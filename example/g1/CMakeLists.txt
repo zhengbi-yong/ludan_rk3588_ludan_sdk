@@ -10,6 +10,27 @@ target_link_libraries(g1_arm7_sdk_dds_example unitree_sdk2)
 add_executable(g1_ankle_swing_example low_level/g1_ankle_swing_example.cpp)
 target_link_libraries(g1_ankle_swing_example unitree_sdk2)
 
+# Debug versions for testing without robot
+add_executable(g1_ankle_swing_example_debug low_level/g1_ankle_swing_example_debug.cpp)
+target_link_libraries(g1_ankle_swing_example_debug unitree_sdk2)
+
+add_executable(command_monitor low_level/command_monitor.cpp)
+target_link_libraries(command_monitor unitree_sdk2)
+
+add_executable(state_simulator low_level/state_simulator.cpp)
+target_link_libraries(state_simulator unitree_sdk2)
+
+add_executable(motor_controller low_level/motor_controller.cpp)
+target_link_libraries(motor_controller unitree_sdk2)
+
+# CAN library dependencies for motor_controller
+if(UNIX AND NOT APPLE)
+    target_link_libraries(motor_controller pthread)
+endif()
+
+add_executable(demo_commands low_level/demo_commands.cpp)
+target_link_libraries(demo_commands unitree_sdk2)
+
 add_executable(g1_audio_client_example audio/g1_audio_client_example.cpp)
 target_link_libraries(g1_audio_client_example unitree_sdk2)
 

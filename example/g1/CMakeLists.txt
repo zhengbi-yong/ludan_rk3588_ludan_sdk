@@ -31,6 +31,9 @@ endif()
 add_executable(demo_commands low_level/demo_commands.cpp)
 target_link_libraries(demo_commands unitree_sdk2)
 
+add_executable(deploy_test low_level/deploy_test.cpp)
+target_link_libraries(deploy_test unitree_sdk2)
+
 add_executable(g1_audio_client_example audio/g1_audio_client_example.cpp)
 target_link_libraries(g1_audio_client_example unitree_sdk2)
 

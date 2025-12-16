@@ -15,6 +15,8 @@
 #include <array>
 #include <ctime>
 #include <iomanip>
+#include <atomic>
+#include <chrono>
 
 // DDS
 #include <unitree/robot/channel/channel_subscriber.hpp>
@@ -72,13 +74,13 @@ struct MotorCommandCan {
     float torq;     // Feedforward torque (N·m)
 };
 
-// Map G1 joint indices to CAN motor IDs (example mapping)
-// This needs to match your actual hardware configuration
+// Map G1 joint indices to CAN motor IDs
+// Matches the actual CAN ID format seen in candump
 std::map<int, int> g1_to_can_motor = {
-    {4, 1},   // LeftAnklePitch -> CAN Motor 1
-    {5, 2},   // LeftAnkleRoll -> CAN Motor 2
-    {10, 3},  // RightAnklePitch -> CAN Motor 3
-    {11, 4}   // RightAnkleRoll -> CAN Motor 4
+    {4, 0x201},   // LeftAnklePitch -> CAN ID 0x201 (Motor 1)
+    {5, 0x202},   // LeftAnkleRoll -> CAN ID 0x202 (Motor 2)
+    {10, 0x203},  // RightAnklePitch -> CAN ID 0x203 (Motor 3)
+    {11, 0x204}   // RightAnkleRoll -> CAN ID 0x204 (Motor 4)
 };
 
 class DDS_to_CAN_Bridge {
@@ -89,6 +91,20 @@ private:
 
     // Store latest motor commands
     std::array<MotorCommandCan, G1_NUM_MOTOR> motor_commands_;
+
+    // 500Hz定时发送相关
+    std::thread can_send_thread_;
+    std::atomic<bool> should_stop_{false};
+
+    // 插值数据存储
+    struct MotorCommandHistory {
+        MotorCommandCan current;
+        MotorCommandCan previous;
+        bool has_previous = false;
+        std::chrono::high_resolution_clock::time_point current_timestamp;
+        std::chrono::high_resolution_clock::time_point previous_timestamp;
+    };
+    std::array<MotorCommandHistory, G1_NUM_MOTOR> command_history_;
 
 public:
     DDS_to_CAN_Bridge() {
@@ -101,6 +117,12 @@ public:
     }
 
     ~DDS_to_CAN_Bridge() {
+        // 停止500Hz发送线程
+        should_stop_ = true;
+        if (can_send_thread_.joinable()) {
+            can_send_thread_.join();
+        }
+
         if (can_config_.initialized && can_config_.socket_fd >= 0) {
             close(can_config_.socket_fd);
         }
@@ -207,9 +229,8 @@ public:
         static int dds_message_count = 0;
         dds_message_count++;
 
-        std::cout << "📥 DDS Message #" << dds_message_count << " received!" << std::endl;
-
         const LowCmd_ *low_cmd = (const LowCmd_ *)message;
+        auto current_time = std::chrono::high_resolution_clock::now();
 
         int motors_with_commands = 0;
         // Extract motor commands from DDS message
@@ -227,18 +248,46 @@ public:
                 auto it = g1_to_can_motor.find(i);
                 if (it != g1_to_can_motor.end()) {
                     motor_commands_[i].motor_id = it->second;
-                    SendMotorCommandCAN(motor_commands_[i]);
+
+                    // 更新命令历史用于插值
+                    auto& history = command_history_[i];
+
+                    // 保存上一个命令
+                    if (history.has_previous) {
+                        history.previous = history.current;
+                        history.previous_timestamp = history.current_timestamp;
+                    } else {
+                        // 第一个命令，创建一个拷贝作为上一个命令
+                        history.previous = motor_commands_[i];
+                        history.previous_timestamp = current_time;
+                        history.has_previous = true;
+                    }
+
+                    // 更新当前命令
+                    history.current = motor_commands_[i];
+                    history.current_timestamp = current_time;
+
                     motors_with_commands++;
                 }
             }
         }
 
-        if (motors_with_commands == 0) {
-            std::cout << "⚠️  DDS message received but no mapped motor commands found" << std::endl;
-            std::cout << "   Available motor commands: " << low_cmd->motor_cmd().size() << std::endl;
-            std::cout << "   Checking mappings: ";
+        // 减少调试输出频率
+        if (dds_message_count % 50 == 0) {
+            std::cout << "📥 DDS Messages: " << dds_message_count
+                     << " | Motors updated: " << motors_with_commands << std::endl;
+
+            // 显示插值状态
+            std::cout << "🔄 Interpolation status: ";
             for (auto const& [g1_joint, can_motor] : g1_to_can_motor) {
-                std::cout << "G1[" << g1_joint << "]->CAN[" << can_motor << "] ";
+                auto& history = command_history_[g1_joint];
+                std::cout << "G1[" << g1_joint << "] ";
+                if (history.has_previous) {
+                    auto time_diff = std::chrono::duration<double>(history.current_timestamp - history.previous_timestamp).count();
+                    std::cout << time_diff*1000 << "ms ";
+                } else {
+                    std::cout << "init ";
+                }
             }
             std::cout << std::endl;
         }
@@ -253,7 +302,7 @@ public:
         // Convert motor command to CAN frame (MIT mode protocol)
         // This matches the STM32 motor controller protocol
         struct can_frame frame;
-        frame.can_id = 0x200 + cmd.motor_id;  // MIT mode command ID
+        frame.can_id = cmd.motor_id;  // Use the actual CAN ID (0x201-0x204)
         frame.can_dlc = 8;  // 8 bytes data
 
         // Convert float values to motor protocol format
@@ -358,13 +407,89 @@ public:
         lowstate_publisher_->Write(low_state);
     }
 
+    // 线性插值函数
+    MotorCommandCan interpolateCommand(const MotorCommandCan& prev, const MotorCommandCan& curr,
+                                       double prev_time, double curr_time, double target_time) {
+        MotorCommandCan result = curr;
+
+        if (curr_time > prev_time) {
+            double t = (target_time - prev_time) / (curr_time - prev_time);
+            t = std::max(0.0, std::min(1.0, t));  // 限制在[0,1]范围内
+
+            result.pos = prev.pos + t * (curr.pos - prev.pos);
+            result.vel = prev.vel + t * (curr.vel - prev.vel);
+            result.kp = prev.kp + t * (curr.kp - prev.kp);
+            result.kd = prev.kd + t * (curr.kd - prev.kd);
+            result.torq = prev.torq + t * (curr.torq - prev.torq);
+        }
+
+        return result;
+    }
+
+    // 500Hz CAN发送线程
+    void CANSendThread() {
+        std::cout << "🔄 500Hz CAN发送线程启动" << std::endl;
+
+        const auto interval = std::chrono::milliseconds(2); // 500Hz = 2ms
+        auto next_send_time = std::chrono::high_resolution_clock::now();
+
+        while (!should_stop_) {
+            auto now = std::chrono::high_resolution_clock::now();
+
+            // 检查是否到了发送时间
+            if (now >= next_send_time) {
+                // 为每个有CAN映射的电机发送插值命令
+                for (auto const& [g1_joint, can_motor] : g1_to_can_motor) {
+                    if (g1_joint < G1_NUM_MOTOR) {
+                        auto& history = command_history_[g1_joint];
+                        auto current_time = std::chrono::duration<double>(now.time_since_epoch()).count();
+
+                        MotorCommandCan cmd_to_send;
+
+                        if (history.has_previous) {
+                            // 使用线性插值
+                            double prev_time = std::chrono::duration<double>(history.previous_timestamp.time_since_epoch()).count();
+                            double curr_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
+
+                            cmd_to_send = interpolateCommand(history.previous, history.current,
+                                                           prev_time, curr_time, current_time);
+                        } else {
+                            // 没有历史数据，使用当前命令
+                            cmd_to_send = history.current;
+                        }
+
+                        cmd_to_send.motor_id = can_motor;
+                        SendMotorCommandCAN(cmd_to_send);
+                    }
+                }
+
+                // 计算下一次发送时间
+                next_send_time += interval;
+
+                // 如果已经落后太多，跳过一些周期
+                if (now > next_send_time + interval) {
+                    next_send_time = now + interval;
+                }
+            }
+
+            // 短暂休眠以避免占用CPU
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+        }
+
+        std::cout << "🛑 500Hz CAN发送线程停止" << std::endl;
+    }
+
     void Run() {
         std::cout << "\nDDS-to-CAN Bridge Running..." << std::endl;
+        std::cout << "⚡ 500Hz CAN发送已启用 (带线性插值)" << std::endl;
         std::cout << "Waiting for DDS commands on topic: " << HG_CMD_TOPIC << std::endl;
         std::cout << "Sending CAN commands on interface: " << can_config_.interface << std::endl;
         std::cout << "Press Ctrl+C to stop" << std::endl << std::endl;
 
-        // Start CAN monitoring thread
+        // 启动500Hz CAN发送线程
+        can_send_thread_ = std::thread(&DDS_to_CAN_Bridge::CANSendThread, this);
+
+        // 启动CAN监控线程
         std::thread can_monitor_thread(&DDS_to_CAN_Bridge::MonitorCAN, this);
         can_monitor_thread.detach();
 

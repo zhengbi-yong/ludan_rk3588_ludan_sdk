@@ -1,0 +1,1 @@
+deployment/start_deploy_rk3588.sh

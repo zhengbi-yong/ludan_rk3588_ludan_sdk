@@ -227,10 +227,35 @@ public:
 
     void LowCmdHandler(const void *message) {
         static int dds_message_count = 0;
+        static auto first_message_time = std::chrono::high_resolution_clock::now();
         dds_message_count++;
 
         const LowCmd_ *low_cmd = (const LowCmd_ *)message;
         auto current_time = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - first_message_time).count() / 1000.0;
+
+        // 🎯 打印每次收到的 DDS rt/lowcmd 消息
+        std::cout << "\n" << std::string(80, '=') << std::endl;
+        std::cout << "📨 DDS LowCmd 消息接收 #" << dds_message_count
+                  << " (时间: " << std::fixed << std::setprecision(3) << elapsed << "s)" << std::endl;
+        std::cout << std::string(80, '-') << std::endl;
+
+        // 打印基本消息信息
+        std::cout << "📋 基本信息:" << std::endl;
+        std::cout << "   Mode PR: " << static_cast<int>(low_cmd->mode_pr())
+                  << " (0=PR模式, 1=AB模式)" << std::endl;
+        std::cout << "   Mode Machine: " << static_cast<int>(low_cmd->mode_machine())
+                  << " (1=G1机器人)" << std::endl;
+        std::cout << "   CRC: 0x" << std::hex << low_cmd->crc() << std::dec << std::endl;
+
+        // 计算消息频率
+        static auto last_message_time = current_time;
+        if (dds_message_count > 1) {
+            auto message_interval = std::chrono::duration_cast<std::chrono::microseconds>(current_time - last_message_time).count();
+            double frequency = 1000000.0 / message_interval;
+            std::cout << "   消息频率: " << std::fixed << std::setprecision(1) << frequency << " Hz" << std::endl;
+        }
+        last_message_time = current_time;
 
         int motors_with_commands = 0;
         // Extract motor commands from DDS message
@@ -272,7 +297,70 @@ public:
             }
         }
 
-        // 减少调试输出频率
+        // 📊 打印电机命令详情
+        std::cout << "\n🔧 电机命令详情:" << std::endl;
+        std::cout << "   总电机数: " << G1_NUM_MOTOR << " (消息中: " << low_cmd->motor_cmd().size() << ")" << std::endl;
+
+        // 创建关节名称映射
+        std::map<int, std::string> joint_names = {
+            {0, "LeftHipPitch"}, {1, "LeftHipRoll"}, {2, "LeftHipYaw"}, {3, "LeftKnee"},
+            {4, "LeftAnklePitch"}, {5, "LeftAnkleRoll"},
+            {6, "RightHipPitch"}, {7, "RightHipRoll"}, {8, "RightHipYaw"}, {9, "RightKnee"},
+            {10, "RightAnklePitch"}, {11, "RightAnkleRoll"}
+        };
+
+        // 打印所有非零命令
+        std::cout << "   非零电机命令:" << std::endl;
+        for (int i = 0; i < std::min(G1_NUM_MOTOR, (int)low_cmd->motor_cmd().size()); i++) {
+            const auto& motor_cmd = low_cmd->motor_cmd()[i];
+
+            if (motor_cmd.mode() != 0 || fabs(motor_cmd.q()) > 0.001 ||
+                fabs(motor_cmd.dq()) > 0.001 || fabs(motor_cmd.tau()) > 0.001 ||
+                motor_cmd.kp() > 0.1 || motor_cmd.kd() > 0.1) {
+
+                std::string joint_name = (joint_names.find(i) != joint_names.end()) ?
+                                        joint_names[i] : ("Joint" + std::to_string(i));
+
+                auto it = g1_to_can_motor.find(i);
+                std::string can_info = (it != g1_to_can_motor.end()) ?
+                                       (", CAN ID: 0x" + std::to_string(it->second)) : "";
+
+                std::cout << "     " << std::setw(16) << std::left << joint_name
+                          << " (ID:" << std::setw(2) << i << can_info << ")" << std::endl;
+                std::cout << "         模式:" << std::setw(2) << static_cast<int>(motor_cmd.mode())
+                          << " 位置:" << std::setw(8) << std::fixed << std::setprecision(3) << motor_cmd.q()
+                          << " 速度:" << std::setw(8) << motor_cmd.dq()
+                          << "  力矩:" << std::setw(8) << motor_cmd.tau() << std::endl;
+                std::cout << "         增益: Kp=" << std::setw(6) << motor_cmd.kp()
+                          << " Kd=" << std::setw(6) << motor_cmd.kd() << std::endl;
+            }
+        }
+
+        // 特别显示脚踝关节（即使为零）
+        std::cout << "\n   🎯 重点关注的脚踝关节:" << std::endl;
+        for (int ankle_id : {4, 5, 10, 11}) {
+            if (ankle_id < low_cmd->motor_cmd().size()) {
+                const auto& motor_cmd = low_cmd->motor_cmd()[ankle_id];
+                std::string joint_name = (joint_names.find(ankle_id) != joint_names.end()) ?
+                                        joint_names[ankle_id] : ("Joint" + std::to_string(ankle_id));
+
+                auto it = g1_to_can_motor.find(ankle_id);
+                std::string can_info = (it != g1_to_can_motor.end()) ?
+                                       (", CAN ID: 0x" + std::to_string(it->second)) : "";
+
+                std::cout << "     " << std::setw(16) << std::left << joint_name
+                          << " (ID:" << std::setw(2) << ankle_id << can_info << ")" << std::endl;
+                std::cout << "         位置:" << std::setw(8) << std::fixed << std::setprecision(3) << motor_cmd.q()
+                          << "  速度:" << std::setw(8) << motor_cmd.dq()
+                          << "  Kp:" << std::setw(6) << motor_cmd.kp()
+                          << "  Kd:" << std::setw(6) << motor_cmd.kd() << std::endl;
+            }
+        }
+
+        std::cout << "\n📊 统计信息:" << std::endl;
+        std::cout << "   有CAN映射的电机数: " << motors_with_commands << "/4" << std::endl;
+
+        // 原有的调试输出（减少频率）
         if (dds_message_count % 50 == 0) {
             std::cout << "📥 DDS Messages: " << dds_message_count
                      << " | Motors updated: " << motors_with_commands << std::endl;

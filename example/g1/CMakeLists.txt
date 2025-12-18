@@ -34,6 +34,13 @@ target_link_libraries(demo_commands unitree_sdk2)
 add_executable(deploy_test low_level/deploy_test.cpp)
 target_link_libraries(deploy_test unitree_sdk2)
 
+# Network distributed deployment programs
+add_executable(deploy_test_jetson low_level/deploy_test_jetson.cpp)
+target_link_libraries(deploy_test_jetson ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(deploy_test_rk3588 low_level/deploy_test_rk3588.cpp)
+target_link_libraries(deploy_test_rk3588 unitree_sdk2 ${CMAKE_THREAD_LIBS_INIT})
+
 add_executable(g1_audio_client_example audio/g1_audio_client_example.cpp)
 target_link_libraries(g1_audio_client_example unitree_sdk2)
 

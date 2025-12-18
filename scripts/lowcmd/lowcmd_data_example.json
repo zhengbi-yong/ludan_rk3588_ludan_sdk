@@ -1,0 +1,211 @@
+{
+  "timestamp": 1703123456.789,
+  "sequence": 12345,
+  "ros_topic": "/lowcmd",
+  "robot_type": "hg",
+  "mode_pr": 1,
+  "mode_machine": 1,
+  "reserve": [0, 0, 0, 0],
+  "crc": 305419896,
+  "motors": [
+    {
+      "id": 0,
+      "name": "left_hip_pitch",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 100.0,
+      "kd": 3.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 1,
+      "name": "left_hip_roll",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 100.0,
+      "kd": 3.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 2,
+      "name": "left_hip_yaw",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 80.0,
+      "kd": 2.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 3,
+      "name": "left_knee",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 120.0,
+      "kd": 4.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 4,
+      "name": "left_ankle_pitch",
+      "mode": 1,
+      "q": 0.2865,
+      "dq": 0.9425,
+      "tau": 0.0000,
+      "kp": 80.0,
+      "kd": 2.0,
+      "reserve": [0, 0, 0],
+      "sine_wave": {
+        "amplitude": 0.3,
+        "frequency": 0.5,
+        "phase_offset": 0.0,
+        "current_time": 12.34
+      }
+    },
+    {
+      "id": 5,
+      "name": "left_ankle_roll",
+      "mode": 1,
+      "q": 0.2025,
+      "dq": 0.6662,
+      "tau": 0.0000,
+      "kp": 80.0,
+      "kd": 2.0,
+      "reserve": [0, 0, 0],
+      "sine_wave": {
+        "amplitude": 0.3,
+        "frequency": 0.5,
+        "phase_offset": 1.5708,
+        "current_time": 12.34
+      }
+    },
+    {
+      "id": 6,
+      "name": "right_hip_pitch",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 100.0,
+      "kd": 3.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 7,
+      "name": "right_hip_roll",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 100.0,
+      "kd": 3.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 8,
+      "name": "right_hip_yaw",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 80.0,
+      "kd": 2.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 9,
+      "name": "right_knee",
+      "mode": 1,
+      "q": 0.0000,
+      "dq": 0.0000,
+      "tau": 0.0000,
+      "kp": 120.0,
+      "kd": 4.0,
+      "reserve": [0, 0, 0]
+    },
+    {
+      "id": 10,
+      "name": "right_ankle_pitch",
+      "mode": 1,
+      "q": -0.2865,
+      "dq": -0.9425,
+      "tau": 0.0000,
+      "kp": 80.0,
+      "kd": 2.0,
+      "reserve": [0, 0, 0],
+      "sine_wave": {
+        "amplitude": 0.3,
+        "frequency": 0.5,
+        "phase_offset": 3.1416,
+        "current_time": 12.34
+      }
+    },
+    {
+      "id": 11,
+      "name": "right_ankle_roll",
+      "mode": 1,
+      "q": -0.2025,
+      "dq": -0.6662,
+      "tau": 0.0000,
+      "kp": 80.0,
+      "kd": 2.0,
+      "reserve": [0, 0, 0],
+      "sine_wave": {
+        "amplitude": 0.3,
+        "frequency": 0.5,
+        "phase_offset": 4.7124,
+        "current_time": 12.34
+      }
+    }
+  ],
+  "ros1_pose_mapping": {
+    "header": {
+      "stamp": 1703123456.789,
+      "frame_id": "robot_base"
+    },
+    "pose": {
+      "position": {
+        "x": 0.2865,
+        "y": 0.2025,
+        "z": 0.0
+      },
+      "orientation": {
+        "x": -0.2865,
+        "y": -0.2025,
+        "z": 0.0,
+        "w": 1.0
+      }
+    }
+  },
+  "joint_states": {
+    "header": {
+      "stamp": 1703123456.789,
+      "frame_id": ""
+    },
+    "name": [
+      "left_hip_pitch", "left_hip_roll", "left_hip_yaw", "left_knee", "left_ankle_pitch", "left_ankle_roll",
+      "right_hip_pitch", "right_hip_roll", "right_hip_yaw", "right_knee", "right_ankle_pitch", "right_ankle_roll"
+    ],
+    "position": [0.0, 0.0, 0.0, 0.0, 0.2865, 0.2025, 0.0, 0.0, 0.0, 0.0, -0.2865, -0.2025],
+    "velocity": [0.0, 0.0, 0.0, 0.0, 0.9425, 0.6662, 0.0, 0.0, 0.0, 0.0, -0.9425, -0.6662],
+    "effort": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  },
+  "network_info": {
+    "source_ip": "192.168.1.10",
+    "dest_ip": "192.168.1.20",
+    "port": 8888,
+    "packet_size": 1024
+  },
+  "metadata": {
+    "created_by": "python_lowcmd_builder.py",
+    "version": "1.0.0",
+    "description": "G1脚踝正弦波运动示例 - 左右脚踝相位相反运动"
+  }
+}

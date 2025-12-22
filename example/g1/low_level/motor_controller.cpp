@@ -82,14 +82,18 @@ struct MotorCommandCan {
     float torq;     // Feedforward torque (N·m)
 };
 
-// Map G1 joint indices to CAN motor IDs
-// Matches the actual CAN ID format seen in candump
-std::map<int, int> g1_to_can_motor = {
-    {4, 0x201},   // LeftAnklePitch -> CAN ID 0x201 (Motor 1)
-    {5, 0x202},   // LeftAnkleRoll -> CAN ID 0x202 (Motor 2)
-    {10, 0x203},  // RightAnklePitch -> CAN ID 0x203 (Motor 3)
-    {11, 0x204}   // RightAnkleRoll -> CAN ID 0x204 (Motor 4)
-};
+// Motor ID mapping function
+// Motors 1-15 -> CAN IDs 0x01-0x0F
+// Motors 16-30 -> CAN IDs 0x10-0x1F
+// Motor ID 0 is not used (reserved)
+int get_can_id_for_motor(int motor_id) {
+    if (motor_id >= 1 && motor_id <= 15) {
+        return motor_id;  // 1-15 -> 0x01-0x0F
+    } else if (motor_id >= 16 && motor_id <= 30) {
+        return motor_id;  // 16-30 -> 0x10-0x1F
+    }
+    return 0;  // Invalid or out of range
+}
 
 class ROS2_to_TCP_Bridge : public rclcpp::Node {
 private:
@@ -324,10 +328,10 @@ public:
                 motor_commands_[motor_id].kd = motor_cmd.kd;
                 motor_commands_[motor_id].torq = motor_cmd.tau;
 
-                // Check if this motor has a CAN mapping (only for ankle motors)
-                auto it = g1_to_can_motor.find(motor_id);
-                if (it != g1_to_can_motor.end()) {
-                    motor_commands_[motor_id].motor_id = it->second;
+                // Check if this motor has a valid ID mapping
+                int can_id = get_can_id_for_motor(motor_id);
+                if (can_id > 0) {
+                    motor_commands_[motor_id].motor_id = can_id;
 
                     // 更新命令历史用于插值
                     auto& history = command_history_[motor_id];
@@ -376,9 +380,9 @@ public:
                 std::string joint_name = (joint_names.find(motor_id) != joint_names.end()) ?
                                         joint_names[motor_id] : ("Motor" + std::to_string(motor_id));
 
-                auto it = g1_to_can_motor.find(motor_id);
-                std::string can_info = (it != g1_to_can_motor.end()) ?
-                                       (", CAN ID: 0x" + std::to_string(it->second)) : "";
+                int can_id = get_can_id_for_motor(motor_id);
+                std::string can_info = (can_id > 0) ?
+                                       (", CAN ID: 0x" + std::to_string(can_id)) : "";
 
                 std::cout << "     " << std::setw(16) << std::left << joint_name
                           << " (ID:" << std::setw(2) << motor_id << can_info << ")" << std::endl;
@@ -399,9 +403,9 @@ public:
                     std::string joint_name = (joint_names.find(ankle_id) != joint_names.end()) ?
                                             joint_names[ankle_id] : ("Motor" + std::to_string(ankle_id));
 
-                    auto it = g1_to_can_motor.find(ankle_id);
-                    std::string can_info = (it != g1_to_can_motor.end()) ?
-                                           (", CAN ID: 0x" + std::to_string(it->second)) : "";
+                    int can_id = get_can_id_for_motor(ankle_id);
+                    std::string can_info = (can_id > 0) ?
+                                           (", CAN ID: 0x" + std::to_string(can_id)) : "";
 
                     std::cout << "     " << std::setw(16) << std::left << joint_name
                               << " (ID:" << std::setw(2) << ankle_id << can_info << ")" << std::endl;
@@ -422,16 +426,37 @@ public:
             std::cout << "📥 ROS2 Messages: " << ros2_message_count
                      << " | Motors updated: " << motors_with_commands << std::endl;
 
-            // 显示插值状态
+            // 显示插值状态（显示前8个电机和脚踝关节）
             std::cout << "🔄 Interpolation status: ";
-            for (auto const& [g1_joint, can_motor] : g1_to_can_motor) {
-                auto& history = command_history_[g1_joint];
-                std::cout << "G1[" << g1_joint << "] ";
-                if (history.has_previous) {
-                    auto time_diff = std::chrono::duration<double>(history.current_timestamp - history.previous_timestamp).count();
-                    std::cout << time_diff*1000 << "ms ";
-                } else {
-                    std::cout << "init ";
+            int display_count = 0;
+            for (int i = 1; i <= 30 && display_count < 8; i++) {
+                int can_id = get_can_id_for_motor(i);
+                if (can_id > 0) {
+                    auto& history = command_history_[i];
+                    std::cout << "M" << i << "[" << std::hex << can_id << std::dec << "] ";
+                    if (history.has_previous) {
+                        auto time_diff = std::chrono::duration<double>(history.current_timestamp - history.previous_timestamp).count();
+                        std::cout << time_diff*1000 << "ms ";
+                    } else {
+                        std::cout << "init ";
+                    }
+                    display_count++;
+                }
+            }
+            // 特别显示脚踝关节
+            for (int ankle_id : {4, 5, 10, 11}) {
+                if (display_count >= 8) break;
+                int can_id = get_can_id_for_motor(ankle_id);
+                if (can_id > 0) {
+                    auto& history = command_history_[ankle_id];
+                    std::cout << "A" << ankle_id << "[" << std::hex << can_id << std::dec << "] ";
+                    if (history.has_previous) {
+                        auto time_diff = std::chrono::duration<double>(history.current_timestamp - history.previous_timestamp).count();
+                        std::cout << time_diff*1000 << "ms ";
+                    } else {
+                        std::cout << "init ";
+                    }
+                    display_count++;
                 }
             }
             std::cout << std::endl;
@@ -499,12 +524,16 @@ public:
             static int counter = 0;
             if (++counter % 100 == 0) {
                 std::cout << "📊 Motor commands update #" << counter << std::endl;
-                for (auto const& [g1_joint, can_motor] : g1_to_can_motor) {
-                    if (g1_joint < G1_NUM_MOTOR) {
-                        auto& cmd = motor_commands_[g1_joint];
-                        std::cout << "  Motor " << g1_joint << " (CAN 0x" << std::hex << can_motor << std::dec
+                // 显示前10个有有效映射的电机
+                int display_count = 0;
+                for (int i = 1; i <= 30 && display_count < 10; i++) {
+                    int can_id = get_can_id_for_motor(i);
+                    if (can_id > 0) {
+                        auto& cmd = motor_commands_[i];
+                        std::cout << "  Motor " << i << " (CAN 0x" << std::hex << can_id << std::dec
                                   << "): pos=" << std::fixed << std::setprecision(3) << cmd.pos
                                   << " vel=" << cmd.vel << " kp=" << cmd.kp << " kd=" << cmd.kd << std::endl;
+                        display_count++;
                     }
                 }
             }
@@ -639,10 +668,11 @@ public:
 
             // 检查是否到了发送时间
             if (now >= next_send_time) {
-                // 为每个有CAN映射的电机发送插值命令
-                for (auto const& [g1_joint, can_motor] : g1_to_can_motor) {
-                    if (g1_joint < G1_NUM_MOTOR) {
-                        auto& history = command_history_[g1_joint];
+                // 为每个有有效映射的电机发送插值命令
+                for (int motor_id = 1; motor_id <= 30; motor_id++) {
+                    int can_id = get_can_id_for_motor(motor_id);
+                    if (can_id > 0) {
+                        auto& history = command_history_[motor_id];
                         auto current_time = std::chrono::duration<double>(now.time_since_epoch()).count();
 
                         MotorCommandCan cmd_to_send;
@@ -659,7 +689,7 @@ public:
                             cmd_to_send = history.current;
                         }
 
-                        cmd_to_send.motor_id = can_motor;
+                        cmd_to_send.motor_id = can_id;
                         SendMotorCommandTCP(cmd_to_send);
                     }
                 }

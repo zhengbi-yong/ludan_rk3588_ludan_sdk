@@ -162,19 +162,19 @@ start_topic_monitor() {
 # 启动ROS bridge
 start_ros_bridge() {
     if [ "$USE_ROS_BRIDGE" = "true" ]; then
-        log_info "Starting ROS Bridge for DDS communication..."
+        log_info "Starting Simple ROS Bridge for DDS communication..."
 
-        # 启动ROS1到DDS的bridge
-        python3 "$(dirname $0)/../ros_integration/ros1_to_dds_bridge.py" &
+        # 启动简单的ROS1到DDS的bridge
+        python3 "$(dirname $0)/simple_ros_to_dds.py" &
         ROS_BRIDGE_PID=$!
 
         sleep 2
 
         if kill -0 $ROS_BRIDGE_PID 2>/dev/null; then
-            log_success "✅ ROS Bridge started successfully (PID: $ROS_BRIDGE_PID)"
+            log_success "✅ Simple ROS Bridge started successfully (PID: $ROS_BRIDGE_PID)"
             echo $ROS_BRIDGE_PID > /tmp/ros_bridge.pid
         else
-            log_error "❌ Failed to start ROS Bridge"
+            log_error "❌ Failed to start Simple ROS Bridge"
             exit 1
         fi
     fi

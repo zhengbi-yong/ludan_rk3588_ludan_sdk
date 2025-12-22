@@ -1,0 +1,27 @@
+module xixilowcmd
+{
+  module msg
+  {
+    const uint32 NUM_JOINTS = 30;
+
+    struct MotorCmd
+    {
+      uint8  mode;     // 1: enable, 0: disable
+      float  q;        // target position
+      float  dq;       // target velocity
+      float  kp;       // position gain
+      float  kd;       // velocity gain
+      float  tau;      // feedforward torque
+    };
+
+    struct LowCmd
+    {
+      uint8  mode_pr;
+      uint8  mode_machine;
+
+      MotorCmd motor_cmd[NUM_JOINTS];
+
+      uint32 crc;
+    };
+  };
+};

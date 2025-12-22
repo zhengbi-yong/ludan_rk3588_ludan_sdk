@@ -1,0 +1,10 @@
+<launch>
+    <!-- 启动rosbridge用于监控 -->
+    <node name="ros_bridge_monitor" pkg="rosbridge_server" type="rosbridge_websocket" output="screen"/>
+
+    <!-- 启动话题监控 -->
+    <node name="topic_monitor" pkg="rqt_topic" type="rqt_topic" output="screen"/>
+
+    <!-- 启动rqt_graph可视化 -->
+    <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph" output="screen"/>
+</launch>

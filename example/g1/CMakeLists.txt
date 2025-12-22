@@ -20,12 +20,77 @@ target_link_libraries(command_monitor unitree_sdk2)
 add_executable(state_simulator low_level/state_simulator.cpp)
 target_link_libraries(state_simulator unitree_sdk2)
 
-add_executable(motor_controller low_level/motor_controller.cpp)
-target_link_libraries(motor_controller unitree_sdk2)
+# Check if ROS2 environment is available
+if(DEFINED ENV{ROS_DISTRO})
+    # ROS2 version with xixilowcmd support
+    find_package(rclcpp QUIET)
+    if(rclcpp_FOUND)
+        # Try to find xixilowcmd in controller_ws
+        set(ROS2_WORKSPACE "/home/linaro/controller_ws")
+        if(EXISTS "${ROS2_WORKSPACE}/install/xixilowcmd")
+            add_executable(motor_controller_ros2 low_level/motor_controller.cpp)
 
-# CAN library dependencies for motor_controller
+            # Set include directories
+            target_include_directories(motor_controller_ros2 PRIVATE
+                "${ROS2_WORKSPACE}/install/xixilowcmd/include"
+                "${ROS2_WORKSPACE}/install/xixilowcmd/local/include"
+                "${ROS2_WORKSPACE}/build/xixilowcmd/rosidl_generator_cpp"
+                "/opt/ros/humble/include"
+            )
+
+            # Set RPATH for runtime library search
+            set_target_properties(motor_controller_ros2 PROPERTIES
+                INSTALL_RPATH "${ROS2_WORKSPACE}/install/xixilowcmd/lib"
+                BUILD_WITH_INSTALL_RPATH TRUE
+            )
+
+            # Link libraries - include ROS2 libraries and xixilowcmd
+            target_link_libraries(motor_controller_ros2
+                rclcpp::rclcpp
+                ${ROS2_WORKSPACE}/install/xixilowcmd/lib/libxixilowcmd__rosidl_typesupport_cpp.so
+                ${ROS2_WORKSPACE}/install/xixilowcmd/lib/libxixilowcmd__rosidl_generator_c.so
+                pthread
+            )
+
+            # Add ROS2 include directories
+            target_include_directories(motor_controller_ros2 PRIVATE
+                ${rclcpp_INCLUDE_DIRS}
+            )
+
+            # Compile with ROS2 support
+            target_compile_definitions(motor_controller_ros2 PRIVATE USE_ROS2=1)
+
+            # Rename the binary to motor_controller
+            set_target_properties(motor_controller_ros2 PROPERTIES OUTPUT_NAME motor_controller)
+
+            message(STATUS "Building motor_controller with ROS2 and xixilowcmd support")
+        else()
+            # Fallback to original version
+            add_executable(motor_controller low_level/motor_controller.cpp)
+            target_link_libraries(motor_controller unitree_sdk2)
+            message(STATUS "Controller workspace not found, building motor_controller with original SDK2 support")
+        endif()
+    else()
+        # Fallback to original version
+        add_executable(motor_controller low_level/motor_controller.cpp)
+        target_link_libraries(motor_controller unitree_sdk2)
+        message(STATUS "rclcpp not found, building motor_controller with original SDK2 support")
+    endif()
+else()
+    # No ROS2 environment - use original version
+    add_executable(motor_controller low_level/motor_controller.cpp)
+    target_link_libraries(motor_controller unitree_sdk2)
+    message(STATUS "No ROS2 environment, building motor_controller with original SDK2 support")
+endif()
+
+# Additional library dependencies for all versions
 if(UNIX AND NOT APPLE)
-    target_link_libraries(motor_controller pthread)
+    if(TARGET motor_controller)
+        target_link_libraries(motor_controller pthread)
+    endif()
+    if(TARGET motor_controller_ros2)
+        target_link_libraries(motor_controller_ros2 pthread)
+    endif()
 endif()
 
 add_executable(demo_commands low_level/demo_commands.cpp)

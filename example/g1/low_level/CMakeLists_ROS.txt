@@ -1,0 +1,61 @@
+# CMakeLists.txt for ROS-enabled motor_controller
+# This is an optional CMake file for building with ROS support
+
+cmake_minimum_required(VERSION 3.0.2)
+project(motor_controller_ros)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find ROS
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  std_msgs
+)
+
+# Set USE_ROS compile definition
+add_definitions(-DUSE_ROS)
+
+# Include directories
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ../../../../include
+)
+
+# Add executable
+add_executable(motor_controller_ros motor_controller.cpp)
+
+# Link libraries
+target_link_libraries(motor_controller_ros
+  ${catkin_LIBRARIES}
+  unitree_sdk2
+)
+
+# Generate messages
+add_message_files(
+  FILES
+  MotorFeedback.msg
+)
+
+# Generate services (if any)
+# add_service_files(
+#   FILES
+#   Service1.srv
+# )
+
+# Generate actions (if any)
+# add_action_files(
+#   FILES
+#   Action1.action
+# )
+
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
+catkin_package(
+  CATKIN_DEPENDS roscpp std_msgs
+)

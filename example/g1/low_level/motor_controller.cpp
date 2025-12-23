@@ -72,7 +72,16 @@ struct TcpConfig {
     bool initialized = false;
 };
 
+// UDP configuration for ZLG CAN device
+struct ZlgConfig {
+    std::string zlg_ip = "192.168.1.10";   // ZLG device IP (local eth0)
+    int zlg_port = 8002;                   // ZLG device UDP port
+    int udp_socket_fd = -1;
+    bool initialized = false;
+};
+
 // Motor command structure (matches STM32 protocol)
+// Must be defined before ZlgPacketBuilder which uses it
 struct MotorCommandCan {
     uint16_t motor_id;
     float pos;      // Target position (rad)
@@ -80,6 +89,132 @@ struct MotorCommandCan {
     float kp;       // Position gain
     float kd;       // Velocity gain
     float torq;     // Feedforward torque (N·m)
+};
+
+// ZLG CAN Network Packet Format (per zlg_desc.txt)
+// PC -> CANFDNET: Send CAN frame via network packet
+struct ZlgCanNetPacket {
+    // Header
+    uint8_t header;                    // 0x55 - packet header
+    uint8_t type[3];                   // 0x00 0x00 0x00 - CAN message type + reserved
+    uint8_t length[2];                 // Data length (little-endian)
+
+    // Timestamp (8 bytes) - set to 0 when sending
+    uint8_t timestamp[8];
+
+    // CAN Frame Info
+    uint8_t can_id[4];                 // CAN Frame ID (little-endian)
+    uint8_t frame_info[2];             // Frame info (0x00 0x00 for standard frame without echo)
+    uint8_t channel;                   // CAN channel (0x00 = CAN0)
+
+    // Data
+    uint8_t dlc;                       // Data length code (0-8)
+    uint8_t data[8];                   // CAN data bytes
+
+    // Checksum (XOR of all bytes except checksum itself)
+    uint8_t checksum;
+} __attribute__((packed));
+
+// Helper class for building ZLG CAN network packets
+class ZlgPacketBuilder {
+public:
+    // Build ZLG CAN network packet for transmission
+    static std::vector<uint8_t> BuildCanPacket(uint32_t can_id, const uint8_t* data, uint8_t dlc, uint8_t channel = 0) {
+        std::vector<uint8_t> packet;
+        packet.reserve(27);  // Total packet size
+
+        // 1. Header: 0x55
+        packet.push_back(0x55);
+
+        // 2. Type: 0x00 0x00 0x00 (CAN message)
+        packet.push_back(0x00);
+        packet.push_back(0x00);
+        packet.push_back(0x00);
+
+        // 3. Data length: 0x18 (24 bytes for CAN frame)
+        uint16_t data_length = 0x18;  // Fixed 24 bytes for standard CAN frame
+        packet.push_back(data_length & 0xFF);
+        packet.push_back((data_length >> 8) & 0xFF);
+
+        // 4. Timestamp: 8 bytes (all zeros for send)
+        for (int i = 0; i < 8; i++) {
+            packet.push_back(0x00);
+        }
+
+        // 5. CAN ID: 4 bytes (little-endian)
+        packet.push_back(can_id & 0xFF);
+        packet.push_back((can_id >> 8) & 0xFF);
+        packet.push_back((can_id >> 16) & 0xFF);
+        packet.push_back((can_id >> 24) & 0xFF);
+
+        // 6. Frame info: 0x00 0x00 (standard frame, no echo)
+        packet.push_back(0x00);
+        packet.push_back(0x00);
+
+        // 7. Channel
+        packet.push_back(channel);
+
+        // 8. DLC
+        packet.push_back(dlc);
+
+        // 9. Data bytes (up to 8 bytes)
+        for (uint8_t i = 0; i < dlc && i < 8; i++) {
+            packet.push_back(data[i]);
+        }
+        // Pad remaining data bytes with zeros if dlc < 8
+        for (uint8_t i = dlc; i < 8; i++) {
+            packet.push_back(0x00);
+        }
+
+        // 10. Calculate XOR checksum
+        uint8_t checksum = 0;
+        for (size_t i = 1; i < packet.size(); i++) {  // Start from index 1 (after header)
+            checksum ^= packet[i];
+        }
+        packet.push_back(checksum);
+
+        return packet;
+    }
+
+    // Convert motor command to CAN data bytes (MIT motor protocol format)
+    static void MotorCommandToCanData(const MotorCommandCan& cmd, uint8_t* can_data) {
+        // MIT motor protocol format:
+        // Bytes 0-1: Position (float to int16)
+        // Bytes 2-3: Velocity (float to int16)
+        // Bytes 4-5: Kp (float to int16)
+        // Bytes 6-7: Kd (float to int16)
+        // Note: Torque (tau) is often not used in position control mode
+
+        // Convert position to int16 (scale: e.g., ±12.5 rad -> ±32767)
+        int16_t pos_int = static_cast<int16_t>(cmd.pos * 32767.0f / 12.5f);
+        can_data[0] = pos_int & 0xFF;
+        can_data[1] = (pos_int >> 8) & 0xFF;
+
+        // Convert velocity to int16 (scale: ±30 rad/s -> ±32767)
+        int16_t vel_int = static_cast<int16_t>(cmd.vel * 32767.0f / 30.0f);
+        can_data[2] = vel_int & 0xFF;
+        can_data[3] = (vel_int >> 8) & 0xFF;
+
+        // Convert Kp to int16 (scale: 0-500 -> 0-32767)
+        int16_t kp_int = static_cast<int16_t>(cmd.kp * 32767.0f / 500.0f);
+        can_data[4] = kp_int & 0xFF;
+        can_data[5] = (kp_int >> 8) & 0xFF;
+
+        // Convert Kd to int16 (scale: 0-50 -> 0-32767)
+        int16_t kd_int = static_cast<int16_t>(cmd.kd * 32767.0f / 50.0f);
+        can_data[6] = kd_int & 0xFF;
+        can_data[7] = (kd_int >> 8) & 0xFF;
+    }
+
+    // Debug: Print packet in hex format
+    static void PrintPacket(const std::vector<uint8_t>& packet) {
+        std::cout << "ZLG Packet [" << packet.size() << " bytes]: ";
+        for (size_t i = 0; i < packet.size(); i++) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0')
+                      << static_cast<int>(packet[i]) << " ";
+        }
+        std::cout << std::dec << std::setfill(' ') << std::endl;
+    }
 };
 
 // Motor ID mapping function
@@ -98,6 +233,7 @@ int get_can_id_for_motor(int motor_id) {
 class ROS2_to_TCP_Bridge : public rclcpp::Node {
 private:
     TcpConfig tcp_config_;
+    ZlgConfig zlg_config_;
 
     // ROS2 components
     rclcpp::Subscription<xixilowcmd::msg::LowCmd>::SharedPtr lowcmd_subscriber_;
@@ -245,6 +381,38 @@ public:
         } else {
             std::cout << "! TCP connection test: Failed to send test message" << std::endl;
         }
+
+        return true;
+    }
+
+    bool InitializeZLGUDP(const std::string& zlg_endpoint) {
+        // Parse endpoint (format: "ip:port")
+        size_t colon_pos = zlg_endpoint.find(':');
+        if (colon_pos != std::string::npos) {
+            zlg_config_.zlg_ip = zlg_endpoint.substr(0, colon_pos);
+            zlg_config_.zlg_port = std::stoi(zlg_endpoint.substr(colon_pos + 1));
+        }
+
+        std::cout << "Initializing ZLG UDP to " << zlg_config_.zlg_ip
+                  << ":" << zlg_config_.zlg_port << std::endl;
+
+        // Create UDP socket
+        zlg_config_.udp_socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
+        if (zlg_config_.udp_socket_fd < 0) {
+            perror("UDP socket creation failed");
+            return false;
+        }
+
+        // Set socket options for better performance
+        int opt = 1;
+        setsockopt(zlg_config_.udp_socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+        zlg_config_.initialized = true;
+        std::cout << "✓ ZLG UDP socket created successfully" << std::endl;
+        std::cout << "📡 ZLG CAN configuration:" << std::endl;
+        std::cout << "   - ZLG IP: " << zlg_config_.zlg_ip << std::endl;
+        std::cout << "   - ZLG Port: " << zlg_config_.zlg_port << std::endl;
+        std::cout << "   - Socket FD: " << zlg_config_.udp_socket_fd << std::endl;
 
         return true;
     }
@@ -503,17 +671,51 @@ public:
                 perror("TCP send error");
             }
         } else {
-            // Reduced logging - only log errors and startup
+            // Silent operation - only log errors
             static int counter = 0;
             counter++;
-
-            // Only log every 100th command to reduce spam
-            if (counter % 100 == 0 || verbose_logging_) {
-                std::cout << "✓ Sent " << counter << " TCP commands (Motor 0x" << std::hex
-                         << cmd.motor_id << std::dec << ": pos=" << std::fixed << std::setprecision(3)
-                         << cmd.pos << ")" << std::endl;
-            }
         }
+    }
+
+    // Send motor command using ZLG CAN network packet format via UDP
+    void SendMotorCommandZLG(const MotorCommandCan& cmd) {
+        if (!zlg_config_.initialized) {
+            return;  // Silently skip if not initialized
+        }
+
+        // Convert motor command to CAN data bytes
+        uint8_t can_data[8];
+        ZlgPacketBuilder::MotorCommandToCanData(cmd, can_data);
+
+        // Build ZLG CAN network packet
+        uint32_t can_id = cmd.motor_id;  // Use motor_id as CAN ID
+        std::vector<uint8_t> zlg_packet = ZlgPacketBuilder::BuildCanPacket(can_id, can_data, 8, 0);  // CAN0
+
+        // Send via UDP to ZLG device
+        struct sockaddr_in zlg_addr;
+        memset(&zlg_addr, 0, sizeof(zlg_addr));
+        zlg_addr.sin_family = AF_INET;
+        zlg_addr.sin_port = htons(zlg_config_.zlg_port);
+
+        if (inet_pton(AF_INET, zlg_config_.zlg_ip.c_str(), &zlg_addr.sin_addr) <= 0) {
+            std::cerr << "Invalid ZLG IP address: " << zlg_config_.zlg_ip << std::endl;
+            return;
+        }
+
+        ssize_t bytes_sent = sendto(zlg_config_.udp_socket_fd,
+                                    zlg_packet.data(),
+                                    zlg_packet.size(),
+                                    0,
+                                    (struct sockaddr*)&zlg_addr,
+                                    sizeof(zlg_addr));
+
+        if (bytes_sent < 0) {
+            std::cerr << "✗ Error sending ZLG UDP packet for motor 0x" << std::hex << cmd.motor_id << std::dec << std::endl;
+            perror("UDP send error");
+        } else if (bytes_sent != static_cast<ssize_t>(zlg_packet.size())) {
+            std::cerr << "⚠ Partial send: " << bytes_sent << " bytes (expected " << zlg_packet.size() << ")" << std::endl;
+        }
+        // Success - silent operation
     }
 
     void PublishSimulatedState() {
@@ -691,6 +893,8 @@ public:
 
                         cmd_to_send.motor_id = can_id;
                         SendMotorCommandTCP(cmd_to_send);
+                        // Also send via ZLG UDP if initialized
+                        SendMotorCommandZLG(cmd_to_send);
                     }
                 }
 
@@ -834,18 +1038,22 @@ public:
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cout << "Usage: motor_controller <tcp_endpoint> [-v]" << std::endl;
-        std::cout << "Example: ./motor_controller 127.0.0.1:8888          # Connect to local TCP server" << std::endl;
-        std::cout << "         ./motor_controller 192.168.1.100:8888 -v   # Connect to remote with verbose" << std::endl;
+        std::cout << "Usage: motor_controller <tcp_endpoint> [zlg_endpoint] [-v]" << std::endl;
+        std::cout << "Example: ./motor_controller 127.0.0.1:8888                    # TCP only" << std::endl;
+        std::cout << "         ./motor_controller 127.0.0.1:8888 192.168.1.10:8002  # TCP + ZLG CAN" << std::endl;
+        std::cout << "         ./motor_controller 192.168.1.100:8888 192.168.1.10:8002 -v  # Verbose" << std::endl;
         std::cout << "\nOptions:" << std::endl;
-        std::cout << "  -v     Enable verbose logging (show all messages)" << std::endl;
-        std::cout << "\nTCP endpoint format: <ip_address>:<port>" << std::endl;
-        std::cout << "  Default IP: 127.0.0.1 (localhost)" << std::endl;
-        std::cout << "  Default Port: 8888" << std::endl;
+        std::cout << "  tcp_endpoint  TCP endpoint for motor commands (ip:port)" << std::endl;
+        std::cout << "  zlg_endpoint  ZLG CAN device endpoint (ip:port), optional" << std::endl;
+        std::cout << "  -v            Enable verbose logging (show all messages)" << std::endl;
+        std::cout << "\nDefaults:" << std::endl;
+        std::cout << "  TCP IP: 127.0.0.1, Port: 8888" << std::endl;
+        std::cout << "  ZLG IP: 192.168.1.10, Port: 8002" << std::endl;
         return 1;
     }
 
     std::string tcp_endpoint = argv[1];
+    std::string zlg_endpoint;
 
     // Check for command line flags
     bool verbose = false;
@@ -853,14 +1061,20 @@ int main(int argc, char* argv[]) {
     for (int i = 2; i < argc; i++) {
         if (std::string(argv[i]) == "-v") {
             verbose = true;
+        } else if (std::string(argv[i]).find(':') != std::string::npos) {
+            // Looks like an endpoint (ip:port)
+            zlg_endpoint = argv[i];
         }
     }
 
     std::cout << "========================================" << std::endl;
-    std::cout << "ROS2-to-TCP Motor Controller Bridge" << std::endl;
+    std::cout << "ROS2-to-TCP/ZLG Motor Controller Bridge" << std::endl;
     std::cout << "========================================" << std::endl;
     std::cout << "ROS2 Topic: " << ROS2_CMD_TOPIC << std::endl;
     std::cout << "TCP Endpoint: " << tcp_endpoint << std::endl;
+    if (!zlg_endpoint.empty()) {
+        std::cout << "ZLG Endpoint: " << zlg_endpoint << " (CAN via UDP)" << std::endl;
+    }
     std::cout << "Verbose Mode: " << (verbose ? "ON" : "OFF") << std::endl;
     std::cout << "Data Format: xixilowcmd/LowCmd" << std::endl;
     std::cout << "" << std::endl;
@@ -881,6 +1095,14 @@ int main(int argc, char* argv[]) {
             std::cerr << "  3. Network connectivity is available" << std::endl;
             rclcpp::shutdown();
             return 1;
+        }
+
+        // Initialize ZLG UDP if endpoint provided
+        if (!zlg_endpoint.empty()) {
+            if (!bridge->InitializeZLGUDP(zlg_endpoint)) {
+                std::cerr << "Failed to initialize ZLG UDP to: " << zlg_endpoint << std::endl;
+                std::cerr << "ZLG CAN will be disabled, continuing with TCP only..." << std::endl;
+            }
         }
 
         // Initialize ROS2 subscriber

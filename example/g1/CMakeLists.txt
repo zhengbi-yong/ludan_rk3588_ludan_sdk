@@ -99,8 +99,45 @@ if(DEFINED ENV{ROS_DISTRO})
             # Rename the binary to motor_controller_with_enable
             set_target_properties(motor_controller_with_enable_ros2 PROPERTIES OUTPUT_NAME motor_controller_with_enable)
 
+            # Build motor_controller_with_enable_zhengbi with ROS2 and xixilowcmd support
+            add_executable(motor_controller_with_enable_zhengbi_ros2 low_level/motor_controller_with_enable_zhengbi.cpp)
+
+            # Set include directories
+            target_include_directories(motor_controller_with_enable_zhengbi_ros2 PRIVATE
+                "${ROS2_WORKSPACE}/install/xixilowcmd/include"
+                "${ROS2_WORKSPACE}/install/xixilowcmd/local/include"
+                "${ROS2_WORKSPACE}/build/xixilowcmd/rosidl_generator_cpp"
+                "/opt/ros/humble/include"
+            )
+
+            # Set RPATH for runtime library search
+            set_target_properties(motor_controller_with_enable_zhengbi_ros2 PROPERTIES
+                INSTALL_RPATH "${ROS2_WORKSPACE}/install/xixilowcmd/lib"
+                BUILD_WITH_INSTALL_RPATH TRUE
+            )
+
+            # Link libraries - include ROS2 libraries and xixilowcmd
+            target_link_libraries(motor_controller_with_enable_zhengbi_ros2
+                rclcpp::rclcpp
+                ${ROS2_WORKSPACE}/install/xixilowcmd/lib/libxixilowcmd__rosidl_typesupport_cpp.so
+                ${ROS2_WORKSPACE}/install/xixilowcmd/lib/libxixilowcmd__rosidl_generator_c.so
+                pthread
+            )
+
+            # Add ROS2 include directories
+            target_include_directories(motor_controller_with_enable_zhengbi_ros2 PRIVATE
+                ${rclcpp_INCLUDE_DIRS}
+            )
+
+            # Compile with ROS2 support
+            target_compile_definitions(motor_controller_with_enable_zhengbi_ros2 PRIVATE USE_ROS2=1)
+
+            # Rename the binary to motor_controller_with_enable_zhengbi
+            set_target_properties(motor_controller_with_enable_zhengbi_ros2 PROPERTIES OUTPUT_NAME motor_controller_with_enable_zhengbi)
+
             message(STATUS "Building motor_controller with ROS2 and xixilowcmd support")
             message(STATUS "Building motor_controller_with_enable with ROS2, xixilowcmd and enable functionality")
+            message(STATUS "Building motor_controller_with_enable_zhengbi with ROS2, xixilowcmd and enable functionality")
         else()
             # Fallback to original version
             add_executable(motor_controller low_level/motor_controller.cpp)
@@ -110,8 +147,13 @@ if(DEFINED ENV{ROS_DISTRO})
             add_executable(motor_controller_with_enable low_level/motor_controller_with_enable.cpp)
             target_link_libraries(motor_controller_with_enable unitree_sdk2)
 
+            # Fallback motor_controller_with_enable_zhengbi
+            add_executable(motor_controller_with_enable_zhengbi low_level/motor_controller_with_enable_zhengbi.cpp)
+            target_link_libraries(motor_controller_with_enable_zhengbi unitree_sdk2)
+
             message(STATUS "Controller workspace not found, building motor_controller with original SDK2 support")
             message(STATUS "Building motor_controller_with_enable with original SDK2 support")
+            message(STATUS "Building motor_controller_with_enable_zhengbi with original SDK2 support")
         endif()
     else()
         # Fallback to original version
@@ -122,8 +164,13 @@ if(DEFINED ENV{ROS_DISTRO})
         add_executable(motor_controller_with_enable low_level/motor_controller_with_enable.cpp)
         target_link_libraries(motor_controller_with_enable unitree_sdk2)
 
+        # Fallback motor_controller_with_enable_zhengbi
+        add_executable(motor_controller_with_enable_zhengbi low_level/motor_controller_with_enable_zhengbi.cpp)
+        target_link_libraries(motor_controller_with_enable_zhengbi unitree_sdk2)
+
         message(STATUS "rclcpp not found, building motor_controller with original SDK2 support")
         message(STATUS "Building motor_controller_with_enable with original SDK2 support")
+        message(STATUS "Building motor_controller_with_enable_zhengbi with original SDK2 support")
     endif()
 else()
     # No ROS2 environment - use original version
@@ -134,8 +181,13 @@ else()
     add_executable(motor_controller_with_enable low_level/motor_controller_with_enable.cpp)
     target_link_libraries(motor_controller_with_enable unitree_sdk2)
 
+    # No ROS2 environment - motor_controller_with_enable_zhengbi version
+    add_executable(motor_controller_with_enable_zhengbi low_level/motor_controller_with_enable_zhengbi.cpp)
+    target_link_libraries(motor_controller_with_enable_zhengbi unitree_sdk2)
+
     message(STATUS "No ROS2 environment, building motor_controller with original SDK2 support")
     message(STATUS "No ROS2 environment, building motor_controller_with_enable with original SDK2 support")
+    message(STATUS "No ROS2 environment, building motor_controller_with_enable_zhengbi with original SDK2 support")
 endif()
 
 # Additional library dependencies for all versions
@@ -151,6 +203,12 @@ if(UNIX AND NOT APPLE)
     endif()
     if(TARGET motor_controller_with_enable_ros2)
         target_link_libraries(motor_controller_with_enable_ros2 pthread)
+    endif()
+    if(TARGET motor_controller_with_enable_zhengbi)
+        target_link_libraries(motor_controller_with_enable_zhengbi pthread)
+    endif()
+    if(TARGET motor_controller_with_enable_zhengbi_ros2)
+        target_link_libraries(motor_controller_with_enable_zhengbi_ros2 pthread)
     endif()
 endif()
 

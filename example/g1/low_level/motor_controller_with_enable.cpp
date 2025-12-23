@@ -57,12 +57,18 @@ struct TcpConfig {
     bool initialized = false;
 };
 
-// 周立功设备配置 (使用UDP)
+// 周立功设备配置 (使用TCP)
 struct ZhilgongConfig {
     std::string remote_ip = "192.168.1.5";  // 周立功设备IP
-    int remote_port = 8002;                // 周立功设备UDP端口
+    int remote_port = 8003;                // 周立功设备TCP端口
+    int channel = 3;                       // CAN通道 (0-7, 默认3=CAN3)
     int socket_fd = -1;
     bool initialized = false;
+
+    // CAN-FD 波特率配置
+    int arbitration_baud = 1000000;  // 仲裁域波特率 (1M bps)
+    int data_baud = 5000000;         // 数据域波特率 (5M bps)
+    bool baud_configured = false;    // 波特率是否已配置
 };
 
 // Motor command structure
@@ -79,83 +85,187 @@ struct MotorCommandCan {
 
 // ZLG CAN Network Packet Format (PC -> CANFDNET)
 // Network packet example: 55 00 00 00 00 18 00 00 00 00 00 00 00 00 00 00 07 ff 00 08 00 08 01 02 03 04 05 06 07 08 bd
+//
+// 字节偏移    字段                      说明
+// ----------------------------------------------------------------------
+// 0           header                   0x55 包头
+// 1-3         type                     0x00 0x00 0x00 (CAN报文类型+保留位)
+// 4-5         length                   大端序数据长度 (0x0018 = 24字节)
+// 6-13        timestamp                8字节时间戳(微秒)，发送时填0
+// 14-17       can_id                   4字节CAN ID (大端序: 0x000007FF)
+// 18-19       frame_info               0x0000 (标准帧，无回显)
+// 20          channel                  通道号 (0=CAN0, 3=CAN3)
+// 21          dlc                      数据长度 (0-8)
+// 22-29       data                     数据段 (固定8字节)
+// 30          checksum                 XOR校验 (字节1-29的异或)
 struct ZlgCanNetPacket {
-    uint8_t header;                    // 0x55 - packet header
-    uint8_t type[3];                   // 0x00 0x00 0x00 - CAN message type + reserved
-    uint8_t length[2];                 // Data length (little-endian)
-    uint8_t timestamp[8];              // 8 bytes timestamp (zeros when sending)
-    uint8_t can_id[4];                 // CAN Frame ID (little-endian)
-    uint8_t frame_info[2];             // Frame info (0x00 0x00 for standard frame without echo)
-    uint8_t channel;                   // CAN channel (0x00 = CAN0)
-    uint8_t dlc;                       // Data length code (0-8)
-    uint8_t data[8];                   // CAN data bytes
-    uint8_t checksum;                  // XOR checksum of all bytes except checksum
+    uint8_t header;                    // 0x55
+    uint8_t type[3];                   // 0x00 0x00 0x00
+    uint8_t length[2];                 // 大端序长度
+    uint8_t timestamp[8];              // 8字节时间戳
+    uint8_t can_id[4];                 // 大端序CAN ID
+    uint8_t frame_info[2];             // 0x00 0x00
+    uint8_t channel;                   // 通道号
+    uint8_t dlc;                       // DLC
+    uint8_t data[8];                   // 数据
+    uint8_t checksum;                  // XOR校验
 } __attribute__((packed));
 
 // Helper class for building ZLG CAN network packets
 class ZlgPacketBuilder {
 public:
+    // 时间戳模式
+    enum TimestampMode {
+        TIMESTAMP_ZERO = 0,      // 全0（发送时默认）
+        TIMESTAMP_CURRENT,       // 使用当前时间
+        TIMESTAMP_CUSTOM         // 使用指定的时间戳
+    };
+
     // Build ZLG CAN network packet for transmission
-    // per zlg_desc.txt format
-    // Example output: 55 00 00 00 00 18 00 00 00 00 00 00 00 00 00 00 07 ff 00 08 00 08 01 02 03 04 05 06 07 08 bd
-    static std::vector<uint8_t> BuildCanPacket(uint32_t can_id, const uint8_t* data, uint8_t dlc, uint8_t channel = 0) {
+    // per zlg_desc.txt format (严格按照ZLG规范)
+    //
+    // @param can_id: CAN ID (标准帧11位或扩展帧29位)
+    // @param data: CAN数据字节 (8字节)
+    // @param dlc: 数据长度 (0-8)
+    // @param channel: CAN通道 (0-7, 默认3=CAN3)
+    // @param timestamp_mode: 时间戳模式
+    // @param custom_timestamp: 自定义时间戳（微秒）
+    //
+    // Example output (CAN ID=0x01, 使能帧):
+    //   55 00 00 00 00 18 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 08 02 08 ff ff ff ff ff ff ff fc [checksum]
+    //   ^^^^^^^^ ^^^^^^^ ^^^^^^^^^^^^^^^^^^^^ ^^^^^^ ^^^^^^ ^^ ^^^^^^^^^^^^^^^^^^^^^^^ ^
+    //   头/类型   长度    时间戳                CANID   帧信息 通道 数据段                     校验
+    static std::vector<uint8_t> BuildCanPacket(
+            uint32_t can_id,
+            const uint8_t* data,
+            uint8_t dlc,
+            uint8_t channel = 3,           // 默认使用CAN3
+            TimestampMode timestamp_mode = TIMESTAMP_ZERO,
+            uint64_t custom_timestamp = 0) {
+
+        // 限制 DLC 范围
+        if (dlc > 8) dlc = 8;
+        if (dlc < 0) dlc = 0;
+
+        // 固定数据段8字节（标准CAN）
+        const uint8_t DATA_BYTES = 8;
+
+        // 计算长度字段值：timestamp(8) + can_id(4) + frame_info(2) + channel(1) + dlc(1) + data(8) = 24
+        const uint16_t DATA_LENGTH = 24;  // 0x0018
+
         std::vector<uint8_t> packet;
-        packet.reserve(27);  // Total packet size: 27 bytes
+        packet.reserve(31);  // 固定31字节
 
         // 1. Header: 0x55
         packet.push_back(0x55);
 
-        // 2. Type: 0x00 0x00 0x00 (CAN message type, reserved)
+        // 2. Type: 0x00 0x00 0x00 (标准CAN报文类型)
         packet.push_back(0x00);
         packet.push_back(0x00);
         packet.push_back(0x00);
 
-        // 3. Data length: 0x18 (24 bytes for CAN frame)
-        // This is the length of the data field after the length field
-        // Includes: timestamp(8) + can_id(4) + frame_info(2) + channel(1) + dlc(1) + data(8) = 24 bytes
-        uint16_t data_length = 0x18;
-        packet.push_back(data_length & 0xFF);         // Little-endian low byte
-        packet.push_back((data_length >> 8) & 0xFF);  // Little-endian high byte
+        // 3. Data length: 大端序 0x0018 = 24字节
+        packet.push_back((DATA_LENGTH >> 8) & 0xFF);  // 高字节 0x00
+        packet.push_back(DATA_LENGTH & 0xFF);         // 低字节 0x18
 
-        // 4. Timestamp: 8 bytes (all zeros when sending)
-        for (int i = 0; i < 8; i++) {
-            packet.push_back(0x00);
+        // 4. Timestamp: 8字节
+        uint64_t timestamp = 0;
+        if (timestamp_mode == TIMESTAMP_CURRENT) {
+            auto now = std::chrono::high_resolution_clock::now();
+            auto duration = now.time_since_epoch();
+            timestamp = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+        } else if (timestamp_mode == TIMESTAMP_CUSTOM) {
+            timestamp = custom_timestamp;
+        }
+        // 写入8字节时间戳（大端序）
+        for (int i = 7; i >= 0; i--) {
+            packet.push_back((timestamp >> (i * 8)) & 0xFF);
         }
 
-        // 5. CAN ID: 4 bytes (little-endian)
-        packet.push_back(can_id & 0xFF);
-        packet.push_back((can_id >> 8) & 0xFF);
-        packet.push_back((can_id >> 16) & 0xFF);
+        // 5. CAN ID: 4字节（大端序）
         packet.push_back((can_id >> 24) & 0xFF);
+        packet.push_back((can_id >> 16) & 0xFF);
+        packet.push_back((can_id >> 8) & 0xFF);
+        packet.push_back(can_id & 0xFF);
 
-        // 6. Frame info: 0x00 0x00 (standard frame, no echo)
-        // bit3=1 enables echo, bit2 is valid for receive direction
+        // 6. Frame info: 0x00 0x00 (标准帧，无回显)
         packet.push_back(0x00);
         packet.push_back(0x00);
 
-        // 7. Channel (0x00 = CAN0)
+        // 7. Channel: 通道号
         packet.push_back(channel);
 
-        // 8. DLC (Data Length Code)
+        // 8. DLC: 数据长度
         packet.push_back(dlc);
 
-        // 9. Data bytes (up to 8 bytes)
-        for (uint8_t i = 0; i < dlc && i < 8; i++) {
-            packet.push_back(data[i]);
-        }
-        // Pad remaining data bytes with zeros if dlc < 8
-        for (uint8_t i = dlc; i < 8; i++) {
-            packet.push_back(0x00);
+        // 9. Data: 固定8字节
+        for (uint8_t i = 0; i < DATA_BYTES; i++) {
+            if (i < dlc) {
+                packet.push_back(data[i]);
+            } else {
+                packet.push_back(0x00);  // 填充0
+            }
         }
 
-        // 10. Calculate XOR checksum (XOR of all bytes after header, i.e., from index 1 to end)
+        // 10. XOR Checksum: 所有字节的异或（包括包头，从索引0开始）
         uint8_t checksum = 0;
-        for (size_t i = 1; i < packet.size(); i++) {
+        for (size_t i = 0; i < packet.size(); i++) {
             checksum ^= packet[i];
         }
         packet.push_back(checksum);
 
         return packet;
+    }
+
+    // 便捷方法：使用当前时间戳
+    static std::vector<uint8_t> BuildCanPacketWithCurrentTime(
+            uint32_t can_id, const uint8_t* data, uint8_t dlc, uint8_t channel = 3) {
+        return BuildCanPacket(can_id, data, dlc, channel, TIMESTAMP_CURRENT, 0);
+    }
+
+    // 便捷方法：使用自定义时间戳
+    static std::vector<uint8_t> BuildCanPacketWithCustomTime(
+            uint32_t can_id, const uint8_t* data, uint8_t dlc, uint8_t channel, uint64_t timestamp_us) {
+        return BuildCanPacket(can_id, data, dlc, channel, TIMESTAMP_CUSTOM, timestamp_us);
+    }
+
+    // 便捷方法：使用零时间戳（默认）
+    static std::vector<uint8_t> BuildCanPacketWithZeroTime(
+            uint32_t can_id, const uint8_t* data, uint8_t dlc, uint8_t channel = 3) {
+        return BuildCanPacket(can_id, data, dlc, channel, TIMESTAMP_ZERO, 0);
+    }
+
+    // Convert motor command to CAN data bytes (MIT motor protocol format)
+    // 将电机命令转换为 CAN 数据字节 (MIT 电机协议格式)
+    //
+    // @param cmd: 电机命令结构体 (包含 pos, vel, kp, kd, torq)
+    // @param can_data: 输出 8 字节 CAN 数据
+    //
+    // MIT motor protocol format:
+    // Bytes 0-1: Position (float to int16, ±12.5 rad -> ±32767)
+    // Bytes 2-3: Velocity (float to int16, ±30 rad/s -> ±32767)
+    // Bytes 4-5: Kp (float to int16, 0-500 -> 0-32767)
+    // Bytes 6-7: Kd (float to int16, 0-50 -> 0-32767)
+    static void MotorCommandToCanData(const MotorCommandCan& cmd, uint8_t* can_data) {
+        // Convert position to int16 (scale: ±12.5 rad -> ±32767)
+        int16_t pos_int = static_cast<int16_t>(cmd.pos * 32767.0f / 12.5f);
+        can_data[0] = pos_int & 0xFF;
+        can_data[1] = (pos_int >> 8) & 0xFF;
+
+        // Convert velocity to int16 (scale: ±30 rad/s -> ±32767)
+        int16_t vel_int = static_cast<int16_t>(cmd.vel * 32767.0f / 30.0f);
+        can_data[2] = vel_int & 0xFF;
+        can_data[3] = (vel_int >> 8) & 0xFF;
+
+        // Convert Kp to int16 (scale: 0-500 -> 0-32767)
+        int16_t kp_int = static_cast<int16_t>(cmd.kp * 32767.0f / 500.0f);
+        can_data[4] = kp_int & 0xFF;
+        can_data[5] = (kp_int >> 8) & 0xFF;
+
+        // Convert Kd to int16 (scale: 0-50 -> 0-32767)
+        int16_t kd_int = static_cast<int16_t>(cmd.kd * 32767.0f / 50.0f);
+        can_data[6] = kd_int & 0xFF;
+        can_data[7] = (kd_int >> 8) & 0xFF;
     }
 
     // Debug: Print packet in hex format (like zlg_desc.txt examples)
@@ -237,6 +347,264 @@ int get_can_id_for_motor(int motor_id) {
     return 0;
 }
 
+// ==================== ZLG CAN-FD 波特率配置 ====================
+// ZLG CANFDNET 设备通过 TCP 命令配置 CAN-FD 波特率
+// 命令格式: :CANFD{通道}:ABTBaud {仲裁域波特率}
+//           :CANFD{通道}:DATABaud {数据域波特率}
+//
+// 示例:
+//   :CANFD3:ABTBaud 1000000    (仲裁域 1M bps)
+//   :CANFD3:DATABaud 5000000    (数据域 5M bps)
+class ZlgBaudRateConfig {
+public:
+    // 配置 CAN-FD 波特率
+    // @param socket_fd: TCP socket 文件描述符
+    // @param channel: CAN 通道号 (0-7)
+    // @param arb_baud: 仲裁域波特率 (如 1000000 = 1M bps)
+    // @param data_baud: 数据域波特率 (如 5000000 = 5M bps)
+    // @return: true 成功, false 失败
+    static bool ConfigureBaudRate(int socket_fd, int channel, int arb_baud, int data_baud) {
+        if (socket_fd < 0) {
+            std::cerr << "Invalid socket fd" << std::endl;
+            return false;
+        }
+
+        std::cout << "\n=== Configuring CAN-FD Baud Rate ===" << std::endl;
+        std::cout << "Channel: CAN" << channel << std::endl;
+        std::cout << "Arbitration Baud: " << arb_baud << " bps (" << (arb_baud / 1000000) << "M)" << std::endl;
+        std::cout << "Data Baud: " << data_baud << " bps (" << (data_baud / 1000000) << "M)" << std::endl;
+
+        // 构建仲裁域波特率配置命令
+        std::string abt_cmd = FormatBaudCommand(channel, "ABTBaud", arb_baud);
+        if (!SendConfigCommand(socket_fd, abt_cmd)) {
+            std::cerr << "Failed to set arbitration baud rate" << std::endl;
+            return false;
+        }
+        std::cout << "  Arbitration baud rate set to " << arb_baud << " bps" << std::endl;
+
+        // 短暂延迟
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        // 构建数据域波特率配置命令
+        std::string data_cmd = FormatBaudCommand(channel, "DATABaud", data_baud);
+        if (!SendConfigCommand(socket_fd, data_cmd)) {
+            std::cerr << "Failed to set data baud rate" << std::endl;
+            return false;
+        }
+        std::cout << "  Data baud rate set to " << data_baud << " bps" << std::endl;
+
+        std::cout << "=== CAN-FD Baud Rate Configuration Complete ===" << std::endl << std::endl;
+        return true;
+    }
+
+private:
+    // 格式化波特率配置命令
+    // 格式: :CANFD{通道}:ABTBaud {波特率}
+    static std::string FormatBaudCommand(int channel, const std::string& baud_type, int baud_rate) {
+        char cmd[128];
+        snprintf(cmd, sizeof(cmd), ":CANFD%d:%s %d", channel, baud_type.c_str(), baud_rate);
+        return std::string(cmd);
+    }
+
+    // 发送配置命令
+    static bool SendConfigCommand(int socket_fd, const std::string& command) {
+        // 添加换行符
+        std::string cmd_with_crlf = command + "\r\n";
+
+        std::cout << "  Sending command: " << command << std::endl;
+
+        ssize_t sent = send(socket_fd, cmd_with_crlf.c_str(), cmd_with_crlf.length(), 0);
+        if (sent < 0) {
+            std::cerr << "  Failed to send command: " << strerror(errno) << std::endl;
+            return false;
+        }
+        if (sent != static_cast<ssize_t>(cmd_with_crlf.length())) {
+            std::cerr << "  Partial send: " << sent << "/" << cmd_with_crlf.length() << " bytes" << std::endl;
+            return false;
+        }
+
+        // 等待响应（ZLG 设备通常会返回 OK 或错误信息）
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        return true;
+    }
+};
+
+// ZLG 网络包发送工具类 (不依赖 ROS2)
+class ZlgNetworkSender {
+private:
+    ZhilgongConfig config_;
+    bool verbose_;
+
+public:
+    ZlgNetworkSender(bool verbose = false) : verbose_(verbose) {}
+
+    // 设置配置
+    void SetConfig(const std::string& ip, int port, int channel) {
+        config_.remote_ip = ip;
+        config_.remote_port = port;
+        config_.channel = channel;
+        std::cout << "ZLG Config set: IP=" << ip << ", Port=" << port << ", Channel=" << channel << std::endl;
+    }
+
+    // 设置配置 (含波特率)
+    void SetConfig(const std::string& ip, int port, int channel, int arb_baud, int data_baud) {
+        config_.remote_ip = ip;
+        config_.remote_port = port;
+        config_.channel = channel;
+        config_.arbitration_baud = arb_baud;
+        config_.data_baud = data_baud;
+        std::cout << "ZLG Config set: IP=" << ip << ", Port=" << port << ", Channel=" << channel << std::endl;
+        std::cout << "  Arbitration Baud: " << arb_baud << " bps, Data Baud: " << data_baud << " bps" << std::endl;
+    }
+
+    // 获取配置
+    const ZhilgongConfig& GetConfig() const { return config_; }
+
+    // 初始化 TCP 连接
+    bool InitializeConnection() {
+        if (config_.initialized) {
+            return true;
+        }
+
+        std::cout << "Initializing ZLG TCP connection to " << config_.remote_ip
+                  << ":" << config_.remote_port << std::endl;
+
+        config_.socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (config_.socket_fd < 0) {
+            perror("TCP socket creation failed");
+            return false;
+        }
+
+        int opt = 1;
+        setsockopt(config_.socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+        struct sockaddr_in zlg_addr;
+        memset(&zlg_addr, 0, sizeof(zlg_addr));
+        zlg_addr.sin_family = AF_INET;
+        zlg_addr.sin_port = htons(config_.remote_port);
+
+        if (inet_pton(AF_INET, config_.remote_ip.c_str(), &zlg_addr.sin_addr) <= 0) {
+            std::cerr << "Invalid ZLG IP address: " << config_.remote_ip << std::endl;
+            close(config_.socket_fd);
+            return false;
+        }
+
+        if (connect(config_.socket_fd, (struct sockaddr*)&zlg_addr, sizeof(zlg_addr)) < 0) {
+            std::cerr << "ZLG TCP connection failed: " << strerror(errno) << std::endl;
+            close(config_.socket_fd);
+            return false;
+        }
+
+        config_.initialized = true;
+        std::cout << "ZLG TCP connection established successfully" << std::endl;
+
+        // 配置 CAN-FD 波特率 (仲裁域 1M, 数据域 5M)
+        if (!config_.baud_configured) {
+            if (ZlgBaudRateConfig::ConfigureBaudRate(config_.socket_fd, config_.channel,
+                                                      config_.arbitration_baud, config_.data_baud)) {
+                config_.baud_configured = true;
+            } else {
+                std::cerr << "Warning: Failed to configure baud rate, using default" << std::endl;
+            }
+        }
+
+        return true;
+    }
+
+    // 关闭连接
+    void CloseConnection() {
+        if (config_.initialized && config_.socket_fd >= 0) {
+            close(config_.socket_fd);
+            config_.socket_fd = -1;
+            config_.initialized = false;
+            std::cout << "ZLG connection closed" << std::endl;
+        }
+    }
+
+    // 发送使能命令
+    void SendEnableCommand(int motor_id, int channel) {
+        if (!InitializeConnection()) {
+            return;
+        }
+
+        int can_id = get_can_id_for_motor(motor_id);
+        if (can_id <= 0) {
+            std::cerr << "Invalid motor ID: " << motor_id << std::endl;
+            return;
+        }
+
+        uint8_t enable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC};
+
+        std::cout << "\n>>> Sending ENABLE Command <<<" << std::endl;
+        std::cout << "  Motor ID: " << motor_id << std::endl;
+        std::cout << "  CAN ID:   0x" << std::hex << can_id << std::dec << std::endl;
+        std::cout << "  Data:     FF FF FF FF FF FF FF FC" << std::endl;
+
+        SendZlgNetworkPacket(can_id, enable_frame, sizeof(enable_frame), channel);
+    }
+
+    // 发送失能命令
+    void SendDisableCommand(int motor_id, int channel) {
+        if (!InitializeConnection()) {
+            return;
+        }
+
+        int can_id = get_can_id_for_motor(motor_id);
+        if (can_id <= 0) {
+            std::cerr << "Invalid motor ID: " << motor_id << std::endl;
+            return;
+        }
+
+        uint8_t disable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD};
+
+        std::cout << "\n>>> Sending DISABLE Command <<<" << std::endl;
+        std::cout << "  Motor ID: " << motor_id << std::endl;
+        std::cout << "  CAN ID:   0x" << std::hex << can_id << std::dec << std::endl;
+        std::cout << "  Data:     FF FF FF FF FF FF FF FD" << std::endl;
+
+        SendZlgNetworkPacket(can_id, disable_frame, sizeof(disable_frame), channel);
+    }
+
+private:
+    // 发送 ZLG 网络包
+    void SendZlgNetworkPacket(int can_id, const uint8_t* data, size_t data_len, int channel) {
+        if (!config_.initialized || config_.socket_fd < 0) {
+            std::cerr << "ZLG device not connected" << std::endl;
+            return;
+        }
+
+        std::vector<uint8_t> zlg_packet = ZlgPacketBuilder::BuildCanPacket(
+            static_cast<uint32_t>(can_id), data, static_cast<uint8_t>(data_len), channel
+        );
+
+        std::cout << "  Raw ZLG Packet [" << zlg_packet.size() << " bytes]: ";
+        for (size_t i = 0; i < zlg_packet.size(); i++) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0')
+                      << static_cast<int>(zlg_packet[i]) << " ";
+        }
+        std::cout << std::dec << std::setfill(' ') << std::endl;
+
+        ssize_t sent = send(config_.socket_fd, zlg_packet.data(), zlg_packet.size(), 0);
+
+        if (sent < 0) {
+            std::cerr << "Failed to send ZLG packet: " << strerror(errno) << std::endl;
+        } else if (sent != static_cast<ssize_t>(zlg_packet.size())) {
+            std::cerr << "Partial send: " << sent << "/" << zlg_packet.size() << " bytes" << std::endl;
+        } else {
+            std::cout << "  Sent " << sent << " bytes to ZLG device" << std::endl;
+        }
+    }
+
+    int get_can_id_for_motor(int motor_id) {
+        if (motor_id >= 1 && motor_id <= 30) {
+            return motor_id;
+        }
+        return 0;
+    }
+};
+
+// ROS2 桥接类 (继承自 rclcpp::Node)
 class ROS2_to_TCP_Bridge : public rclcpp::Node {
 private:
     TcpConfig tcp_config_;
@@ -286,6 +654,27 @@ public:
         std::cout << "  Motor command: " << (motor_cmd_enabled_ ? "ENABLED" : "DISABLED") << std::endl;
     }
 
+    // 设置 ZLG 配置 (从 main 函数调用)
+    void SetZlgConfig(const std::string& ip, int port, int channel) {
+        zhilgong_config_.remote_ip = ip;
+        zhilgong_config_.remote_port = port;
+        zhilgong_config_.channel = channel;
+
+        std::cout << "ZLG Config set: IP=" << ip << ", Port=" << port << ", Channel=" << channel << std::endl;
+    }
+
+    // 设置 ZLG 配置 (含波特率)
+    void SetZlgConfig(const std::string& ip, int port, int channel, int arb_baud, int data_baud) {
+        zhilgong_config_.remote_ip = ip;
+        zhilgong_config_.remote_port = port;
+        zhilgong_config_.channel = channel;
+        zhilgong_config_.arbitration_baud = arb_baud;
+        zhilgong_config_.data_baud = data_baud;
+
+        std::cout << "ZLG Config set: IP=" << ip << ", Port=" << port << ", Channel=" << channel << std::endl;
+        std::cout << "  Arbitration Baud: " << arb_baud << " bps, Data Baud: " << data_baud << " bps" << std::endl;
+    }
+
     ~ROS2_to_TCP_Bridge() {
         should_stop_ = true;
         if (can_send_thread_.joinable()) {
@@ -305,6 +694,10 @@ public:
             tcp_config_.remote_ip = tcp_endpoint.substr(0, colon_pos);
             tcp_config_.remote_port = std::stoi(tcp_endpoint.substr(colon_pos + 1));
         }
+
+        // 同时更新 ZLG 配置，使用相同的 IP 和端口
+        zhilgong_config_.remote_ip = tcp_config_.remote_ip;
+        zhilgong_config_.remote_port = tcp_config_.remote_port;
 
         std::cout << "Initializing TCP connection to " << tcp_config_.remote_ip
                   << ":" << tcp_config_.remote_port << std::endl;
@@ -382,6 +775,18 @@ public:
         std::cout << "ZLG TCP connection established successfully" << std::endl;
         std::cout << "  ZLG IP: " << zhilgong_config_.remote_ip << std::endl;
         std::cout << "  ZLG Port: " << zhilgong_config_.remote_port << std::endl;
+        std::cout << "  ZLG Channel: CAN" << zhilgong_config_.channel << std::endl;
+
+        // 配置 CAN-FD 波特率 (仲裁域 1M, 数据域 5M)
+        if (!zhilgong_config_.baud_configured) {
+            if (ZlgBaudRateConfig::ConfigureBaudRate(zhilgong_config_.socket_fd, zhilgong_config_.channel,
+                                                      zhilgong_config_.arbitration_baud, zhilgong_config_.data_baud)) {
+                zhilgong_config_.baud_configured = true;
+            } else {
+                std::cerr << "Warning: Failed to configure baud rate, using default" << std::endl;
+            }
+        }
+
         return true;
     }
 
@@ -568,9 +973,9 @@ public:
             return;
         }
 
-        // Build ZLG CAN network packet
+        // Build ZLG CAN network packet with configured channel
         std::vector<uint8_t> zlg_packet = ZlgPacketBuilder::BuildCanPacket(
-            static_cast<uint32_t>(can_id), data, static_cast<uint8_t>(data_len), 0  // CAN0
+            static_cast<uint32_t>(can_id), data, static_cast<uint8_t>(data_len), zhilgong_config_.channel
         );
 
         // Print raw packet bytes in hex format (like: 55 00 00 00 00 18 00 ...)
@@ -605,33 +1010,42 @@ public:
         }
     }
 
+    // Send motor command using ZLG CAN network packet format
+    // 使用 ZLG CAN 网络包格式发送电机命令
     void SendMotorCommandTCP(const MotorCommandCan& cmd) {
-        if (!tcp_config_.initialized) {
+        if (!zhilgong_config_.initialized) {
             return;
         }
 
-        struct MotorCommandPacket {
-            uint32_t header;
-            uint16_t motor_id;
-            float pos;
-            float vel;
-            float kp;
-            float kd;
-            float torq;
-            uint32_t crc32;
-        } __attribute__((packed));
+        // Convert motor command to CAN data bytes (MIT motor protocol)
+        // 将电机命令转换为 CAN 数据字节 (MIT 电机协议)
+        uint8_t can_data[8];
+        ZlgPacketBuilder::MotorCommandToCanData(cmd, can_data);
 
-        MotorCommandPacket packet;
-        packet.header = 0xDEADBEEF;
-        packet.motor_id = cmd.motor_id;
-        packet.pos = cmd.pos;
-        packet.vel = cmd.vel;
-        packet.kp = cmd.kp;
-        packet.kd = cmd.kd;
-        packet.torq = cmd.torq;
-        packet.crc32 = Crc32Core((uint32_t*)&packet, sizeof(packet) / sizeof(uint32_t) - 1);
+        // Build ZLG CAN network packet
+        // 构建 ZLG CAN 网络包
+        uint32_t can_id = cmd.motor_id;  // Use motor_id as CAN ID
+        std::vector<uint8_t> zlg_packet = ZlgPacketBuilder::BuildCanPacketWithZeroTime(
+            can_id, can_data, 8, zhilgong_config_.channel);
 
-        send(tcp_config_.socket_fd, &packet, sizeof(packet), MSG_NOSIGNAL);
+        // Send via ZLG TCP connection
+        // 通过 ZLG TCP 连接发送
+        ssize_t bytes_sent = send(zhilgong_config_.socket_fd,
+                                   zlg_packet.data(),
+                                   zlg_packet.size(),
+                                   MSG_NOSIGNAL);
+
+        // Silent operation - only log errors
+        if (bytes_sent < 0) {
+            static int error_count = 0;
+            if (++error_count <= 10) {  // Only print first 10 errors
+                std::cerr << "Error sending motor command for CAN ID 0x" << std::hex << can_id << std::dec
+                         << ": " << strerror(errno) << std::endl;
+            }
+        } else if (bytes_sent != static_cast<ssize_t>(zlg_packet.size())) {
+            std::cerr << "Partial send: " << bytes_sent << " bytes (expected "
+                     << zlg_packet.size() << ")" << std::endl;
+        }
     }
 
     MotorCommandCan interpolateCommand(const MotorCommandCan& prev, const MotorCommandCan& curr,
@@ -725,48 +1139,169 @@ public:
 };
 
 int main(int argc, char* argv[]) {
+    // 命令行参数结构
+    struct {
+        std::string tcp_endpoint = "";
+        std::string zlg_ip = "192.168.1.5";
+        int zlg_port = 8003;
+        int channel = 3;  // CAN3
+        bool verbose = false;
+        bool motor_cmd_enabled = false;
+
+        // CAN-FD 波特率配置
+        int arb_baud = 1000000;  // 仲裁域波特率 (默认 1M bps)
+        int data_baud = 5000000;  // 数据域波特率 (默认 5M bps)
+
+        // 直接命令模式
+        bool direct_mode = false;
+        int direct_motor_id = -1;
+        bool direct_enable = false;  // true=enable, false=disable
+    } params;
+
     if (argc < 2) {
         std::cout << "Usage: motor_controller_with_enable <tcp_endpoint> [options]" << std::endl;
-        std::cout << "Example: ./motor_controller_with_enable 127.0.0.1:8888" << std::endl;
-        std::cout << "         ./motor_controller_with_enable 127.0.0.1:8888 -v" << std::endl;
-        std::cout << "         ./motor_controller_with_enable 127.0.0.1:8888 --enable-motor-cmd" << std::endl;
+        std::cout << "\nPositional Arguments:" << std::endl;
+        std::cout << "  tcp_endpoint       TCP endpoint (e.g., 127.0.0.1:8888 or 192.168.1.5:8003)" << std::endl;
         std::cout << "\nOptions:" << std::endl;
-        std::cout << "  -v                 Enable verbose logging" << std::endl;
-        std::cout << "  --enable-motor-cmd Enable motor command sending (default: DISABLED)" << std::endl;
-        std::cout << "\nZLG Configuration:" << std::endl;
-        std::cout << "  Default IP: 192.168.1.5" << std::endl;
-        std::cout << "  Default Port: 8002" << std::endl;
+        std::cout << "  -p, --port <port>       ZLG device TCP port (default: 8003)" << std::endl;
+        std::cout << "  -c, --channel <ch>      CAN channel (default: 3)" << std::endl;
+        std::cout << "  -v, --verbose           Enable verbose logging" << std::endl;
+        std::cout << "  --enable-motor-cmd      Enable motor command sending (default: DISABLED)" << std::endl;
+        std::cout << "\nCAN-FD Baud Rate Configuration:" << std::endl;
+        std::cout << "  --arb-baud <rate>       Arbitration baud rate in bps (default: 1000000 = 1M)" << std::endl;
+        std::cout << "  --data-baud <rate>      Data baud rate in bps (default: 5000000 = 5M)" << std::endl;
+        std::cout << "\nDirect Command Mode (no ROS2 required):" << std::endl;
+        std::cout << "  --enable <motor_id>     Send enable command to motor (1-30)" << std::endl;
+        std::cout << "  --disable <motor_id>    Send disable command to motor (1-30)" << std::endl;
+        std::cout << "\nExamples:" << std::endl;
+        std::cout << "  # ROS2 mode (default)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 -p 8003 -v" << std::endl;
+        std::cout << "\n  # Custom baud rate (arbitration 1M, data 5M)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --arb-baud 1000000 --data-baud 5000000" << std::endl;
+        std::cout << "\n  # Direct enable/disable mode" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --enable 1" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --disable 5" << std::endl;
+        std::cout << "\n  # Enable all motors (1-10)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --enable 1-10" << std::endl;
         return 1;
     }
 
-    std::string tcp_endpoint = argv[1];
+    // 解析第一个位置参数 (TCP endpoint)
+    params.tcp_endpoint = argv[1];
 
-    bool verbose = false;
-    bool motor_cmd_enabled = false;
-
+    // 解析可选参数
     for (int i = 2; i < argc; i++) {
-        if (std::string(argv[i]) == "-v") {
-            verbose = true;
-        } else if (std::string(argv[i]) == "--enable-motor-cmd") {
-            motor_cmd_enabled = true;
+        std::string arg = argv[i];
+
+        if (arg == "-v" || arg == "--verbose") {
+            params.verbose = true;
+        }
+        else if (arg == "--enable-motor-cmd") {
+            params.motor_cmd_enabled = true;
+        }
+        else if ((arg == "-p" || arg == "--port") && i + 1 < argc) {
+            params.zlg_port = std::atoi(argv[++i]);
+        }
+        else if ((arg == "-c" || arg == "--channel") && i + 1 < argc) {
+            params.channel = std::atoi(argv[++i]);
+        }
+        else if (arg == "--arb-baud" && i + 1 < argc) {
+            params.arb_baud = std::atoi(argv[++i]);
+        }
+        else if (arg == "--data-baud" && i + 1 < argc) {
+            params.data_baud = std::atoi(argv[++i]);
+        }
+        else if (arg == "--enable" && i + 1 < argc) {
+            params.direct_mode = true;
+            params.direct_enable = true;
+
+            // 解析 motor_id (支持单个 ID 或范围，如 "1-10")
+            std::string motor_str = argv[++i];
+            size_t dash_pos = motor_str.find('-');
+            if (dash_pos != std::string::npos) {
+                // 范围模式: 只保存起始ID，用于后续循环
+                params.direct_motor_id = std::atoi(motor_str.substr(0, dash_pos).c_str());
+            } else {
+                params.direct_motor_id = std::atoi(motor_str.c_str());
+            }
+        }
+        else if (arg == "--disable" && i + 1 < argc) {
+            params.direct_mode = true;
+            params.direct_enable = false;
+            params.direct_motor_id = std::atoi(argv[++i]);
         }
     }
 
     std::cout << "========================================" << std::endl;
     std::cout << "ROS2 Motor Controller with ZLG Enable" << std::endl;
     std::cout << "========================================" << std::endl;
-    std::cout << "TCP Endpoint: " << tcp_endpoint << std::endl;
-    std::cout << "ZLG Device: " << "192.168.1.5:8002" << std::endl;
-    std::cout << "Verbose Mode: " << (verbose ? "ON" : "OFF") << std::endl;
-    std::cout << "Motor Command: " << (motor_cmd_enabled ? "ENABLED" : "DISABLED") << std::endl;
-    std::cout << "" << std::endl;
+    std::cout << "TCP Endpoint: " << params.tcp_endpoint << std::endl;
+    std::cout << "ZLG IP: " << params.zlg_ip << std::endl;
+    std::cout << "ZLG Port: " << params.zlg_port << std::endl;
+    std::cout << "CAN Channel: " << params.channel << std::endl;
+    std::cout << "CAN-FD Arbitration Baud: " << params.arb_baud << " bps (" << (params.arb_baud / 1000000) << "M)" << std::endl;
+    std::cout << "CAN-FD Data Baud: " << params.data_baud << " bps (" << (params.data_baud / 1000000) << "M)" << std::endl;
+    std::cout << "Mode: " << (params.direct_mode ? "Direct Command" : "ROS2 Bridge") << std::endl;
+    std::cout << "Verbose: " << (params.verbose ? "ON" : "OFF") << std::endl;
+    std::cout << "========================================" << std::endl;
 
+    // 直接命令模式 (不需要ROS2)
+    if (params.direct_mode) {
+        std::cout << "\n=== Direct Command Mode ===" << std::endl;
+
+        // 创建 ZLG 发送器 (不依赖 ROS2)
+        auto sender = std::make_shared<ZlgNetworkSender>(params.verbose);
+
+        // 设置 ZLG 配置 (含波特率)
+        sender->SetConfig(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud);
+
+        // 处理单个或多个电机
+        std::string motor_str = argv[argc - 1];  // 最后一个参数是 motor_id
+        size_t dash_pos = motor_str.find('-');
+
+        if (dash_pos != std::string::npos) {
+            // 范围模式: 1-10
+            int start_id = std::atoi(motor_str.substr(0, dash_pos).c_str());
+            int end_id = std::atoi(motor_str.substr(dash_pos + 1).c_str());
+
+            std::cout << "Sending " << (params.direct_enable ? "ENABLE" : "DISABLE")
+                      << " to motors " << start_id << " - " << end_id << std::endl;
+
+            for (int motor_id = start_id; motor_id <= end_id; motor_id++) {
+                if (params.direct_enable) {
+                    sender->SendEnableCommand(motor_id, params.channel);
+                } else {
+                    sender->SendDisableCommand(motor_id, params.channel);
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        } else {
+            // 单个电机模式
+            std::cout << "Sending " << (params.direct_enable ? "ENABLE" : "DISABLE")
+                      << " to motor " << params.direct_motor_id << std::endl;
+
+            if (params.direct_enable) {
+                sender->SendEnableCommand(params.direct_motor_id, params.channel);
+            } else {
+                sender->SendDisableCommand(params.direct_motor_id, params.channel);
+            }
+        }
+
+        std::cout << "\n=== Command Complete ===" << std::endl;
+        return 0;
+    }
+
+    // ROS2 桥接模式
     rclcpp::init(argc, argv);
 
     try {
-        auto bridge = std::make_shared<ROS2_to_TCP_Bridge>(verbose, motor_cmd_enabled);
+        auto bridge = std::make_shared<ROS2_to_TCP_Bridge>(params.verbose, params.motor_cmd_enabled);
 
-        if (!bridge->InitializeTCP(tcp_endpoint)) {
+        // 设置 ZLG 配置 (含波特率)
+        bridge->SetZlgConfig(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud);
+
+        if (!bridge->InitializeTCP(params.tcp_endpoint)) {
             std::cerr << "Failed to initialize TCP connection" << std::endl;
             rclcpp::shutdown();
             return 1;
@@ -774,7 +1309,8 @@ int main(int argc, char* argv[]) {
 
         bridge->InitializeROS2();
 
-        std::cout << "Initialization complete!" << std::endl << std::endl;
+        std::cout << "\nInitialization complete!" << std::endl;
+        std::cout << "Waiting for ROS2 commands..." << std::endl << std::endl;
 
         bridge->Run();
 

@@ -622,6 +622,7 @@ private:
     bool motor_cmd_enabled_ = false;
 
     std::array<MotorCommandCan, G1_NUM_MOTOR> motor_commands_;
+    std::mutex motor_commands_mutex_;  // 保护 motor_commands_ 和 command_history_
 
     std::thread can_send_thread_;
     std::atomic<bool> should_stop_{false};
@@ -630,6 +631,12 @@ private:
     std::atomic<bool> can_send_started_{false};
     std::mutex pause_mutex_;
     std::condition_variable pause_cv_;
+
+    // 发送统计
+    std::atomic<uint64_t> send_count_{0};
+    std::atomic<uint64_t> send_success_count_{0};
+    std::atomic<uint64_t> send_error_count_{0};
+    std::atomic<uint64_t> ros2_msg_count_{0};
 
     struct MotorCommandHistory {
         MotorCommandCan current;
@@ -695,9 +702,9 @@ public:
             tcp_config_.remote_port = std::stoi(tcp_endpoint.substr(colon_pos + 1));
         }
 
-        // 同时更新 ZLG 配置，使用相同的 IP 和端口
-        zhilgong_config_.remote_ip = tcp_config_.remote_ip;
-        zhilgong_config_.remote_port = tcp_config_.remote_port;
+        // 不再覆盖 ZLG 配置，ZLG 配置由 SetZlgConfig 独立设置
+        // zhilgong_config_.remote_ip = tcp_config_.remote_ip;    // 已移除
+        // zhilgong_config_.remote_port = tcp_config_.remote_port; // 已移除
 
         std::cout << "Initializing TCP connection to " << tcp_config_.remote_ip
                   << ":" << tcp_config_.remote_port << std::endl;
@@ -811,6 +818,12 @@ public:
     void LowCmdHandler(const xixilowcmd::msg::LowCmd::SharedPtr msg) {
         auto current_time = std::chrono::high_resolution_clock::now();
 
+        // 增加 ROS2 消息计数
+        ros2_msg_count_++;
+
+        // 使用互斥锁保护 motor_commands_ 和 command_history_
+        std::lock_guard<std::mutex> lock(motor_commands_mutex_);
+
         for (const auto& motor_cmd : msg->motor_cmd) {
             int motor_id = motor_cmd.id;
 
@@ -888,6 +901,8 @@ public:
             can_send_started_ = true;
         }
         pause_cv_.notify_one();
+
+        std::cout << ">>> 500Hz motor command sending STARTED <<<" << std::endl;
     }
 
     // Send enable command using ZLG network packet format
@@ -1012,8 +1027,12 @@ public:
 
     // Send motor command using ZLG CAN network packet format
     // 使用 ZLG CAN 网络包格式发送电机命令
+    // 使用与 SendZlgNetworkPacket 相同的方式打包发送
     void SendMotorCommandTCP(const MotorCommandCan& cmd) {
+        send_count_++;
+
         if (!zhilgong_config_.initialized) {
+            send_error_count_++;
             return;
         }
 
@@ -1025,27 +1044,24 @@ public:
         // Build ZLG CAN network packet
         // 构建 ZLG CAN 网络包
         uint32_t can_id = cmd.motor_id;  // Use motor_id as CAN ID
-        std::vector<uint8_t> zlg_packet = ZlgPacketBuilder::BuildCanPacketWithZeroTime(
-            can_id, can_data, 8, zhilgong_config_.channel);
 
-        // Send via ZLG TCP connection
-        // 通过 ZLG TCP 连接发送
-        ssize_t bytes_sent = send(zhilgong_config_.socket_fd,
-                                   zlg_packet.data(),
-                                   zlg_packet.size(),
-                                   MSG_NOSIGNAL);
-
-        // Silent operation - only log errors
-        if (bytes_sent < 0) {
-            static int error_count = 0;
-            if (++error_count <= 10) {  // Only print first 10 errors
-                std::cerr << "Error sending motor command for CAN ID 0x" << std::hex << can_id << std::dec
-                         << ": " << strerror(errno) << std::endl;
+        // 打印调试信息（每100次打印一次，避免刷屏）
+        static int debug_count = 0;
+        if (++debug_count % 100 == 1) {
+            std::cout << "[MotorCmd] Motor ID: " << cmd.motor_id
+                      << " | CAN ID: 0x" << std::hex << can_id << std::dec
+                      << " | Data: ";
+            for (int i = 0; i < 8; i++) {
+                std::cout << std::hex << std::setw(2) << std::setfill('0')
+                          << static_cast<int>(can_data[i]) << " ";
             }
-        } else if (bytes_sent != static_cast<ssize_t>(zlg_packet.size())) {
-            std::cerr << "Partial send: " << bytes_sent << " bytes (expected "
-                     << zlg_packet.size() << ")" << std::endl;
+            std::cout << std::dec << std::setfill(' ') << std::endl;
         }
+
+        // 使用与 SendZlgNetworkPacket 完全相同的方式发送
+        // 调用统一的 SendZlgNetworkPacket 函数
+        SendZlgNetworkPacket(can_id, can_data, 8);
+        send_success_count_++;
     }
 
     MotorCommandCan interpolateCommand(const MotorCommandCan& prev, const MotorCommandCan& curr,
@@ -1067,28 +1083,39 @@ public:
     }
 
     void TCPSendThread() {
-        std::cout << "500Hz TCP send thread started, waiting for start signal..." << std::endl;
+        std::cout << ">>> 500Hz TCP send thread started, waiting for enable command to start sending..." << std::endl;
 
         const auto interval = std::chrono::milliseconds(2);
+        const auto log_interval = std::chrono::seconds(1);  // 每秒打印一次
         auto next_send_time = std::chrono::high_resolution_clock::now();
+        auto next_log_time = next_send_time + log_interval;
+
+        uint64_t last_send_count = 0;
+        uint64_t last_success_count = 0;
+        uint64_t last_error_count = 0;
+        uint64_t last_ros2_count = 0;
+        bool first_log = true;  // 第一次打印等待状态
 
         while (!should_stop_) {
-            std::unique_lock<std::mutex> lock(pause_mutex_);
+            auto now = std::chrono::high_resolution_clock::now();
 
-            pause_cv_.wait(lock, [this] {
+            // 使用 wait_for 而不是 wait，设置1秒超时以便定期打印日志
+            std::unique_lock<std::mutex> lock(pause_mutex_);
+            bool should_send = pause_cv_.wait_for(lock, std::chrono::milliseconds(100), [this] {
                 return (can_send_started_ && !enable_command_active_) || should_stop_;
             });
-
             lock.unlock();
 
             if (should_stop_) {
                 break;
             }
 
-            auto now = std::chrono::high_resolution_clock::now();
+            // 如果可以发送，执行发送逻辑
+            if (should_send && motor_cmd_enabled_) {
+                if (now >= next_send_time) {
+                    // 使用互斥锁保护 command_history_
+                    std::lock_guard<std::mutex> lock(motor_commands_mutex_);
 
-            if (now >= next_send_time) {
-                if (motor_cmd_enabled_) {
                     for (int motor_id = 1; motor_id <= 30; motor_id++) {
                         int can_id = get_can_id_for_motor(motor_id);
                         if (can_id > 0) {
@@ -1111,13 +1138,60 @@ public:
                             SendMotorCommandTCP(cmd_to_send);
                         }
                     }
+
+                    next_send_time += interval;
+
+                    if (now > next_send_time + interval) {
+                        next_send_time = now + interval;
+                    }
+                }
+            }
+
+            // 每秒打印一次状态（不管是否在发送）
+            if (now >= next_log_time) {
+                uint64_t current_send_count = send_count_.load();
+                uint64_t current_success_count = send_success_count_.load();
+                uint64_t current_error_count = send_error_count_.load();
+                uint64_t current_ros2_count = ros2_msg_count_.load();
+
+                uint64_t sends_delta = current_send_count - last_send_count;
+                uint64_t success_delta = current_success_count - last_success_count;
+                uint64_t error_delta = current_error_count - last_error_count;
+                uint64_t ros2_delta = current_ros2_count - last_ros2_count;
+
+                if (!can_send_started_) {
+                    // 等待使能命令阶段
+                    std::cout << "[WAIT] Waiting for enable command via /motor_enable topic... "
+                              << "ROS2_msg: " << current_ros2_count << " (+" << ros2_delta << "/s) | "
+                              << "ZLG: " << (zhilgong_config_.initialized ? "Connected" : "Disconnected")
+                              << std::endl;
+                } else if (first_log) {
+                    // 第一次开始发送，打印标题
+                    std::cout << "\n========== Motor Command Sending Started ==========" << std::endl;
+                    std::cout << "[STAT] "
+                              << "ROS2_msg: " << current_ros2_count << " (+" << ros2_delta << "/s) | "
+                              << "Send: " << current_send_count << " (+" << sends_delta << "/s) | "
+                              << "Success: " << current_success_count << " (+" << success_delta << "/s) | "
+                              << "Error: " << current_error_count << " (+" << error_delta << "/s) | "
+                              << "ZLG: " << (zhilgong_config_.initialized ? "Connected" : "Disconnected")
+                              << std::endl;
+                    first_log = false;
+                } else {
+                    // 正常发送状态
+                    std::cout << "[STAT] "
+                              << "ROS2_msg: " << current_ros2_count << " (+" << ros2_delta << "/s) | "
+                              << "Send: " << current_send_count << " (+" << sends_delta << "/s) | "
+                              << "Success: " << current_success_count << " (+" << success_delta << "/s) | "
+                              << "Error: " << current_error_count << " (+" << error_delta << "/s) | "
+                              << "ZLG: " << (zhilgong_config_.initialized ? "Connected" : "Disconnected")
+                              << std::endl;
                 }
 
-                next_send_time += interval;
-
-                if (now > next_send_time + interval) {
-                    next_send_time = now + interval;
-                }
+                last_send_count = current_send_count;
+                last_success_count = current_success_count;
+                last_error_count = current_error_count;
+                last_ros2_count = current_ros2_count;
+                next_log_time = now + log_interval;
             }
 
             std::this_thread::sleep_for(std::chrono::microseconds(100));
@@ -1141,10 +1215,9 @@ public:
 int main(int argc, char* argv[]) {
     // 命令行参数结构
     struct {
-        std::string tcp_endpoint = "";
         std::string zlg_ip = "192.168.1.5";
         int zlg_port = 8003;
-        int channel = 3;  // CAN3
+        int channel = 2;  // CAN2 (默认改为CAN2)
         bool verbose = false;
         bool motor_cmd_enabled = false;
 
@@ -1159,12 +1232,13 @@ int main(int argc, char* argv[]) {
     } params;
 
     if (argc < 2) {
-        std::cout << "Usage: motor_controller_with_enable <tcp_endpoint> [options]" << std::endl;
+        std::cout << "Usage: motor_controller_with_enable [zlg_endpoint] [options]" << std::endl;
         std::cout << "\nPositional Arguments:" << std::endl;
-        std::cout << "  tcp_endpoint       TCP endpoint (e.g., 127.0.0.1:8888 or 192.168.1.5:8003)" << std::endl;
+        std::cout << "  zlg_endpoint       ZLG device endpoint (e.g., 192.168.1.5:8002, default: 192.168.1.5:8003)" << std::endl;
+        std::cout << "                     If omitted, port is determined by -p option" << std::endl;
         std::cout << "\nOptions:" << std::endl;
         std::cout << "  -p, --port <port>       ZLG device TCP port (default: 8003)" << std::endl;
-        std::cout << "  -c, --channel <ch>      CAN channel (default: 3)" << std::endl;
+        std::cout << "  -c, --channel <ch>      CAN channel 0-3 (default: 3)" << std::endl;
         std::cout << "  -v, --verbose           Enable verbose logging" << std::endl;
         std::cout << "  --enable-motor-cmd      Enable motor command sending (default: DISABLED)" << std::endl;
         std::cout << "\nCAN-FD Baud Rate Configuration:" << std::endl;
@@ -1174,21 +1248,36 @@ int main(int argc, char* argv[]) {
         std::cout << "  --enable <motor_id>     Send enable command to motor (1-30)" << std::endl;
         std::cout << "  --disable <motor_id>    Send disable command to motor (1-30)" << std::endl;
         std::cout << "\nExamples:" << std::endl;
-        std::cout << "  # ROS2 mode (default)" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 -p 8003 -v" << std::endl;
+        std::cout << "  # ROS2 mode - CAN2 with motor commands" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --enable-motor-cmd" << std::endl;
+        std::cout << "\n  # ROS2 mode - CAN3 with verbose logging" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 -c 3 -v --enable-motor-cmd" << std::endl;
         std::cout << "\n  # Custom baud rate (arbitration 1M, data 5M)" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --arb-baud 1000000 --data-baud 5000000" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --arb-baud 1000000 --data-baud 5000000" << std::endl;
         std::cout << "\n  # Direct enable/disable mode" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --enable 1" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --disable 5" << std::endl;
-        std::cout << "\n  # Enable all motors (1-10)" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 --enable 1-10" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 --enable 1" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --disable 5" << std::endl;
+        std::cout << "\n  # Enable all motors (1-10) on CAN2" << std::endl;
+        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --enable 1-10" << std::endl;
         return 1;
     }
 
-    // 解析第一个位置参数 (TCP endpoint)
-    params.tcp_endpoint = argv[1];
+    // 解析第一个位置参数 (ZLG endpoint，格式: IP:PORT 或仅 PORT)
+    std::string first_arg = argv[1];
+    size_t colon_pos = first_arg.find(':');
+    if (colon_pos != std::string::npos) {
+        // 格式: IP:PORT
+        params.zlg_ip = first_arg.substr(0, colon_pos);
+        params.zlg_port = std::stoi(first_arg.substr(colon_pos + 1));
+    } else {
+        // 尝试解析为端口号
+        try {
+            params.zlg_port = std::stoi(first_arg);
+        } catch (...) {
+            // 不是数字，当作 IP 处理（使用默认端口）
+            params.zlg_ip = first_arg;
+        }
+    }
 
     // 解析可选参数
     for (int i = 2; i < argc; i++) {
@@ -1236,10 +1325,8 @@ int main(int argc, char* argv[]) {
     std::cout << "========================================" << std::endl;
     std::cout << "ROS2 Motor Controller with ZLG Enable" << std::endl;
     std::cout << "========================================" << std::endl;
-    std::cout << "TCP Endpoint: " << params.tcp_endpoint << std::endl;
-    std::cout << "ZLG IP: " << params.zlg_ip << std::endl;
-    std::cout << "ZLG Port: " << params.zlg_port << std::endl;
-    std::cout << "CAN Channel: " << params.channel << std::endl;
+    std::cout << "ZLG Device: " << params.zlg_ip << ":" << params.zlg_port << std::endl;
+    std::cout << "CAN Channel: " << params.channel << " (CAN" << params.channel << ")" << std::endl;
     std::cout << "CAN-FD Arbitration Baud: " << params.arb_baud << " bps (" << (params.arb_baud / 1000000) << "M)" << std::endl;
     std::cout << "CAN-FD Data Baud: " << params.data_baud << " bps (" << (params.data_baud / 1000000) << "M)" << std::endl;
     std::cout << "Mode: " << (params.direct_mode ? "Direct Command" : "ROS2 Bridge") << std::endl;
@@ -1301,8 +1388,17 @@ int main(int argc, char* argv[]) {
         // 设置 ZLG 配置 (含波特率)
         bridge->SetZlgConfig(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud);
 
-        if (!bridge->InitializeTCP(params.tcp_endpoint)) {
-            std::cerr << "Failed to initialize TCP connection" << std::endl;
+        // 初始化 TCP 连接 (用于上位机通信，如果需要)
+        // 注意：如果不需要连接到上位机 TCP 服务器，可以跳过
+        // if (!bridge->InitializeTCP(params.tcp_endpoint)) {
+        //     std::cerr << "Failed to initialize TCP connection" << std::endl;
+        //     rclcpp::shutdown();
+        //     return 1;
+        // }
+
+        // 初始化周立功设备连接 (用于发送 CAN 命令)
+        if (!bridge->InitializeZhilgongConnection()) {
+            std::cerr << "Failed to initialize ZLG connection" << std::endl;
             rclcpp::shutdown();
             return 1;
         }

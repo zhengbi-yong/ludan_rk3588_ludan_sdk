@@ -8,171 +8,13 @@
 #include <cstring>
 #include <sstream>
 #include <mutex>
-#include <map>
 #include "CANFDNET.h"
 #include "zlgcan/canframe.h"
 #include "zlgcan/zlgcan.h"
 
 // Test configuration
 const int TEST_DURATION_SEC = 300;  // 5 minutes
-
-// Motor feedback frame decoder based on DM motor format
-// Format: D[0] D[1] D[2] D[3] D[4] D[5] D[6] D[7]
-//         ID|ERR<<4, POS[15:8], POS[7:0], VEL[11:4], VEL[3:0]|T[11:8], T[7:0], T_MOS, T_Rotor
-class MotorFrameDecoder {
-public:
-    struct MotorData {
-        // Raw CAN frame data
-        uint8_t raw[8];      // Raw CAN data bytes
-
-        // Decoded values (DM motor format)
-        uint8_t  motor_id;   // Motor ID (4 bits from D[0] lower)
-        uint8_t  error;      // Error code (4 bits from D[0] upper)
-        int16_t  position;   // Position (16-bit signed from D[1], D[2])
-        int16_t  velocity;   // Velocity (12-bit signed from D[3], D[4] lower)
-        int16_t  torque;     // Torque (12-bit signed from D[4] upper, D[5])
-        int8_t   temp_mos;   // MOS temperature (8-bit signed from D[6])
-        int8_t   temp_rotor; // Rotor temperature (8-bit signed from D[7])
-
-        // Frame metadata
-        uint32_t can_id;     // CAN ID from frame header
-        bool     is_fd;      // CAN-FD flag
-    };
-
-    // Decode CAN standard frame (DM motor format)
-    static MotorData DecodeFrame(const ZCAN_Receive_Data& frame) {
-        MotorData data;
-        memset(&data, 0, sizeof(data));
-
-        data.can_id = frame.frame.can_id & 0x7FF;
-        data.is_fd = false;
-
-        const uint8_t* d = frame.frame.data;
-
-        // Store raw data
-        memcpy(data.raw, d, 8);
-
-        // D[0]: ID[3:0] | ERR[3:0]<<4
-        data.motor_id = d[0] & 0x0F;           // Lower 4 bits: Motor ID
-        data.error = (d[0] >> 4) & 0x0F;       // Upper 4 bits: Error code
-
-        // D[1-2]: Position (16-bit signed)
-        // D[1] = POS[15:8], D[2] = POS[7:0]
-        data.position = static_cast<int16_t>((d[1] << 8) | d[2]);
-
-        // D[3-4]: Velocity (12-bit signed) + Torque high nibble
-        // D[3] = VEL[11:4]
-        // D[4] = VEL[3:0] | T[11:8]
-        int16_t vel_raw = ((d[3] & 0xFF) << 4) | (d[4] & 0x0F);
-        // Sign-extend 12-bit to 16-bit
-        if (vel_raw & 0x800) {
-            vel_raw |= 0xF000;  // Sign extension for negative 12-bit values
-        }
-        data.velocity = vel_raw;
-
-        // D[4-5]: Torque (12-bit signed)
-        // D[4] upper nibble = T[11:8]
-        // D[5] = T[7:0]
-        int16_t torque_raw = (((d[4] >> 4) & 0x0F) << 8) | d[5];
-        // Sign-extend 12-bit to 16-bit
-        if (torque_raw & 0x800) {
-            torque_raw |= 0xF000;
-        }
-        data.torque = torque_raw;
-
-        // D[6]: T_MOS (MOS temperature, 8-bit signed)
-        data.temp_mos = static_cast<int8_t>(d[6]);
-
-        // D[7]: T_Rotor (Rotor temperature, 8-bit signed)
-        data.temp_rotor = static_cast<int8_t>(d[7]);
-
-        return data;
-    }
-
-    // Decode CAN-FD frame (DM motor format)
-    static MotorData DecodeFrameFD(const ZCAN_ReceiveFD_Data& frame) {
-        MotorData data;
-        memset(&data, 0, sizeof(data));
-
-        data.can_id = frame.frame.can_id & 0x7FF;
-        data.is_fd = true;
-
-        const uint8_t* d = frame.frame.data;
-
-        // Store raw data
-        memcpy(data.raw, d, 8);
-
-        // D[0]: ID[3:0] | ERR[3:0]<<4
-        data.motor_id = d[0] & 0x0F;
-        data.error = (d[0] >> 4) & 0x0F;
-
-        // D[1-2]: Position (16-bit signed)
-        data.position = static_cast<int16_t>((d[1] << 8) | d[2]);
-
-        // D[3-4]: Velocity (12-bit signed)
-        int16_t vel_raw = ((d[3] & 0xFF) << 4) | (d[4] & 0x0F);
-        if (vel_raw & 0x800) {
-            vel_raw |= 0xF000;
-        }
-        data.velocity = vel_raw;
-
-        // D[4-5]: Torque (12-bit signed)
-        int16_t torque_raw = (((d[4] >> 4) & 0x0F) << 8) | d[5];
-        if (torque_raw & 0x800) {
-            torque_raw |= 0xF000;
-        }
-        data.torque = torque_raw;
-
-        // D[6-7]: Temperatures
-        data.temp_mos = static_cast<int8_t>(d[6]);
-        data.temp_rotor = static_cast<int8_t>(d[7]);
-
-        return data;
-    }
-
-    // Format decoded data as string
-    static std::string FormatDecoded(const MotorData& data, uint64_t timestamp_ms, int seq) {
-        std::stringstream ss;
-        ss << "#" << std::setw(3) << seq << " | ";
-        ss << "Time: " << std::setw(8) << timestamp_ms << " ms | ";
-        ss << "ID: " << std::setw(2) << (int)data.motor_id << " | ";
-        ss << "Pos: " << std::setw(6) << data.position << " | ";
-        ss << "Vel: " << std::setw(6) << data.velocity << " | ";
-        ss << "Tau: " << std::setw(6) << data.torque << " | ";
-        ss << "Tmos: " << std::setw(3) << (int)data.temp_mos << " | ";
-        ss << "Trt: " << std::setw(3) << (int)data.temp_rotor << " | ";
-        ss << "Err: 0x" << std::hex << (int)data.error << std::dec;
-        return ss.str();
-    }
-
-    // Format raw data as hex string
-    static std::string FormatRaw(const MotorData& data) {
-        std::stringstream ss;
-        ss << "RAW: ";
-        for (int i = 0; i < 8; i++) {
-            ss << std::hex << std::setw(2) << std::setfill('0') << (int)data.raw[i];
-            if (i < 7) ss << " ";
-        }
-        ss << std::dec << std::setfill(' ');
-        return ss.str();
-    }
-
-    // Get error description
-    static std::string GetErrorDescription(uint8_t error) {
-        switch (error) {
-            case 0x0: return "OK/Disabled";
-            case 0x1: return "Enabled";
-            case 0x8: return "Over-voltage";
-            case 0x9: return "Under-voltage";
-            case 0xA: return "Over-current";
-            case 0xB: return "MOS Over-temp";
-            case 0xC: return "Coil Over-temp";
-            case 0xD: return "Comms Lost";
-            case 0xE: return "Overload";
-            default: return "Unknown(0x" + std::to_string(error) + ")";
-        }
-    }
-};
+const std::string LOG_FILE = "motor_test_log.txt";
 
 class ZLGExtendedTester {
 private:
@@ -185,12 +27,20 @@ private:
 
     // Frame logging
     std::mutex log_mutex;
-    std::vector<std::string> decoded_frames;
+    std::vector<std::string> saved_frames;
+
+    // Statistics
+    struct Stats {
+        uint64_t sent_per_sec;
+        uint64_t recv_per_sec;
+        BYTE tx_err;
+        BYTE rx_err;
+    } latest_stats;
 
 public:
     bool Initialize(const std::string& ip, int port, int channel) {
         std::cout << "========================================" << std::endl;
-        std::cout << "    ZLG 5-Minute Extended Test with Frame Decode" << std::endl;
+        std::cout << "    ZLG 5-Minute Extended Test" << std::endl;
         std::cout << "========================================" << std::endl;
         std::cout << "Target: " << ip << ":" << port << std::endl;
         std::cout << "Channel: CAN" << channel << std::endl;
@@ -237,6 +87,9 @@ public:
             return false;
         }
         std::cout << "[3/4] CAN started" << std::endl;
+
+        // Clear buffer
+        ZCAN_ClearBuffer(channel_handle);
         std::cout << "[4/4] Buffer cleared, ready!" << std::endl;
         std::cout << "=====================================" << std::endl;
         return true;
@@ -248,8 +101,40 @@ public:
             tx_err = status.regTECounter;
             rx_err = status.regRECounter;
         } else {
-            tx_err = rx_err = 255;  // Error reading
+            tx_err = rx_err = 255;
         }
+    }
+
+    std::string FormatFrame(const ZCAN_Receive_Data& frame, uint64_t timestamp_ms, int seq) {
+        std::stringstream ss;
+        ss << "Frame #" << std::setw(5) << seq << " | ";
+        ss << "Time: " << std::setw(8) << timestamp_ms << " ms | ";
+        ss << "ID: 0x" << std::setfill('0') << std::setw(3) << std::hex << (frame.frame.can_id & 0x7FF) << std::dec << std::setfill(' ') << " | ";
+        ss << "DLC: " << (int)frame.frame.can_dlc << " | ";
+        ss << "Data: ";
+        for (int i = 0; i < frame.frame.can_dlc; i++) {
+            ss << std::setfill('0') << std::setw(2) << std::hex << (int)frame.frame.data[i] << std::dec << std::setfill(' ');
+            if (i < frame.frame.can_dlc - 1) ss << " ";
+        }
+        ss << " | ";
+        ss << "Timestamp: " << frame.timestamp << " us";
+        return ss.str();
+    }
+
+    std::string FormatFrameFD(const ZCAN_ReceiveFD_Data& frame, uint64_t timestamp_ms, int seq) {
+        std::stringstream ss;
+        ss << "FrameFD #" << std::setw(5) << seq << " | ";
+        ss << "Time: " << std::setw(8) << timestamp_ms << " ms | ";
+        ss << "ID: 0x" << std::setfill('0') << std::setw(3) << std::hex << (frame.frame.can_id & 0x7FF) << std::dec << std::setfill(' ') << " | ";
+        ss << "DLC: " << (int)frame.frame.len << " | ";
+        ss << "Data: ";
+        for (int i = 0; i < frame.frame.len && i < 64; i++) {
+            ss << std::setfill('0') << std::setw(2) << std::hex << (int)frame.frame.data[i] << std::dec << std::setfill(' ');
+            if (i < frame.frame.len - 1) ss << " ";
+        }
+        ss << " | ";
+        ss << "Timestamp: " << frame.timestamp << " us";
+        return ss.str();
     }
 
     // Main test - send enable commands and receive feedback
@@ -262,24 +147,6 @@ public:
         total_recv = 0;
         total_tx_errors = 0;
 
-        // Prepare enable command for motor 1
-        ZCAN_Transmit_Data cmd_frame;
-        memset(&cmd_frame, 0, sizeof(cmd_frame));
-        cmd_frame.frame.can_id = 1;
-        cmd_frame.frame.can_dlc = 8;
-        memset(cmd_frame.frame.data, 0xFF, 7);
-        cmd_frame.frame.data[7] = 0xFC;  // ENABLE command
-
-        // Receive buffers
-        ZCAN_Receive_Data recv_frames[100];
-        ZCAN_ReceiveFD_Data recv_fd_frames[50];
-
-        std::cout << "\n";
-        std::cout << "==================================================================================" << std::endl;
-        std::cout << "   Time    |  Sent/s  | Recv/s |  Sent Tot | Recv Tot | TX_Err | RX_Err | Saved | Decode Summary" << std::endl;
-        std::cout << "==================================================================================" << std::endl;
-
-        int report_count = 0;
         auto start_time = std::chrono::steady_clock::now();
         auto next_report = start_time + std::chrono::seconds(1);
         auto next_save = start_time + std::chrono::seconds(1);
@@ -288,14 +155,29 @@ public:
         uint64_t last_recv = 0;
         int saved_frame_count = 0;
 
-        // Count different motor IDs seen
-        std::map<uint32_t, uint64_t> motor_count;
+        // Prepare enable command for motor 1
+        ZCAN_Transmit_Data cmd_frame;
+        memset(&cmd_frame, 0, sizeof(cmd_frame));
+        cmd_frame.frame.can_id = 1;
+        cmd_frame.frame.can_dlc = 8;
+        memset(cmd_frame.frame.data, 0xFF, 7);
+        cmd_frame.frame.data[7] = 0xFC;
 
+        // Receive buffers
+        ZCAN_Receive_Data recv_frames[100];
+        ZCAN_ReceiveFD_Data recv_fd_frames[50];
+
+        std::cout << "\n";
+        std::cout << "==================================================================================" << std::endl;
+        std::cout << "   Time    |  Sent/s  | Recv/s |  Sent Tot | Recv Tot | TX_Err | RX_Err | Saved" << std::endl;
+        std::cout << "==================================================================================" << std::endl;
+
+        int report_count = 0;
         while (running) {
             auto now = std::chrono::steady_clock::now();
             double elapsed = std::chrono::duration<double>(now - start_time).count();
 
-            // Send command
+            // Send command (try different frequencies)
             if (ZCAN_Transmit(channel_handle, &cmd_frame, 1) != 1) {
                 total_tx_errors++;
             } else {
@@ -309,45 +191,35 @@ public:
             UINT recv_count = ZCAN_Receive(channel_handle, recv_frames, 100, 0);
             for (UINT i = 0; i < recv_count; i++) {
                 total_recv++;
-                // Count motor IDs
-                uint32_t id = recv_frames[i].frame.can_id & 0x7F;
-                motor_count[id]++;
             }
 
             // Try to receive CAN FD frames
             UINT recv_fd_count = ZCAN_ReceiveFD(channel_handle, recv_fd_frames, 50, 0);
             for (UINT i = 0; i < recv_fd_count; i++) {
                 total_recv++;
-                uint32_t id = recv_fd_frames[i].frame.can_id & 0x7F;
-                motor_count[id]++;
             }
 
-            // Save one decoded frame per second
+            // Save one frame per second
             if (now >= next_save) {
-                std::string decoded_str;
+                std::string frame_str;
 
-                // Choose which frame type to save based on what we received
                 if (recv_fd_count > 0) {
-                    MotorFrameDecoder::MotorData data = MotorFrameDecoder::DecodeFrameFD(recv_fd_frames[0]);
-                    decoded_str = MotorFrameDecoder::FormatDecoded(data,
+                    frame_str = FormatFrameFD(recv_fd_frames[0],
                         static_cast<uint64_t>(elapsed * 1000), saved_frame_count);
-                    saved_frame_count++;
                 } else if (recv_count > 0) {
-                    MotorFrameDecoder::MotorData data = MotorFrameDecoder::DecodeFrame(recv_frames[0]);
-                    decoded_str = MotorFrameDecoder::FormatDecoded(data,
+                    frame_str = FormatFrame(recv_frames[0],
                         static_cast<uint64_t>(elapsed * 1000), saved_frame_count);
-                    saved_frame_count++;
                 } else {
-                    decoded_str = "Frame #" + std::to_string(saved_frame_count) + " | " +
+                    frame_str = "Frame #" + std::to_string(saved_frame_count) + " | " +
                                "Time: " + std::to_string(static_cast<uint64_t>(elapsed * 1000)) + " ms | " +
                                "No data received in this second";
-                    saved_frame_count++;
                 }
 
                 {
                     std::lock_guard<std::mutex> lock(log_mutex);
-                    decoded_frames.push_back(decoded_str);
+                    saved_frames.push_back(frame_str);
                 }
+                saved_frame_count++;
                 next_save = now + std::chrono::seconds(1);
             }
 
@@ -359,22 +231,16 @@ public:
                 uint64_t sent_this_sec = total_sent - last_sent;
                 uint64_t recv_this_sec = total_recv - last_recv;
 
-                // Build decode summary
-                std::string summary = "Motors seen: ";
-                for (const auto& pair : motor_count) {
-                    summary += "ID" + std::to_string(pair.first) + "(" + std::to_string(pair.second) + ") ";
-                }
-
                 std::cout << "[ "
                          << std::setw(6) << std::fixed << std::setprecision(1) << elapsed << "s ] "
-                         << "| " << std::setw(7) << sent_this_sec << " "
+                         << "| " << std::setw(8) << sent_this_sec << " "
                          << "| " << std::setw(7) << recv_this_sec << " "
                          << "| " << std::setw(9) << total_sent << " "
-                         "| " << std::setw(9) << total_recv << " "
-                         "| " << std::setw(6) << (int)tx_err << " "
-                         "| " << std::setw(6) << (int)rx_err << " "
-                         "| " << std::setw(5) << saved_frame_count << " "
-                         << " | " << summary << std::endl;
+                         << "| " << std::setw(9) << total_recv << " "
+                         << "| " << std::setw(6) << (int)tx_err << " "
+                         << "| " << std::setw(6) << (int)rx_err << " "
+                         << "| " << std::setw(5) << saved_frame_count << " "
+                         << std::endl;
 
                 last_sent = total_sent;
                 last_recv = total_recv;
@@ -406,28 +272,22 @@ public:
         std::cout << "Total Recv:       " << std::setw(12) << total_recv << " frames" << std::endl;
         std::cout << "Total TX Errors:  " << std::setw(12) << total_tx_errors << " frames" << std::endl;
         std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Avg TX Rate:   " << std::setw(12) << std::fixed << std::setprecision(2) << avg_tx_fps << " fps" << std::endl;
-        std::cout << "Avg RX Rate:   " << std::setw(12) << std::fixed << std::setprecision(2) << avg_rx_fps << " fps" << std::endl;
+        std::cout << "Avg TX Rate:      " << std::setw(12) << std::fixed << std::setprecision(2) << avg_tx_fps << " fps" << std::endl;
+        std::cout << "Avg RX Rate:      " << std::setw(12) << std::fixed << std::setprecision(2) << avg_rx_fps << " fps" << std::endl;
         std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Final TX_Error: " << std::setw(12) << (int)tx_err << std::endl;
-        std::cout << "Final RX_Error: " << std::setw(12) << (int)rx_err << std::endl;
+        std::cout << "Final TX_Error:   " << std::setw(12) << (int)tx_err << std::endl;
+        std::cout << "Final RX_Error:   " << std::setw(12) << (int)rx_err << std::endl;
         std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Frames Saved:    " << std::setw(12) << saved_frame_count << " frames" << std::endl;
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << "Motor ID Summary:" << std::endl;
-        for (const auto& pair : motor_count) {
-            std::cout << "  Motor ID " << std::setw(3) << pair.first
-                      << ": " << pair.second << " frames received" << std::endl;
-        }
+        std::cout << "Frames Saved:     " << std::setw(12) << saved_frame_count << " frames" << std::endl;
         std::cout << "=====================================" << std::endl;
 
         return true;
     }
 
-    bool SaveLogToFile(const std::string& filename) {
-        std::cout << "\n=== Saving decoded frames to " << filename << " ===" << std::endl;
+    bool SaveLogToFile() {
+        std::cout << "\n=== Saving frames to " << LOG_FILE << " ===" << std::endl;
 
-        std::ofstream logfile(filename);
+        std::ofstream logfile(LOG_FILE);
         if (!logfile.is_open()) {
             std::cerr << "Failed to open log file!" << std::endl;
             return false;
@@ -435,15 +295,15 @@ public:
 
         // Write header
         logfile << "========================================" << std::endl;
-        logfile << "   Motor Feedback Test Log (Decoded)" << std::endl;
+        logfile << "   Motor Feedback Test Log" << std::endl;
         logfile << "========================================" << std::endl;
-        logfile << "Total Frames Decoded: " << decoded_frames.size() << std::endl;
+        logfile << "Total Frames Saved: " << saved_frames.size() << std::endl;
         logfile << "Test Duration: " << TEST_DURATION_SEC << " seconds" << std::endl;
         logfile << "========================================" << std::endl;
         logfile << std::endl;
 
-        // Write all decoded frames
-        for (const auto& frame : decoded_frames) {
+        // Write all saved frames
+        for (const auto& frame : saved_frames) {
             logfile << frame << std::endl;
         }
 
@@ -455,10 +315,9 @@ public:
         logfile << "Total Sent:     " << total_sent << std::endl;
         logfile << "Total Received: " << total_recv << std::endl;
         logfile << "TX Errors:      " << total_tx_errors << std::endl;
-        logfile << std::endl;
 
         logfile.close();
-        std::cout << "Successfully saved " << decoded_frames.size() << " decoded frames to " << filename << std::endl;
+        std::cout << "Successfully saved " << saved_frames.size() << " frames to " << LOG_FILE << std::endl;
 
         return true;
     }
@@ -487,10 +346,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    std::cout << "========================================" << std::endl;
-    std::cout << "    ZLG 5-Minute Extended Test (Decoded)" << std::endl;
-    std::cout << "========================================" << std::endl;
-
     ZLGExtendedTester tester;
 
     if (!tester.Initialize(ip, port, channel)) {
@@ -501,8 +356,8 @@ int main(int argc, char* argv[]) {
     // Run the extended test
     tester.RunExtendedTest();
 
-    // Save decoded log to file
-    tester.SaveLogToFile("motor_test_frame_decode.txt");
+    // Save log to file
+    tester.SaveLogToFile();
 
     tester.Cleanup();
 

@@ -1,0 +1,59 @@
+[0.016s] Invoking command in '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/ludan_sdk/example/g1/low_level -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable
+[0.090s] -- The C compiler identification is GNU 11.4.0
+[0.164s] -- The CXX compiler identification is GNU 11.4.0
+[0.175s] -- Detecting C compiler ABI info
+[0.317s] -- Detecting C compiler ABI info - done
+[0.355s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.357s] -- Detecting C compile features
+[0.358s] -- Detecting C compile features - done
+[0.366s] -- Detecting CXX compiler ABI info
+[0.495s] -- Detecting CXX compiler ABI info - done
+[0.534s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.535s] -- Detecting CXX compile features
+[0.535s] -- Detecting CXX compile features - done
+[0.538s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.800s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.948s] -- Found rclcpp: 16.0.16 (/opt/ros/humble/share/rclcpp/cmake)
+[0.998s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.005s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.015s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.032s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.053s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.109s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.111s] -- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.237s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[1.265s] -- Found FastRTPS: /opt/ros/humble/include  
+[1.307s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.318s] -- Looking for pthread.h
+[1.473s] -- Looking for pthread.h - found
+[1.473s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.580s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.581s] -- Found Threads: TRUE  
+[1.718s] -- Found sensor_msgs: 4.9.0 (/opt/ros/humble/share/sensor_msgs/cmake)
+[1.775s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.901s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.907s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.908s] -- Configured cppcheck include dirs: /home/linaro/ludan_sdk/example/g1/low_level/../../../../../include
+[1.908s] -- Configured cppcheck exclude dirs and/or files: 
+[1.912s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.913s] -- Configured cpplint exclude dirs and/or files: 
+[1.913s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.915s] -- Added test 'lint_cmake' to check CMake code style
+[1.917s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.922s] -- Added test 'uncrustify' to check C / C++ code style
+[1.922s] -- Configured uncrustify additional arguments: 
+[1.923s] -- Added test 'xmllint' to check XML markup files
+[1.925s] -- Configuring done
+[1.939s] -- Generating done
+[1.947s] -- Build files have been written to: /home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable
+[1.964s] Invoked command in '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/ludan_sdk/example/g1/low_level -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable
+[1.966s] Invoking command in '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable -- -j8 -l8
+[2.093s] [ 50%] Building CXX object CMakeFiles/motor_controller_with_enable.dir/motor_controller_with_enable.cpp.o
+[2.372s] /home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:24:10: fatal error: xixilowcmd/xixilowcmd/msg/low_cmd.hpp: No such file or directory
+[2.373s]    24 | #include "xixilowcmd/xixilowcmd/msg/low_cmd.hpp"
+[2.373s]       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[2.373s] compilation terminated.
+[2.384s] gmake[2]: *** [CMakeFiles/motor_controller_with_enable.dir/build.make:76: CMakeFiles/motor_controller_with_enable.dir/motor_controller_with_enable.cpp.o] Error 1
+[2.384s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/motor_controller_with_enable.dir/all] Error 2
+[2.384s] gmake: *** [Makefile:146: all] Error 2
+[2.387s] Invoked command in '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable -- -j8 -l8

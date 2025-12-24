@@ -1,0 +1,39 @@
+# Makefile for motor_controller_with_enable using ZCAN API + ROS2
+# IMPORTANT: Before building, source ROS2 environment:
+#   source /opt/ros/humble/setup.bash
+
+# Compiler settings
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -O2
+LDFLAGS = -lpthread
+
+# ZLG CANFDNET SDK paths
+ZLG_SDK_ROOT = /home/linaro/ludan_sdk/CANFDNET/example/linux_canfdnet_v1.3.0.5_c_example/linux_canfdnet_v1.3.0.5_c
+ZLG_INCLUDE = -I$(ZLG_SDK_ROOT)/src/zlgcan
+ZLG_LIB = -L$(ZLG_SDK_ROOT) -lCANFDNET
+
+# Unitree SDK
+UNITREE_INCLUDE = -I../../../../../include
+
+# Output executable
+TARGET = motor_controller_with_enable
+
+# Source files
+SOURCES = motor_controller_with_enable.cpp
+
+# Check if ROS2 environment is sourced
+ifndef ROS_DISTRO
+$(error ROS2 environment not sourced. Please run: source /opt/ros/humble/setup.bash)
+endif
+
+# Build rules
+all: $(TARGET)
+
+$(TARGET): $(SOURCES)
+	$(CXX) $(CXXFLAGS) $(ZLG_INCLUDE) $(UNITREE_INCLUDE) \
+		-o $(TARGET) $(SOURCES) $(ZLG_LIB) $(LDFLAGS)
+
+clean:
+	rm -f $(TARGET)
+
+.PHONY: all clean

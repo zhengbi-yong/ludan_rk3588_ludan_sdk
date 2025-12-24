@@ -66,25 +66,31 @@ if(DEFINED ENV{ROS_DISTRO})
             # Build motor_controller_with_enable with ROS2 and xixilowcmd support
             add_executable(motor_controller_with_enable_ros2 low_level/motor_controller_with_enable.cpp)
 
+            # ZLG CANFDNET SDK paths (using newly compiled ARM64 library)
+            set(ZLG_SDK_DIR "/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example")
+
             # Set include directories
             target_include_directories(motor_controller_with_enable_ros2 PRIVATE
                 "${ROS2_WORKSPACE}/install/xixilowcmd/include"
                 "${ROS2_WORKSPACE}/install/xixilowcmd/local/include"
                 "${ROS2_WORKSPACE}/build/xixilowcmd/rosidl_generator_cpp"
                 "/opt/ros/humble/include"
+                "${ZLG_SDK_DIR}/src"
+                "${ZLG_SDK_DIR}/src/zlgcan"
             )
 
             # Set RPATH for runtime library search
             set_target_properties(motor_controller_with_enable_ros2 PROPERTIES
-                INSTALL_RPATH "${ROS2_WORKSPACE}/install/xixilowcmd/lib"
+                INSTALL_RPATH "${ROS2_WORKSPACE}/install/xixilowcmd/lib;${ZLG_SDK_DIR}/lib/linux_x64"
                 BUILD_WITH_INSTALL_RPATH TRUE
             )
 
-            # Link libraries - include ROS2 libraries and xixilowcmd
+            # Link libraries - include ROS2 libraries, xixilowcmd and ZLG CANFDNET
             target_link_libraries(motor_controller_with_enable_ros2
                 rclcpp::rclcpp
                 ${ROS2_WORKSPACE}/install/xixilowcmd/lib/libxixilowcmd__rosidl_typesupport_cpp.so
                 ${ROS2_WORKSPACE}/install/xixilowcmd/lib/libxixilowcmd__rosidl_generator_c.so
+                "${ZLG_SDK_DIR}/lib/linux_x64/libCANFDNET.so"
                 pthread
             )
 

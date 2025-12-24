@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/canfdnet_test.dir/test/test.cpp.o CMakeFiles/canfdnet_test.dir/src/common.cpp.o CMakeFiles/canfdnet_test.dir/src/log.cpp.o -o ../lib/linux_x64/canfdnet_test  -Wl,-rpath,/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/lib/linux_x64 ../lib/linux_x64/libCANFDNET.so 

@@ -1,0 +1,29 @@
+# CMakeLists.txt for motor_controller_with_enable using ZCAN API
+cmake_minimum_required(VERSION 3.10)
+project(motor_controller_with_enable)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# ZLG CANFDNET SDK paths
+set(ZLG_SDK_ROOT "/home/linaro/ludan_sdk/CANFDNET/example/linux_canfdnet_v1.3.0.5_c_example/linux_canfdnet_v1.3.0.5_c")
+set(ZLG_INCLUDE_DIR "${ZLG_SDK_ROOT}/src/zlgcan")
+set(ZLG_LIB_DIR "${ZLG_SDK_ROOT}")
+
+# Include directories
+include_directories(
+    ${ZLG_INCLUDE_DIR}
+    ../../../../include
+)
+
+# Add executable
+add_executable(motor_controller_with_enable motor_controller_with_enable.cpp)
+
+# Link libraries
+target_link_libraries(motor_controller_with_enable
+    ${ZLG_LIB_DIR}/libCANFDNET.so
+    pthread
+)
+
+# Compile definitions
+target_compile_definitions(motor_controller_with_enable PRIVATE LINUX_BUILD)

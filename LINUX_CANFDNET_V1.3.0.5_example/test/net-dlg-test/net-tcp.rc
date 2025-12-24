@@ -1,0 +1,333 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\net-tcp.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""      // 标准组件\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\net-tcp.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 net-tcp"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
+    LTEXT           "net-tcp，1.0 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2018",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
+END
+
+IDD_USBCANFDX00UDEMO_DIALOG DIALOGEX 0, 0, 438, 353
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "net-tcp"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "设备: ",IDC_STATIC,5,9,20,8
+    COMBOBOX        IDC_COMBO_DEVICE,28,8,97,183,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "设备索引: ",IDC_STATIC,136,9,34,8
+    COMBOBOX        IDC_COMBO_DEVICE_INDEX,172,8,25,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "参数配置",IDC_STATIC,1,25,278,47
+    LTEXT           "工作模式: ",IDC_STATIC_WORK_MODE,12,39,34,8
+    COMBOBOX        IDC_COMBO_MODE,48,38,42,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "目标地址(点分式): ",IDC_STATIC_IP,13,57,59,8
+    EDITTEXT        IDC_EDIT_IP,78,55,67,14,ES_AUTOHSCROLL
+    LTEXT           "目标端口: ",IDC_STATIC_WORK_PORT,159,57,33,8
+    EDITTEXT        IDC_EDIT_WORK_PORT,194,55,41,14,ES_AUTOHSCROLL
+    GROUPBOX        "数据发送",IDC_STATIC,0,141,438,70
+    LTEXT           "ID(0x): ",IDC_STATIC,4,154,24,8
+    EDITTEXT        IDC_EDIT_ID,29,153,41,14,ES_AUTOHSCROLL
+    LTEXT           "帧类型: ",IDC_STATIC,76,154,25,8
+    COMBOBOX        IDC_COMBO_FRAME_TYPE,102,153,36,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "帧格式: ",IDC_STATIC,142,154,28,8
+    COMBOBOX        IDC_COMBO_FORMAT,168,153,36,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "数据(0x, 以空格隔开): ",IDC_STATIC,3,173,73,8
+    EDITTEXT        IDC_EDIT_FILTER_START3,76,172,312,14,ES_AUTOHSCROLL
+    LTEXT           "发送方式: ",IDC_STATIC,12,193,34,8
+    COMBOBOX        IDC_COMBO_SEND_TYPE,47,192,57,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "发送",IDC_BUTTON_SEND,243,190,30,14
+    PUSHBUTTON      "打开设备",IDC_BUTTON_OPEN,4,75,42,14
+    PUSHBUTTON      "初始化CAN",IDC_BUTTON_INITCAN,4,94,42,14
+    PUSHBUTTON      "启动CAN",IDC_BUTTON_STARTCAN,48,94,42,14
+    PUSHBUTTON      "复位",IDC_BUTTON_RESET,94,94,42,14
+    PUSHBUTTON      "关闭设备",IDC_BUTTON_CLOSE,48,75,42,14
+    GROUPBOX        "数据接收",IDC_STATIC,0,210,438,132
+    LISTBOX         IDC_LIST1,5,223,384,114,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "清空",IDC_BUTTON_CLEAR,391,223,39,14
+    LTEXT           "本地端口: ",IDC_STATIC_LOCAL_PORT,106,40,33,8
+    EDITTEXT        IDC_EDIT_LOCAL_PORT,141,38,41,14,ES_AUTOHSCROLL
+    LTEXT           "通道号: ",IDC_STATIC,204,9,34,8
+    COMBOBOX        IDC_COMBO_CHANNEL_INDEX,234,8,25,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "TxEcho",IDC_CHECK_TX_ECHO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,237,57,39,10
+    EDITTEXT        IDC_EDIT_DEV_TIMESTAMP,140,74,46,14,ES_AUTOHSCROLL | NOT WS_VISIBLE
+    PUSHBUTTON      "设置设备时间戳",IDC_BUTTON_SET_DEV_TIMESTAMP,192,74,53,14,NOT WS_VISIBLE
+    CONTROL         "BusUsage",IDC_CHECK_BUS_USAGE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,390,241,46,10
+    LTEXT           "一次发送: ",IDC_STATIC,112,194,31,8
+    EDITTEXT        IDC_EDIT_ID2,145,191,24,14,ES_AUTOHSCROLL
+    LTEXT           "发送次数: ",IDC_STATIC,177,193,31,8
+    EDITTEXT        IDC_EDIT_ID3,210,190,31,14,ES_AUTOHSCROLL
+    CONTROL         "ShowData",IDC_CHECK_SHOW_DATA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,390,256,48,10
+    LTEXT           "协议: ",IDC_STATIC,206,155,25,8
+    COMBOBOX        IDC_COMBO_CAN_CANFD,225,153,36,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "CANFD加速: ",IDC_STATIC,265,155,38,8
+    COMBOBOX        IDC_COMBO_CAN_CANFD2,306,153,28,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "队列发送",IDC_CHECK_DELAY_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,277,193,43,10
+    PUSHBUTTON      "设备信息",IDC_BUTTON_DEV_INFO,94,75,42,14
+    LTEXT           "间隔: ",IDC_STATIC,339,154,19,8
+    EDITTEXT        IDC_EDIT_TIME,357,151,30,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "获取队列空间",IDC_BUTTON_GET_DELAY_SEND_AVAILABLE_COUNT,140,93,46,14
+    PUSHBUTTON      "获取定时发送信息",IDC_BUTTON_GET_AUTO_SEND_INFO,341,94,60,14
+    PUSHBUTTON      "取消队列",IDC_BUTTON_CANCEL_DELAY_SEND,190,93,46,14
+    PUSHBUTTON      "设置定时发送",IDC_BUTTON_SET_AUTO_SEND,242,94,46,14
+    PUSHBUTTON      "取消定时发送",IDC_BUTTON_CANCEL_AUTO_SEND,291,94,46,14
+    PUSHBUTTON      "系统状态",IDC_BUTTON_STATE_SYS_INFO,266,74,32,14
+    PUSHBUTTON      "通道状态",IDC_BUTTON_STATE_CAN_INFO,300,74,32,14
+    PUSHBUTTON      "记录状态",IDC_BUTTON_STATE_RECORDER,336,74,32,14
+    PUSHBUTTON      "网络状态",IDC_BUTTON_STATE_NET,370,74,32,14
+    CONTROL         "切换单位",IDC_CHECK_TIME_UNIT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,390,141,42,10
+    PUSHBUTTON      "取消0",IDC_BUTTON_CANCEL_SINGLE,405,94,23,14
+    LTEXT           "ms",IDC_STATIC_TIME_UNIT,390,154,36,8
+    PUSHBUTTON      "初始化LIN",IDC_BUTTON_INIT_LIN,4,113,42,14
+    PUSHBUTTON      "启动LIN",IDC_BUTTON_START_LIN,48,113,42,14
+    PUSHBUTTON      "复位LIN",IDC_BUTTON_RESET_LIN,94,113,42,14
+    CONTROL         "Master",IDC_CHECK_LIN_MASTER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,287,39,37,10
+    COMBOBOX        IDC_COMBO_LIN_BAUD,331,37,45,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "增强校验",IDC_CHECK_ENHANCE_CHKSUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,287,57,43,10
+    CONTROL         "长度随ID(VarDLC)",IDC_CHECK_VAR_DLC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,339,57,71,10
+    COMBOBOX        IDC_COMBO_LIN_VERSION,382,37,45,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "LIN参数",IDC_STATIC,281,25,151,47
+    PUSHBUTTON      "发送LIN",IDC_BUTTON_SEND_LIN,327,191,38,14
+    PUSHBUTTON      "清除ID(Slave)",IDC_BUTTON_CLEAR_SLAVE_ID_RESPONSE,369,191,51,14
+    PUSHBUTTON      "获取LIN空间",IDC_BUTTON_GET_LIN_FIFO_INFO,140,113,50,14
+    CONTROL         "接收库数据",IDC_CHECK_RECV_DATA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,385,115,50,10
+    CONTROL         "合并接收",IDC_CHECK_RECV_MERGE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,238,38,43,10
+    PUSHBUTTON      "发送(合并)",IDC_BUTTON_SEND_MERGE,393,171,38,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,3
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080403a8"
+        BEGIN
+            VALUE "CompanyName", "ZLG"
+            VALUE "FileDescription", "Demo"
+            VALUE "FileVersion", "1.0.0.3"
+            VALUE "InternalName", "ZCANPRO.exe"
+            VALUE "LegalCopyright", "ZLG"
+            VALUE "OriginalFilename", "ZCANPRO.exe"
+            VALUE "ProductName", "CANFDNET"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 936
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_USBCANFDX00UDEMO_DIALOG, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 349
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_USBCANFDX00UDEMO_DIALOG DLGINIT
+BEGIN
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0030, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_DEVICE_INDEX, 0x403, 2, 0
+0x0037, 
+    IDC_COMBO_MODE, 0x403, 7, 0
+0xcdbf, 0xa7bb, 0xcbb6, "\000" 
+    IDC_COMBO_MODE, 0x403, 7, 0
+0xfeb7, 0xf1ce, 0xf7c6, "\000" 
+    IDC_COMBO_FRAME_TYPE, 0x403, 7, 0
+0xeab1, 0xbcd7, 0xa1d6, "\000" 
+    IDC_COMBO_FRAME_TYPE, 0x403, 7, 0
+0xa9c0, 0xb9d5, 0xa1d6, "\000" 
+    IDC_COMBO_FORMAT, 0x403, 7, 0
+0xfdca, 0xddbe, 0xa1d6, "\000" 
+    IDC_COMBO_FORMAT, 0x403, 7, 0
+0xb6d4, 0xccb3, 0xa1d6, "\000" 
+    IDC_COMBO_SEND_TYPE, 0x403, 9, 0
+0xfdd5, 0xa3b3, 0xa2b7, 0xcdcb, "\000" 
+    IDC_COMBO_SEND_TYPE, 0x403, 9, 0
+0xa5b5, 0xceb4, 0xa2b7, 0xcdcb, "\000" 
+    IDC_COMBO_SEND_TYPE, 0x403, 9, 0
+0xd4d7, 0xa2b7, 0xd4d7, 0xd5ca, "\000" 
+    IDC_COMBO_SEND_TYPE, 0x403, 13, 0
+0xa5b5, 0xceb4, 0xd4d7, 0xa2b7, 0xd4d7, 0xd5ca, "\000" 
+    IDC_COMBO_CAN_CANFD, 0x403, 4, 0
+0x4143, 0x004e, 
+    IDC_COMBO_CAN_CANFD, 0x403, 6, 0
+0x4143, 0x464e, 0x0044, 
+    IDC_COMBO_CAN_CANFD2, 0x403, 3, 0
+0xf1b7, "\000" 
+    IDC_COMBO_CAN_CANFD2, 0x403, 3, 0
+0xc7ca, "\000" 
+    IDC_COMBO_LIN_VERSION, 0x403, 5, 0
+0x3156, 0x582e, "\000" 
+    IDC_COMBO_LIN_VERSION, 0x403, 5, 0
+0x3256, 0x582e, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "关于 net-tcp(&A)..."
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\net-tcp.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "l.CHS\afxres.rc"      // 标准组件
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

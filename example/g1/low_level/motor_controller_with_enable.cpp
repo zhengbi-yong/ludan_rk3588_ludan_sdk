@@ -244,10 +244,10 @@ static bool InitializeDirectZCAN(const std::string& ip, int port, int channel, i
     return true;
 }
 
-// 发送 CAN 帧
+// 发送单个 CAN 帧
 static bool SendDirectCANFrame(uint32_t can_id, const uint8_t* data, uint8_t dlc, bool verbose = false) {
     if (!direct_zlg_config.initialized || direct_zlg_config.channel_handle == INVALID_CHANNEL_HANDLE) {
-        std::cerr << "ZCAN device not connected" << std::endl;
+        std::cerr << "[!] ZCAN device not connected" << std::endl;
         return false;
     }
 
@@ -265,26 +265,82 @@ static bool SendDirectCANFrame(uint32_t can_id, const uint8_t* data, uint8_t dlc
 
     transmit_data.transmit_type = 0;
 
+    // 打印详细的数据包内容
+    if (verbose) {
+        std::cout << "  >>> Sending CAN Frame <<<" << std::endl;
+        std::cout << "    CAN_ID    : 0x" << std::hex << std::setw(3) << std::setfill('0') << can_id << std::dec << std::endl;
+        std::cout << "    DLC       : " << static_cast<int>(dlc) << " bytes" << std::endl;
+        std::cout << "    Data      : ";
+        for (uint8_t i = 0; i < dlc; i++) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(data[i]);
+            if (i < dlc - 1) std::cout << " ";
+        }
+        std::cout << std::dec << std::endl;
+        std::cout << "    Binary    : ";
+        for (uint8_t i = 0; i < dlc; i++) {
+            std::cout << "[";
+            for (int b = 7; b >= 0; b--) {
+                std::cout << ((data[i] >> b) & 1);
+            }
+            std::cout << "]";
+            if (i < dlc - 1) std::cout << " ";
+        }
+        std::cout << std::dec << std::endl;
+    }
+
     uint32_t ret = ZCAN_Transmit(direct_zlg_config.channel_handle, &transmit_data, 1);
 
     if (ret == 1) {
         if (verbose) {
-            std::cout << "  [OK] CAN_ID=0x" << std::hex << can_id << std::dec
-                      << " Data=";
-            for (uint8_t i = 0; i < dlc; i++) {
-                std::cout << std::hex << std::setw(2) << std::setfill('0')
-                          << static_cast<int>(data[i]) << " ";
-            }
-            std::cout << std::dec << std::setfill(' ') << std::endl;
+            std::cout << "    Status    : [OK] Sent successfully" << std::endl;
         }
         ReadAndDisplayCanStatus(direct_zlg_config.channel_handle);
         return true;
     } else {
-        std::cerr << "  [FAIL] CAN_ID=0x" << std::hex << can_id << std::dec
-                  << " ret=" << ret << std::endl;
+        std::cerr << "    Status    : [FAIL] ret=" << ret << std::endl;
         ReadAndDisplayCanStatus(direct_zlg_config.channel_handle);
         return false;
     }
+}
+
+// 队列批量发送 CAN 帧（ZLG SDK 队列发送）
+static int SendDirectCANFrameBatch(const ZCAN_Transmit_Data* frames, uint32_t count, bool verbose = false) {
+    if (!direct_zlg_config.initialized || direct_zlg_config.channel_handle == INVALID_CHANNEL_HANDLE) {
+        std::cerr << "[!] ZCAN device not connected" << std::endl;
+        return 0;
+    }
+
+    if (count == 0 || frames == nullptr) {
+        return 0;
+    }
+
+    // 打印批量发送信息
+    if (verbose) {
+        std::cout << "  >>> Batch Sending " << count << " CAN Frames <<<" << std::endl;
+        for (uint32_t i = 0; i < count && i < 10; i++) { // 最多显示前10个
+            uint32_t can_id = GET_ID(frames[i].frame.can_id);
+            std::cout << "    [" << i << "] CAN_ID=0x" << std::hex << std::setw(3) << std::setfill('0')
+                      << can_id << std::dec << " DLC=" << static_cast<int>(frames[i].frame.can_dlc) << " Data=";
+            for (uint8_t j = 0; j < frames[i].frame.can_dlc && j < 8; j++) {
+                std::cout << std::hex << std::setw(2) << std::setfill('0')
+                          << static_cast<int>(frames[i].frame.data[j]) << " ";
+            }
+            std::cout << std::dec << std::endl;
+        }
+        if (count > 10) {
+            std::cout << "    ... and " << (count - 10) << " more frames" << std::endl;
+        }
+    }
+
+    // 使用 ZLG SDK 的队列发送功能（一次发送多个帧）
+    uint32_t ret = ZCAN_Transmit(direct_zlg_config.channel_handle, const_cast<ZCAN_Transmit_Data*>(frames), count);
+
+    if (verbose) {
+        std::cout << "    Batch Result: " << ret << "/" << count << " frames sent" << std::endl;
+        ReadAndDisplayCanStatus(direct_zlg_config.channel_handle);
+    }
+
+    return ret;
 }
 
 // 发送使能命令

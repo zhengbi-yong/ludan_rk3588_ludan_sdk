@@ -105,6 +105,29 @@ if(DEFINED ENV{ROS_DISTRO})
             # Rename the binary to motor_controller_with_enable
             set_target_properties(motor_controller_with_enable_ros2 PROPERTIES OUTPUT_NAME motor_controller_with_enable)
 
+            # Build zlg_stability_test with ZLG CANFDNET SDK
+            add_executable(zlg_stability_test low_level/zlg_stability_test.cpp)
+
+            # Set include directories
+            target_include_directories(zlg_stability_test PRIVATE
+                "${ZLG_SDK_DIR}/src"
+                "${ZLG_SDK_DIR}/src/zlgcan"
+            )
+
+            # Set RPATH for runtime library search
+            set_target_properties(zlg_stability_test PROPERTIES
+                INSTALL_RPATH "${ZLG_SDK_DIR}/lib/linux_x64"
+                BUILD_WITH_INSTALL_RPATH TRUE
+            )
+
+            # Link libraries - ZLG CANFDNET
+            target_link_libraries(zlg_stability_test
+                "${ZLG_SDK_DIR}/lib/linux_x64/libCANFDNET.so"
+                pthread
+            )
+
+            message(STATUS "Building zlg_stability_test with ZLG CANFDNET support")
+
             # Build motor_controller_with_enable_zhengbi with ROS2 and xixilowcmd support
             add_executable(motor_controller_with_enable_zhengbi_ros2 low_level/motor_controller_with_enable_zhengbi.cpp)
 

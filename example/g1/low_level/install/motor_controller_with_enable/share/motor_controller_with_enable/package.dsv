@@ -1,3 +1,6 @@
+source;share/motor_controller_with_enable/hook/cmake_prefix_path.ps1
+source;share/motor_controller_with_enable/hook/cmake_prefix_path.dsv
+source;share/motor_controller_with_enable/hook/cmake_prefix_path.sh
 source;share/motor_controller_with_enable/local_setup.bash
 source;share/motor_controller_with_enable/local_setup.dsv
 source;share/motor_controller_with_enable/local_setup.ps1

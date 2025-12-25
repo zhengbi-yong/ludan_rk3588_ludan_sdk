@@ -1,0 +1,58 @@
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+                 from /home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:35:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+  584 |         struct {
+      |                ^
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp: In function ‘MotorResponse ParseMotorResponse(const ZCAN_Receive_Data&)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::pos’ [-Wmissing-field-initializers]
+  527 |     MotorResponse resp = {0};
+      |                            ^
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::vel’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::torque’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::raw_pos’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::raw_vel’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::raw_torque’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::temp’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::status’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::timestamp’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:527:28: warning: missing initializer for member ‘MotorResponse::valid’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp: In function ‘void ReadAndDisplayCanStatusDetailed(CHANNEL_HANDLE, bool)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:683:33: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+  683 |         if (status.regTECounter >= 256) std::cout << " [!!!] Bus-Off";
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp: In function ‘MotorResponse ParseMotorResponseFromFD(const ZCAN_ReceiveFD_Data&)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::pos’ [-Wmissing-field-initializers]
+ 1042 |     MotorResponse resp = {0};
+      |                            ^
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::vel’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::torque’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::raw_pos’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::raw_vel’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::raw_torque’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::temp’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::status’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::timestamp’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1042:28: warning: missing initializer for member ‘MotorResponse::valid’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp: In function ‘void CANReceiveThread(CHANNEL_HANDLE, uint8_t, bool)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::pos’ [-Wmissing-field-initializers]
+ 1210 |                         MotorResponse resp = {0};
+      |                                                ^
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::vel’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::torque’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::raw_pos’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::raw_vel’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::raw_torque’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::temp’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::status’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::timestamp’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:1210:48: warning: missing initializer for member ‘MotorResponse::valid’ [-Wmissing-field-initializers]
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp: At global scope:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:880:12: warning: ‘int SendDirectCANFrameBatch(const ZCAN_Transmit_Data*, uint32_t, bool)’ defined but not used [-Wunused-function]
+  880 | static int SendDirectCANFrameBatch(const ZCAN_Transmit_Data* frames, uint32_t count, bool verbose = false) {
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:669:13: warning: ‘void ReadAndDisplayCanStatusDetailed(CHANNEL_HANDLE, bool)’ defined but not used [-Wunused-function]
+  669 | static void ReadAndDisplayCanStatusDetailed(CHANNEL_HANDLE channel_handle, bool explain = true) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:42:13: warning: ‘void DisableZlgDebugOutput()’ defined but not used [-Wunused-function]
+   42 | static void DisableZlgDebugOutput() {
+      |             ^~~~~~~~~~~~~~~~~~~~~

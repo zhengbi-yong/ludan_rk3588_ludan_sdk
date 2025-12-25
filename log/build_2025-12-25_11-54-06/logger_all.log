@@ -1,0 +1,94 @@
+[0.135s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--cmake-clean-cache']
+[0.135s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=True, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f94efbe80>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f950dd210>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f950dd210>>)
+[0.333s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.333s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.333s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.333s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.333s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.333s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.333s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/linaro/ludan_sdk'
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.333s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.334s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.349s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.349s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.489s] DEBUG:colcon.colcon_core.package_identification:Package '.' with type 'cmake' and name 'unitree_sdk2'
+[0.490s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.490s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.490s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.490s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.490s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.517s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.518s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.521s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 3 installed packages in /home/linaro/controller_ws/install
+[0.523s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 273 installed packages in /opt/ros/humble
+[0.549s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.598s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'cmake_args' from command line to 'None'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'cmake_target' from command line to 'None'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'cmake_clean_cache' from command line to 'True'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'cmake_clean_first' from command line to 'False'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'cmake_force_configure' from command line to 'False'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'ament_cmake_args' from command line to 'None'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'catkin_cmake_args' from command line to 'None'
+[0.599s] Level 5:colcon.colcon_core.verb:set package 'unitree_sdk2' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.599s] DEBUG:colcon.colcon_core.verb:Building package 'unitree_sdk2' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/linaro/ludan_sdk/build/unitree_sdk2', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': True, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/linaro/ludan_sdk/install/unitree_sdk2', 'merge_install': False, 'path': '/home/linaro/ludan_sdk', 'symlink_install': False, 'test_result_base': None}
+[0.599s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.601s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.601s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/linaro/ludan_sdk'
+[0.604s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.605s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.605s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.615s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/linaro/ludan_sdk/build/unitree_sdk2': /usr/bin/cmake /home/linaro/ludan_sdk -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/unitree_sdk2
+[2.660s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/linaro/ludan_sdk/build/unitree_sdk2' returned '0': /usr/bin/cmake /home/linaro/ludan_sdk -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/unitree_sdk2
+[2.667s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/linaro/ludan_sdk/build/unitree_sdk2': /usr/bin/cmake --build /home/linaro/ludan_sdk/build/unitree_sdk2 -- -j8 -l8
+[134.154s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/linaro/ludan_sdk/build/unitree_sdk2' returned '0': /usr/bin/cmake --build /home/linaro/ludan_sdk/build/unitree_sdk2 -- -j8 -l8
+[134.171s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/linaro/ludan_sdk/build/unitree_sdk2': /usr/bin/cmake --install /home/linaro/ludan_sdk/build/unitree_sdk2
+[134.362s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(unitree_sdk2)
+[134.370s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2' for CMake module files
+[134.371s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2' for CMake config files
+[134.372s] Level 1:colcon.colcon_core.shell:create_environment_hook('unitree_sdk2', 'cmake_prefix_path')
+[134.372s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/hook/cmake_prefix_path.ps1'
+[134.374s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/hook/cmake_prefix_path.dsv'
+[134.374s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/hook/cmake_prefix_path.sh'
+[134.376s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2/lib'
+[134.376s] Level 1:colcon.colcon_core.shell:create_environment_hook('unitree_sdk2', 'ld_library_path_lib')
+[134.376s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/hook/ld_library_path_lib.ps1'
+[134.377s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/hook/ld_library_path_lib.dsv'
+[134.378s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/hook/ld_library_path_lib.sh'
+[134.379s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2/bin'
+[134.379s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2/lib/pkgconfig/unitree_sdk2.pc'
+[134.380s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2/lib/python3.10/site-packages'
+[134.380s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/install/unitree_sdk2/bin'
+[134.381s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/package.ps1'
+[134.383s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/package.dsv'
+[134.384s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/package.sh'
+[134.385s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/package.bash'
+[134.386s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/install/unitree_sdk2/share/unitree_sdk2/package.zsh'
+[134.388s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/linaro/ludan_sdk/install/unitree_sdk2/share/colcon-core/packages/unitree_sdk2)
+[134.388s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[134.389s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[134.389s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[134.389s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[134.413s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/linaro/ludan_sdk/build/unitree_sdk2' returned '0': /usr/bin/cmake --install /home/linaro/ludan_sdk/build/unitree_sdk2
+[134.420s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[134.420s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[134.420s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[134.430s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[134.431s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/install/local_setup.ps1'
+[134.432s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/linaro/ludan_sdk/install/_local_setup_util_ps1.py'
+[134.435s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/install/setup.ps1'
+[134.437s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/install/local_setup.sh'
+[134.438s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/linaro/ludan_sdk/install/_local_setup_util_sh.py'
+[134.439s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/install/setup.sh'
+[134.441s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/install/local_setup.bash'
+[134.441s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/install/setup.bash'
+[134.443s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/install/local_setup.zsh'
+[134.444s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/install/setup.zsh'

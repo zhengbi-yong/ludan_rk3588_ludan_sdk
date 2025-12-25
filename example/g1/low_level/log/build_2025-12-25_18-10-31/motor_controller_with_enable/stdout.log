@@ -1,0 +1,26 @@
+Consolidate compiler generated dependencies of target enable_motor_publisher
+[ 16%] Building CXX object CMakeFiles/enable_motor_publisher.dir/enable_motor_publisher.cpp.o
+[ 50%] Built target motor_controller_with_enable
+[ 83%] Built target motor_control_example
+[100%] Linking CXX executable enable_motor_publisher
+[100%] Built target enable_motor_publisher
+-- Install configuration: "Release"
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/motor_controller_with_enable
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/motor_control_example
+-- Installing: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/enable_motor_publisher
+-- Set runtime path of "/home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/enable_motor_publisher" to ""
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/ament_index/resource_index/package_run_dependencies/motor_controller_with_enable
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/ament_index/resource_index/parent_prefix_path/motor_controller_with_enable
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/ament_prefix_path.sh
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/path.sh
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/path.dsv
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.bash
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.sh
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.zsh
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.dsv
+-- Installing: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/package.dsv
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/ament_index/resource_index/packages/motor_controller_with_enable
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/cmake/motor_controller_with_enableConfig.cmake
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/cmake/motor_controller_with_enableConfig-version.cmake
+-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/package.xml

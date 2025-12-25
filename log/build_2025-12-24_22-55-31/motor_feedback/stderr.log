@@ -1,0 +1,10 @@
+In file included from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.h:19,
+                 from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.c:4:
+/home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__struct.h:22:10: fatal error: builtin_interfaces/msg/detail/time__struct.h: No such file or directory
+   22 | #include "builtin_interfaces/msg/detail/time__struct.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/motor_feedback__rosidl_generator_c.dir/build.make:105: CMakeFiles/motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.c.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:217: CMakeFiles/motor_feedback__rosidl_generator_c.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+gmake: *** [Makefile:146: all] Error 2

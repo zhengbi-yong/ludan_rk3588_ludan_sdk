@@ -1,0 +1,75 @@
+[0.013s] Invoking command in '/home/linaro/ludan_sdk/build/motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/controller_ws/src/motor_feedback -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/motor_feedback
+[0.050s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.257s] -- Found rclcpp: 16.0.16 (/opt/ros/humble/share/rclcpp/cmake)
+[0.290s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.293s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.301s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.313s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.329s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.370s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.371s] -- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.478s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.544s] -- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)
+[0.977s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[1.536s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.778s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.828s] -- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)
+[1.879s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[1.880s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10
+[1.880s] -- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.10.so
+[1.921s] -- Configuring done
+[1.964s] -- Generating done
+[1.982s] -- Build files have been written to: /home/linaro/ludan_sdk/build/motor_feedback
+[1.998s] Invoked command in '/home/linaro/ludan_sdk/build/motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/controller_ws/src/motor_feedback -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/motor_feedback
+[2.004s] Invoking command in '/home/linaro/ludan_sdk/build/motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/build/motor_feedback -- -j8 -l8
+[2.106s] [  2%] Generating C code for ROS interfaces
+[2.115s] [  2%] Built target ament_cmake_python_copy_motor_feedback
+[2.132s] [  5%] Generating C++ code for ROS interfaces
+[2.429s] running egg_info
+[2.429s] writing motor_feedback.egg-info/PKG-INFO
+[2.430s] writing dependency_links to motor_feedback.egg-info/dependency_links.txt
+[2.430s] writing top-level names to motor_feedback.egg-info/top_level.txt
+[2.432s] reading manifest file 'motor_feedback.egg-info/SOURCES.txt'
+[2.433s] writing manifest file 'motor_feedback.egg-info/SOURCES.txt'
+[2.502s] [  5%] Built target ament_cmake_python_build_motor_feedback_egg
+[2.752s] [  8%] Building C object CMakeFiles/motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.c.o
+[2.775s] [  8%] Built target motor_feedback__cpp
+[2.785s] In file included from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.h:19,
+[2.785s]                  from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.c:4:
+[2.785s] /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__struct.h:22:10: fatal error: builtin_interfaces/msg/detail/time__struct.h: No such file or directory
+[2.785s]    22 | #include "builtin_interfaces/msg/detail/time__struct.h"
+[2.785s]       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[2.785s] compilation terminated.
+[2.787s] gmake[2]: *** [CMakeFiles/motor_feedback__rosidl_generator_c.dir/build.make:105: CMakeFiles/motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.c.o] Error 1
+[2.788s] gmake[1]: *** [CMakeFiles/Makefile2:217: CMakeFiles/motor_feedback__rosidl_generator_c.dir/all] Error 2
+[2.788s] gmake[1]: *** Waiting for unfinished jobs....
+[2.790s] [ 11%] Generating C++ type support for eProsima Fast-RTPS
+[2.801s] [ 17%] Generating C++ type support dispatch for ROS interfaces
+[2.801s] [ 17%] Generating C++ introspection for ROS interfaces
+[3.388s] [ 20%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/motor_feedback/msg/motor_feedback__type_support.cpp.o
+[3.401s] [ 22%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/motor_feedback/msg/detail/motor_feedback__type_support.cpp.o
+[3.417s] [ 25%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/motor_feedback/msg/detail/dds_fastrtps/motor_feedback__type_support.cpp.o
+[3.478s] In file included from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_typesupport_cpp/motor_feedback/msg/motor_feedback__type_support.cpp:7:
+[3.479s] /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_cpp/motor_feedback/msg/detail/motor_feedback__struct.hpp:20:10: fatal error: builtin_interfaces/msg/detail/time__struct.hpp: No such file or directory
+[3.479s]    20 | #include "builtin_interfaces/msg/detail/time__struct.hpp"
+[3.480s]       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[3.480s] compilation terminated.
+[3.485s] In file included from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_typesupport_fastrtps_cpp/motor_feedback/msg/detail/motor_feedback__rosidl_typesupport_fastrtps_cpp.hpp:11,
+[3.486s]                  from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_typesupport_fastrtps_cpp/motor_feedback/msg/detail/dds_fastrtps/motor_feedback__type_support.cpp:4:
+[3.486s] /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_cpp/motor_feedback/msg/detail/motor_feedback__struct.hpp:20:10: fatal error: builtin_interfaces/msg/detail/time__struct.hpp: No such file or directory
+[3.487s]    20 | #include "builtin_interfaces/msg/detail/time__struct.hpp"
+[3.487s]       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[3.487s] compilation terminated.
+[3.487s] gmake[2]: *** [CMakeFiles/motor_feedback__rosidl_typesupport_cpp.dir/build.make:86: CMakeFiles/motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/motor_feedback/msg/motor_feedback__type_support.cpp.o] Error 1
+[3.487s] gmake[1]: *** [CMakeFiles/Makefile2:399: CMakeFiles/motor_feedback__rosidl_typesupport_cpp.dir/all] Error 2
+[3.487s] gmake[2]: *** [CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/build.make:91: CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/motor_feedback/msg/detail/dds_fastrtps/motor_feedback__type_support.cpp.o] Error 1
+[3.487s] gmake[1]: *** [CMakeFiles/Makefile2:295: CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/all] Error 2
+[3.498s] In file included from /home/linaro/ludan_sdk/build/motor_feedback/rosidl_typesupport_introspection_cpp/motor_feedback/msg/detail/motor_feedback__type_support.cpp:12:
+[3.498s] /home/linaro/ludan_sdk/build/motor_feedback/rosidl_generator_cpp/motor_feedback/msg/detail/motor_feedback__struct.hpp:20:10: fatal error: builtin_interfaces/msg/detail/time__struct.hpp: No such file or directory
+[3.498s]    20 | #include "builtin_interfaces/msg/detail/time__struct.hpp"
+[3.498s]       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[3.498s] compilation terminated.
+[3.501s] gmake[2]: *** [CMakeFiles/motor_feedback__rosidl_typesupport_introspection_cpp.dir/build.make:91: CMakeFiles/motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/motor_feedback/msg/detail/motor_feedback__type_support.cpp.o] Error 1
+[3.501s] gmake[1]: *** [CMakeFiles/Makefile2:373: CMakeFiles/motor_feedback__rosidl_typesupport_introspection_cpp.dir/all] Error 2
+[3.502s] gmake: *** [Makefile:146: all] Error 2
+[3.506s] Invoked command in '/home/linaro/ludan_sdk/build/motor_feedback' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/build/motor_feedback -- -j8 -l8

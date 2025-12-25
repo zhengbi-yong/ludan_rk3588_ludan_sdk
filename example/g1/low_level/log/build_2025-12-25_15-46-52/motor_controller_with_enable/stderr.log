@@ -1,0 +1,14 @@
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:35:10: fatal error: CANFDNET.h: No such file or directory
+   35 | #include "CANFDNET.h"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/motor_controller_with_enable.dir/build.make:76: CMakeFiles/motor_controller_with_enable.dir/motor_controller_with_enable.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/motor_controller_with_enable.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+/home/linaro/ludan_sdk/example/g1/low_level/motor_control_example.cpp: In function ‘xixilowcmd::msg::LowCmd create_single_motor_command(int, float, float, float, float, float)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_control_example.cpp:88:23: error: ‘using _motor_cmd_type = struct std::array<xixilowcmd::msg::MotorCmd_<std::allocator<void> >, 30>’ {aka ‘struct std::array<xixilowcmd::msg::MotorCmd_<std::allocator<void> >, 30>’} has no member named ‘push_back’
+   88 |         cmd.motor_cmd.push_back(motor_cmd);
+      |                       ^~~~~~~~~
+gmake[2]: *** [CMakeFiles/motor_control_example.dir/build.make:76: CMakeFiles/motor_control_example.dir/motor_control_example.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:165: CMakeFiles/motor_control_example.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

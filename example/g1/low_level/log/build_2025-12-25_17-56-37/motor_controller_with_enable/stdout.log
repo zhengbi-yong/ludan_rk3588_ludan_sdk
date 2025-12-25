@@ -1,0 +1,5 @@
+Consolidate compiler generated dependencies of target enable_motor_publisher
+[ 16%] Building CXX object CMakeFiles/enable_motor_publisher.dir/enable_motor_publisher.cpp.o
+[ 50%] Built target motor_control_example
+Consolidate compiler generated dependencies of target motor_controller_with_enable
+[ 83%] Built target motor_controller_with_enable

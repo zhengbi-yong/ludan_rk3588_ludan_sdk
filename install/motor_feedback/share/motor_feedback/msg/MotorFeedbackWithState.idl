@@ -1,0 +1,30 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from motor_feedback/msg/MotorFeedbackWithState.msg
+// generated code does not contain a copyright notice
+
+
+module motor_feedback {
+  module msg {
+    struct MotorFeedbackWithState {
+      @verbatim (language="comment", text=
+        "id,-1,或1-14")
+      int8 id;
+
+      @verbatim (language="comment", text=
+        "Motor position(rad/s)")
+      float position;
+
+      @verbatim (language="comment", text=
+        "Motor velocitie (rad/s)")
+      float velocity;
+
+      @verbatim (language="comment", text=
+        "Motor effort (torque in Nm)")
+      float effort;
+
+      @verbatim (language="comment", text=
+        "Motor state (error codes or status codes)")
+      uint8 state;
+    };
+  };
+};

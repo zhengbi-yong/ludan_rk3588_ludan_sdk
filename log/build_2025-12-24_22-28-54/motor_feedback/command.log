@@ -1,0 +1,2 @@
+Invoking command in '/home/linaro/ludan_sdk/build/motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/controller_ws/src/motor_feedback -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/motor_feedback
+Invoked command in '/home/linaro/ludan_sdk/build/motor_feedback' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/controller_ws/src/motor_feedback -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/motor_feedback

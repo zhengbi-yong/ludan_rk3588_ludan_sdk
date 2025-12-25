@@ -1,0 +1,300 @@
+[0.000000] (-) TimerEvent: {}
+[0.000920] (motor_feedback) JobQueued: {'identifier': 'motor_feedback', 'dependencies': OrderedDict()}
+[0.001268] (motor_feedback) JobStarted: {'identifier': 'motor_feedback'}
+[0.011120] (motor_feedback) JobProgress: {'identifier': 'motor_feedback', 'progress': 'cmake'}
+[0.011610] (motor_feedback) Command: {'cmd': ['/usr/bin/cmake', '/home/linaro/controller_ws/src/motor_feedback', '-DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/install/motor_feedback'], 'cwd': '/home/linaro/ludan_sdk/build/motor_feedback', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('GST_V4L2_PREFERRED_FOURCC', 'NV12:YU12:NV16:YUY2'), ('USER', 'linaro'), ('SSH_CLIENT', '192.168.0.250 49455 22'), ('CLAUDE_CODE_ENTRYPOINT', 'cli'), ('GIT_EDITOR', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '2'), ('USB_FUNCS', 'adb'), ('LD_LIBRARY_PATH', '/home/linaro/controller_ws/install/xixilowcmd/lib:/home/linaro/controller_ws/install/motor_feedback/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/linaro'), ('OLDPWD', '/home/linaro'), ('NVM_BIN', '/home/linaro/.nvm/versions/node/v24.12.0/bin'), ('SSH_TTY', '/dev/pts/18'), ('NVM_INC', '/home/linaro/.nvm/versions/node/v24.12.0/include/node'), ('GST_INSPECT_NO_COLORS', '1'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'glm-4.7'), ('USB_VENDOR_ID', '0x2207'), ('GST_MPP_NO_RGA', '1'), ('ROS_PYTHON_VERSION', '3'), ('COGL_DRIVER', 'gles2'), ('PLAYBIN2_PREFERRED_VIDEOSINK', 'xvimagesink'), ('LC_CTYPE', 'UTF-8'), ('USB_PRODUCT', 'rk3xxx'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('QTWEBENGINE_CHROMIUM_FLAGS', '--no-sandbox --disable-es3-gl-context --ignore-gpu-blacklist --ignore-gpu-blocklist --enable-accelerated-video-decode'), ('NVM_DIR', '/home/linaro/.nvm'), ('COLCON_PREFIX_PATH', '/home/linaro/controller_ws/install'), ('API_TIMEOUT_MS', '3000000'), ('GST_V4L2SRC_MAX_RESOLUTION', '3840x2160'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'linaro'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('ANTHROPIC_BASE_URL', 'https://open.bigmodel.cn/api/anthropic'), ('TERM', 'xterm-256color'), ('GST_GL_API', 'gles2'), ('XDG_SESSION_ID', 'c83'), ('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', 'delta'), ('GST_VIDEO_CONVERT_PREFERRED_FORMAT', 'NV12:NV16:I420:YUY2'), ('GST_V4L2SRC_RK_DEVICES', 'scale'), ('ROS_LOCALHOST_ONLY', '0'), ('XSERVER_FREEZE_DISPLAY', '/tmp/.freeze_xserver'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'glm-4.7'), ('PATH', '/home/linaro/.local/bin:/home/linaro/bin:/home/linaro/.local/bin:/home/linaro/.nvm/versions/node/v24.12.0/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GST_GL_PLATFORM', 'egl'), ('GST_DEBUG_NO_COLOR', '1'), ('GST_V4L2SRC_DEFAULT_DEVICE', '/dev/video-camera0'), ('ADBD_SHELL', '/bin/bash'), ('DISPLAY', ':0'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'en_US.UTF-8'), ('USB_MANUFACTURER', 'Rockchip'), ('ANTHROPIC_DEFAULT_HAIKU_MODEL', 'glm-4.5-air'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GST_V4L2_USE_LIBV4L2', '1'), ('AMENT_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/motor_feedback:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'ef9efeb8dccc474298c976660f083f98.Nmjw9VWQdJ074aH8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('PWD', '/home/linaro/ludan_sdk/build/motor_feedback'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.0.250 49455 192.168.0.198 22'), ('AUTOVIDEOSINK_PREFERRED', 'xvimagesink'), ('USB_FW_VERSION', '0x0310'), ('NVM_CD_FLAGS', ''), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('ADB_TCP_PORT', '5555'), ('PYTHONPATH', '/home/linaro/controller_ws/install/xixilowcmd/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/motor_feedback/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/motor_feedback:/opt/ros/humble')]), 'shell': False}
+[0.099104] (-) TimerEvent: {}
+[0.153586] (motor_feedback) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.199299] (-) TimerEvent: {}
+[0.299697] (-) TimerEvent: {}
+[0.312069] (motor_feedback) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.321214] (motor_feedback) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.399845] (-) TimerEvent: {}
+[0.500097] (-) TimerEvent: {}
+[0.504732] (motor_feedback) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.515115] (motor_feedback) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.515773] (motor_feedback) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.516348] (motor_feedback) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.519541] (motor_feedback) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.600217] (-) TimerEvent: {}
+[0.669359] (motor_feedback) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.700437] (-) TimerEvent: {}
+[0.708173] (motor_feedback) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.709126] (motor_feedback) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.711318] (motor_feedback) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.719677] (motor_feedback) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.800631] (-) TimerEvent: {}
+[0.901264] (-) TimerEvent: {}
+[0.973202] (motor_feedback) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[1.001406] (-) TimerEvent: {}
+[1.101850] (-) TimerEvent: {}
+[1.161967] (motor_feedback) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[1.166136] (motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.173985] (motor_feedback) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[1.201924] (-) TimerEvent: {}
+[1.221766] (motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.302031] (-) TimerEvent: {}
+[1.402254] (-) TimerEvent: {}
+[1.502616] (-) TimerEvent: {}
+[1.603113] (-) TimerEvent: {}
+[1.703528] (-) TimerEvent: {}
+[1.720564] (motor_feedback) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[1.803656] (-) TimerEvent: {}
+[1.904046] (-) TimerEvent: {}
+[2.004482] (-) TimerEvent: {}
+[2.077979] (motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.104657] (-) TimerEvent: {}
+[2.205012] (-) TimerEvent: {}
+[2.305313] (-) TimerEvent: {}
+[2.405873] (-) TimerEvent: {}
+[2.506271] (-) TimerEvent: {}
+[2.547719] (motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[2.585872] (motor_feedback) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[2.591320] (motor_feedback) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[2.606402] (-) TimerEvent: {}
+[2.669343] (motor_feedback) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/aarch64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[2.669891] (motor_feedback) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[2.670007] (motor_feedback) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[2.670081] (motor_feedback) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.10.so\n'}
+[2.699752] (motor_feedback) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[2.706567] (-) TimerEvent: {}
+[2.769793] (motor_feedback) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[2.789472] (motor_feedback) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[2.790406] (motor_feedback) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[2.793260] (motor_feedback) StdoutLine: {'line': b'-- Configuring done\n'}
+[2.806781] (-) TimerEvent: {}
+[2.826546] (motor_feedback) StdoutLine: {'line': b'-- Generating done\n'}
+[2.842176] (motor_feedback) StdoutLine: {'line': b'-- Build files have been written to: /home/linaro/ludan_sdk/build/motor_feedback\n'}
+[2.854073] (motor_feedback) CommandEnded: {'returncode': 0}
+[2.856399] (motor_feedback) JobProgress: {'identifier': 'motor_feedback', 'progress': 'build'}
+[2.859549] (motor_feedback) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/linaro/ludan_sdk/build/motor_feedback', '--', '-j8', '-l8'], 'cwd': '/home/linaro/ludan_sdk/build/motor_feedback', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('GST_V4L2_PREFERRED_FOURCC', 'NV12:YU12:NV16:YUY2'), ('USER', 'linaro'), ('SSH_CLIENT', '192.168.0.250 49455 22'), ('CLAUDE_CODE_ENTRYPOINT', 'cli'), ('GIT_EDITOR', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '2'), ('USB_FUNCS', 'adb'), ('LD_LIBRARY_PATH', '/home/linaro/controller_ws/install/xixilowcmd/lib:/home/linaro/controller_ws/install/motor_feedback/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/linaro'), ('OLDPWD', '/home/linaro'), ('NVM_BIN', '/home/linaro/.nvm/versions/node/v24.12.0/bin'), ('SSH_TTY', '/dev/pts/18'), ('NVM_INC', '/home/linaro/.nvm/versions/node/v24.12.0/include/node'), ('GST_INSPECT_NO_COLORS', '1'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'glm-4.7'), ('USB_VENDOR_ID', '0x2207'), ('GST_MPP_NO_RGA', '1'), ('ROS_PYTHON_VERSION', '3'), ('COGL_DRIVER', 'gles2'), ('PLAYBIN2_PREFERRED_VIDEOSINK', 'xvimagesink'), ('LC_CTYPE', 'UTF-8'), ('USB_PRODUCT', 'rk3xxx'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('QTWEBENGINE_CHROMIUM_FLAGS', '--no-sandbox --disable-es3-gl-context --ignore-gpu-blacklist --ignore-gpu-blocklist --enable-accelerated-video-decode'), ('NVM_DIR', '/home/linaro/.nvm'), ('COLCON_PREFIX_PATH', '/home/linaro/controller_ws/install'), ('API_TIMEOUT_MS', '3000000'), ('GST_V4L2SRC_MAX_RESOLUTION', '3840x2160'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'linaro'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('ANTHROPIC_BASE_URL', 'https://open.bigmodel.cn/api/anthropic'), ('TERM', 'xterm-256color'), ('GST_GL_API', 'gles2'), ('XDG_SESSION_ID', 'c83'), ('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', 'delta'), ('GST_VIDEO_CONVERT_PREFERRED_FORMAT', 'NV12:NV16:I420:YUY2'), ('GST_V4L2SRC_RK_DEVICES', 'scale'), ('ROS_LOCALHOST_ONLY', '0'), ('XSERVER_FREEZE_DISPLAY', '/tmp/.freeze_xserver'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'glm-4.7'), ('PATH', '/home/linaro/.local/bin:/home/linaro/bin:/home/linaro/.local/bin:/home/linaro/.nvm/versions/node/v24.12.0/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GST_GL_PLATFORM', 'egl'), ('GST_DEBUG_NO_COLOR', '1'), ('GST_V4L2SRC_DEFAULT_DEVICE', '/dev/video-camera0'), ('ADBD_SHELL', '/bin/bash'), ('DISPLAY', ':0'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'en_US.UTF-8'), ('USB_MANUFACTURER', 'Rockchip'), ('ANTHROPIC_DEFAULT_HAIKU_MODEL', 'glm-4.5-air'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GST_V4L2_USE_LIBV4L2', '1'), ('AMENT_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/motor_feedback:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'ef9efeb8dccc474298c976660f083f98.Nmjw9VWQdJ074aH8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('PWD', '/home/linaro/ludan_sdk/build/motor_feedback'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.0.250 49455 192.168.0.198 22'), ('AUTOVIDEOSINK_PREFERRED', 'xvimagesink'), ('USB_FW_VERSION', '0x0310'), ('NVM_CD_FLAGS', ''), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('ADB_TCP_PORT', '5555'), ('PYTHONPATH', '/home/linaro/controller_ws/install/xixilowcmd/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/motor_feedback/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/motor_feedback:/opt/ros/humble')]), 'shell': False}
+[2.906873] (-) TimerEvent: {}
+[2.921157] (motor_feedback) StdoutLine: {'line': b'[  3%] Generating C code for ROS interfaces\n'}
+[2.931727] (motor_feedback) StdoutLine: {'line': b'[  6%] Generating C++ code for ROS interfaces\n'}
+[2.973645] (motor_feedback) StdoutLine: {'line': b'[  6%] Built target ament_cmake_python_copy_motor_feedback\n'}
+[3.007104] (-) TimerEvent: {}
+[3.107514] (-) TimerEvent: {}
+[3.207955] (-) TimerEvent: {}
+[3.308680] (-) TimerEvent: {}
+[3.383103] (motor_feedback) StdoutLine: {'line': b'running egg_info\n'}
+[3.384160] (motor_feedback) StdoutLine: {'line': b'creating motor_feedback.egg-info\n'}
+[3.384956] (motor_feedback) StdoutLine: {'line': b'writing motor_feedback.egg-info/PKG-INFO\n'}
+[3.385539] (motor_feedback) StdoutLine: {'line': b'writing dependency_links to motor_feedback.egg-info/dependency_links.txt\n'}
+[3.386010] (motor_feedback) StdoutLine: {'line': b'writing top-level names to motor_feedback.egg-info/top_level.txt\n'}
+[3.386495] (motor_feedback) StdoutLine: {'line': b"writing manifest file 'motor_feedback.egg-info/SOURCES.txt'\n"}
+[3.392300] (motor_feedback) StdoutLine: {'line': b"reading manifest file 'motor_feedback.egg-info/SOURCES.txt'\n"}
+[3.397087] (motor_feedback) StdoutLine: {'line': b"writing manifest file 'motor_feedback.egg-info/SOURCES.txt'\n"}
+[3.402332] (motor_feedback) StdoutLine: {'line': b'[  6%] Built target motor_feedback__cpp\n'}
+[3.408971] (-) TimerEvent: {}
+[3.415250] (motor_feedback) StdoutLine: {'line': b'[  9%] Generating C++ introspection for ROS interfaces\n'}
+[3.420512] (motor_feedback) StdoutLine: {'line': b'[ 12%] Generating C++ type support for eProsima Fast-RTPS\n'}
+[3.424079] (motor_feedback) StdoutLine: {'line': b'[ 16%] Building C object CMakeFiles/motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback_with_state__functions.c.o\n'}
+[3.432661] (motor_feedback) StdoutLine: {'line': b'[ 19%] Generating C++ type support dispatch for ROS interfaces\n'}
+[3.483474] (motor_feedback) StdoutLine: {'line': b'[ 19%] Built target ament_cmake_python_build_motor_feedback_egg\n'}
+[3.496075] (motor_feedback) StdoutLine: {'line': b'[ 22%] Linking C shared library libmotor_feedback__rosidl_generator_c.so\n'}
+[3.509052] (-) TimerEvent: {}
+[3.573572] (motor_feedback) StdoutLine: {'line': b'[ 22%] Built target motor_feedback__rosidl_generator_c\n'}
+[3.604373] (motor_feedback) StdoutLine: {'line': b'[ 25%] Generating C type support dispatch for ROS interfaces\n'}
+[3.609267] (-) TimerEvent: {}
+[3.619419] (motor_feedback) StdoutLine: {'line': b'[ 29%] Generating C type support for eProsima Fast-RTPS\n'}
+[3.628813] (motor_feedback) StdoutLine: {'line': b'[ 32%] Generating C introspection for ROS interfaces\n'}
+[3.709450] (-) TimerEvent: {}
+[3.809916] (-) TimerEvent: {}
+[3.890064] (motor_feedback) StdoutLine: {'line': b'[ 35%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/motor_feedback/msg/detail/motor_feedback_with_state__type_support.cpp.o\n'}
+[3.894055] (motor_feedback) StdoutLine: {'line': b'[ 38%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/motor_feedback/msg/motor_feedback_with_state__type_support.cpp.o\n'}
+[3.910082] (-) TimerEvent: {}
+[3.950416] (motor_feedback) StdoutLine: {'line': b'[ 41%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/motor_feedback/msg/detail/dds_fastrtps/motor_feedback_with_state__type_support.cpp.o\n'}
+[4.010270] (-) TimerEvent: {}
+[4.114125] (-) TimerEvent: {}
+[4.214646] (-) TimerEvent: {}
+[4.297227] (motor_feedback) StdoutLine: {'line': b'[ 45%] Building C object CMakeFiles/motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/motor_feedback/msg/detail/motor_feedback_with_state__type_support.c.o\n'}
+[4.314837] (-) TimerEvent: {}
+[4.346415] (motor_feedback) StdoutLine: {'line': b'[ 48%] Linking CXX shared library libmotor_feedback__rosidl_typesupport_cpp.so\n'}
+[4.374218] (motor_feedback) StdoutLine: {'line': b'[ 51%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/motor_feedback/msg/detail/motor_feedback_with_state__type_support_c.cpp.o\n'}
+[4.387143] (motor_feedback) StdoutLine: {'line': b'[ 54%] Linking C shared library libmotor_feedback__rosidl_typesupport_introspection_c.so\n'}
+[4.414955] (-) TimerEvent: {}
+[4.446392] (motor_feedback) StdoutLine: {'line': b'[ 54%] Built target motor_feedback__rosidl_typesupport_introspection_c\n'}
+[4.453461] (motor_feedback) StdoutLine: {'line': b'[ 54%] Built target motor_feedback__rosidl_typesupport_cpp\n'}
+[4.515085] (-) TimerEvent: {}
+[4.615350] (-) TimerEvent: {}
+[4.715346] (motor_feedback) StdoutLine: {'line': b'[ 58%] Linking CXX shared library libmotor_feedback__rosidl_typesupport_fastrtps_cpp.so\n'}
+[4.715609] (-) TimerEvent: {}
+[4.739714] (motor_feedback) StdoutLine: {'line': b'[ 61%] Linking CXX shared library libmotor_feedback__rosidl_typesupport_introspection_cpp.so\n'}
+[4.815856] (-) TimerEvent: {}
+[4.823681] (motor_feedback) StdoutLine: {'line': b'[ 64%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/motor_feedback/msg/motor_feedback_with_state__type_support.cpp.o\n'}
+[4.852511] (motor_feedback) StdoutLine: {'line': b'[ 64%] Built target motor_feedback__rosidl_typesupport_introspection_cpp\n'}
+[4.898942] (motor_feedback) StdoutLine: {'line': b'[ 67%] Linking CXX shared library libmotor_feedback__rosidl_typesupport_c.so\n'}
+[4.916078] (-) TimerEvent: {}
+[4.948182] (motor_feedback) StdoutLine: {'line': b'[ 70%] Linking CXX shared library libmotor_feedback__rosidl_typesupport_fastrtps_c.so\n'}
+[4.957823] (motor_feedback) StdoutLine: {'line': b'[ 70%] Built target motor_feedback__rosidl_typesupport_fastrtps_cpp\n'}
+[5.009712] (motor_feedback) StdoutLine: {'line': b'[ 70%] Built target motor_feedback__rosidl_typesupport_c\n'}
+[5.016380] (-) TimerEvent: {}
+[5.085321] (motor_feedback) StdoutLine: {'line': b'[ 70%] Built target motor_feedback__rosidl_typesupport_fastrtps_c\n'}
+[5.116559] (-) TimerEvent: {}
+[5.129554] (motor_feedback) StdoutLine: {'line': b'[ 70%] Built target motor_feedback\n'}
+[5.170831] (motor_feedback) StdoutLine: {'line': b'[ 74%] Generating Python code for ROS interfaces\n'}
+[5.216790] (-) TimerEvent: {}
+[5.317329] (-) TimerEvent: {}
+[5.417861] (-) TimerEvent: {}
+[5.518314] (-) TimerEvent: {}
+[5.618737] (-) TimerEvent: {}
+[5.719104] (-) TimerEvent: {}
+[5.819448] (-) TimerEvent: {}
+[5.872965] (motor_feedback) StdoutLine: {'line': b'[ 74%] Built target motor_feedback__py\n'}
+[5.915434] (motor_feedback) StdoutLine: {'line': b'[ 77%] Building C object CMakeFiles/motor_feedback__rosidl_generator_py.dir/rosidl_generator_py/motor_feedback/msg/_motor_feedback_with_state_s.c.o\n'}
+[5.919631] (-) TimerEvent: {}
+[6.020175] (-) TimerEvent: {}
+[6.108591] (motor_feedback) StdoutLine: {'line': b'[ 80%] Linking C shared library rosidl_generator_py/motor_feedback/libmotor_feedback__rosidl_generator_py.so\n'}
+[6.120239] (-) TimerEvent: {}
+[6.183030] (motor_feedback) StdoutLine: {'line': b'[ 80%] Built target motor_feedback__rosidl_generator_py\n'}
+[6.217458] (motor_feedback) StdoutLine: {'line': b'[ 83%] Building C object CMakeFiles/motor_feedback__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/motor_feedback/_motor_feedback_s.ep.rosidl_typesupport_c.c.o\n'}
+[6.220444] (-) TimerEvent: {}
+[6.221708] (motor_feedback) StdoutLine: {'line': b'[ 87%] Building C object CMakeFiles/motor_feedback__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/motor_feedback/_motor_feedback_s.ep.rosidl_typesupport_introspection_c.c.o\n'}
+[6.235280] (motor_feedback) StdoutLine: {'line': b'[ 90%] Building C object CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/motor_feedback/_motor_feedback_s.ep.rosidl_typesupport_fastrtps_c.c.o\n'}
+[6.320670] (-) TimerEvent: {}
+[6.360909] (motor_feedback) StdoutLine: {'line': b'[ 93%] Linking C shared library rosidl_generator_py/motor_feedback/motor_feedback_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.373201] (motor_feedback) StdoutLine: {'line': b'[ 96%] Linking C shared library rosidl_generator_py/motor_feedback/motor_feedback_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.378727] (motor_feedback) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/motor_feedback/motor_feedback_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.400860] (motor_feedback) StdoutLine: {'line': b'[100%] Built target motor_feedback__rosidl_typesupport_c__pyext\n'}
+[6.420871] (-) TimerEvent: {}
+[6.426531] (motor_feedback) StdoutLine: {'line': b'[100%] Built target motor_feedback__rosidl_typesupport_introspection_c__pyext\n'}
+[6.435907] (motor_feedback) StdoutLine: {'line': b'[100%] Built target motor_feedback__rosidl_typesupport_fastrtps_c__pyext\n'}
+[6.451523] (motor_feedback) CommandEnded: {'returncode': 0}
+[6.454603] (motor_feedback) JobProgress: {'identifier': 'motor_feedback', 'progress': 'install'}
+[6.467191] (motor_feedback) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/linaro/ludan_sdk/build/motor_feedback'], 'cwd': '/home/linaro/ludan_sdk/build/motor_feedback', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('GST_V4L2_PREFERRED_FOURCC', 'NV12:YU12:NV16:YUY2'), ('USER', 'linaro'), ('SSH_CLIENT', '192.168.0.250 49455 22'), ('CLAUDE_CODE_ENTRYPOINT', 'cli'), ('GIT_EDITOR', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '2'), ('USB_FUNCS', 'adb'), ('LD_LIBRARY_PATH', '/home/linaro/controller_ws/install/xixilowcmd/lib:/home/linaro/controller_ws/install/motor_feedback/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/linaro'), ('OLDPWD', '/home/linaro'), ('NVM_BIN', '/home/linaro/.nvm/versions/node/v24.12.0/bin'), ('SSH_TTY', '/dev/pts/18'), ('NVM_INC', '/home/linaro/.nvm/versions/node/v24.12.0/include/node'), ('GST_INSPECT_NO_COLORS', '1'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'glm-4.7'), ('USB_VENDOR_ID', '0x2207'), ('GST_MPP_NO_RGA', '1'), ('ROS_PYTHON_VERSION', '3'), ('COGL_DRIVER', 'gles2'), ('PLAYBIN2_PREFERRED_VIDEOSINK', 'xvimagesink'), ('LC_CTYPE', 'UTF-8'), ('USB_PRODUCT', 'rk3xxx'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('QTWEBENGINE_CHROMIUM_FLAGS', '--no-sandbox --disable-es3-gl-context --ignore-gpu-blacklist --ignore-gpu-blocklist --enable-accelerated-video-decode'), ('NVM_DIR', '/home/linaro/.nvm'), ('COLCON_PREFIX_PATH', '/home/linaro/controller_ws/install'), ('API_TIMEOUT_MS', '3000000'), ('GST_V4L2SRC_MAX_RESOLUTION', '3840x2160'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'linaro'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('ANTHROPIC_BASE_URL', 'https://open.bigmodel.cn/api/anthropic'), ('TERM', 'xterm-256color'), ('GST_GL_API', 'gles2'), ('XDG_SESSION_ID', 'c83'), ('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', 'delta'), ('GST_VIDEO_CONVERT_PREFERRED_FORMAT', 'NV12:NV16:I420:YUY2'), ('GST_V4L2SRC_RK_DEVICES', 'scale'), ('ROS_LOCALHOST_ONLY', '0'), ('XSERVER_FREEZE_DISPLAY', '/tmp/.freeze_xserver'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'glm-4.7'), ('PATH', '/home/linaro/.local/bin:/home/linaro/bin:/home/linaro/.local/bin:/home/linaro/.nvm/versions/node/v24.12.0/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GST_GL_PLATFORM', 'egl'), ('GST_DEBUG_NO_COLOR', '1'), ('GST_V4L2SRC_DEFAULT_DEVICE', '/dev/video-camera0'), ('ADBD_SHELL', '/bin/bash'), ('DISPLAY', ':0'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'en_US.UTF-8'), ('USB_MANUFACTURER', 'Rockchip'), ('ANTHROPIC_DEFAULT_HAIKU_MODEL', 'glm-4.5-air'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GST_V4L2_USE_LIBV4L2', '1'), ('AMENT_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/motor_feedback:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'ef9efeb8dccc474298c976660f083f98.Nmjw9VWQdJ074aH8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('PWD', '/home/linaro/ludan_sdk/build/motor_feedback'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.0.250 49455 192.168.0.198 22'), ('AUTOVIDEOSINK_PREFERRED', 'xvimagesink'), ('USB_FW_VERSION', '0x0310'), ('NVM_CD_FLAGS', ''), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('ADB_TCP_PORT', '5555'), ('PYTHONPATH', '/home/linaro/controller_ws/install/xixilowcmd/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/motor_feedback/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/motor_feedback:/opt/ros/humble')]), 'shell': False}
+[6.478632] (motor_feedback) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[6.479083] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/ament_index/resource_index/rosidl_interfaces/motor_feedback\n'}
+[6.479365] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback\n'}
+[6.479532] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg\n'}
+[6.479607] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/motor_feedback_with_state.h\n'}
+[6.479721] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/rosidl_generator_c__visibility_control.h\n'}
+[6.479792] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail\n'}
+[6.479907] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__type_support.h\n'}
+[6.480038] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__functions.h\n'}
+[6.480121] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__functions.c\n'}
+[6.480269] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__struct.h\n'}
+[6.480353] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/library_path.sh\n'}
+[6.480425] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/library_path.dsv\n'}
+[6.480494] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_generator_c.so\n'}
+[6.481020] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_generator_c.so" to ""\n'}
+[6.481104] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback\n'}
+[6.481175] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg\n'}
+[6.481246] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[6.481316] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail\n'}
+[6.481385] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__rosidl_typesupport_fastrtps_c.h\n'}
+[6.481579] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_fastrtps_c.so\n'}
+[6.482036] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[6.482115] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback\n'}
+[6.482185] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg\n'}
+[6.482253] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail\n'}
+[6.482439] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__type_support.c\n'}
+[6.482519] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__rosidl_typesupport_introspection_c.h\n'}
+[6.482590] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[6.482661] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_introspection_c.so\n'}
+[6.482729] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_introspection_c.so" to ""\n'}
+[6.482858] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_c.so\n'}
+[6.483313] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_c.so" to ""\n'}
+[6.483390] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback\n'}
+[6.483461] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg\n'}
+[6.483546] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[6.483619] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail\n'}
+[6.483690] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__type_support.hpp\n'}
+[6.483762] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__traits.hpp\n'}
+[6.483833] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__struct.hpp\n'}
+[6.484172] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__builder.hpp\n'}
+[6.484245] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/motor_feedback_with_state.hpp\n'}
+[6.484461] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback\n'}
+[6.484536] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg\n'}
+[6.484606] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[6.484677] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail\n'}
+[6.484744] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[6.484816] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/dds_fastrtps\n'}
+[6.484886] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_fastrtps_cpp.so\n'}
+[6.485347] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[6.485433] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback\n'}
+[6.485506] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg\n'}
+[6.485575] (motor_feedback) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail\n'}
+[6.485644] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__type_support.cpp\n'}
+[6.485773] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/include/motor_feedback/motor_feedback/msg/detail/motor_feedback_with_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[6.486028] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_introspection_cpp.so\n'}
+[6.486107] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[6.486180] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_cpp.so\n'}
+[6.486250] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_typesupport_cpp.so" to ""\n'}
+[6.486318] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/pythonpath.sh\n'}
+[6.486387] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/pythonpath.dsv\n'}
+[6.487115] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback-0.0.0-py3.10.egg-info\n'}
+[6.487318] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback-0.0.0-py3.10.egg-info/dependency_links.txt\n'}
+[6.487411] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback-0.0.0-py3.10.egg-info/top_level.txt\n'}
+[6.487486] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback-0.0.0-py3.10.egg-info/SOURCES.txt\n'}
+[6.487556] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback-0.0.0-py3.10.egg-info/PKG-INFO\n'}
+[6.487624] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback\n'}
+[6.487688] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.487757] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/libmotor_feedback__rosidl_generator_py.so\n'}
+[6.487822] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/_motor_feedback_s.ep.rosidl_typesupport_c.c\n'}
+[6.487887] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.487953] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/_motor_feedback_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[6.488044] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.488116] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg\n'}
+[6.488200] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg/_motor_feedback_with_state_s.c\n'}
+[6.488270] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg/_motor_feedback_with_state.py\n'}
+[6.488337] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg/__init__.py\n'}
+[6.488401] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/_motor_feedback_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[6.488467] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/__init__.py\n'}
+[6.520941] (-) TimerEvent: {}
+[6.548128] (motor_feedback) StdoutLine: {'line': b"Listing '/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback'...\n"}
+[6.548387] (motor_feedback) StdoutLine: {'line': b"Compiling '/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/__init__.py'...\n"}
+[6.548469] (motor_feedback) StdoutLine: {'line': b"Listing '/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg'...\n"}
+[6.548538] (motor_feedback) StdoutLine: {'line': b"Compiling '/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg/__init__.py'...\n"}
+[6.548622] (motor_feedback) StdoutLine: {'line': b"Compiling '/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/msg/_motor_feedback_with_state.py'...\n"}
+[6.559136] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.560280] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so" to ""\n'}
+[6.560428] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.560512] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so" to ""\n'}
+[6.560595] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[6.561345] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/local/lib/python3.10/dist-packages/motor_feedback/motor_feedback_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so" to ""\n'}
+[6.562059] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_generator_py.so\n'}
+[6.563221] (motor_feedback) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/install/motor_feedback/lib/libmotor_feedback__rosidl_generator_py.so" to ""\n'}
+[6.564735] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/msg/MotorFeedbackWithState.idl\n'}
+[6.564979] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/msg/MotorFeedbackWithState.msg\n'}
+[6.565617] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/ament_index/resource_index/package_run_dependencies/motor_feedback\n'}
+[6.565704] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/ament_index/resource_index/parent_prefix_path/motor_feedback\n'}
+[6.565773] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/ament_prefix_path.sh\n'}
+[6.565841] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/ament_prefix_path.dsv\n'}
+[6.565907] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/path.sh\n'}
+[6.565971] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/environment/path.dsv\n'}
+[6.566036] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/local_setup.bash\n'}
+[6.566100] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/local_setup.sh\n'}
+[6.566194] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/local_setup.zsh\n'}
+[6.566261] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/local_setup.dsv\n'}
+[6.566327] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/package.dsv\n'}
+[6.566391] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/ament_index/resource_index/packages/motor_feedback\n'}
+[6.566458] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_generator_cExport.cmake\n'}
+[6.566523] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_generator_cExport-noconfig.cmake\n'}
+[6.566588] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[6.566651] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[6.566716] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_introspection_cExport.cmake\n'}
+[6.566792] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[6.566894] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_cExport.cmake\n'}
+[6.566968] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[6.567033] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_generator_cppExport.cmake\n'}
+[6.567100] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[6.567164] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[6.567243] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[6.567310] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[6.567377] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_cppExport.cmake\n'}
+[6.567442] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedback__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[6.567867] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_generator_pyExport.cmake\n'}
+[6.567957] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/export_motor_feedback__rosidl_generator_pyExport-noconfig.cmake\n'}
+[6.568030] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[6.568102] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/rosidl_cmake-extras.cmake\n'}
+[6.568172] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[6.568242] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[6.568310] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[6.568381] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[6.568450] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[6.568518] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedbackConfig.cmake\n'}
+[6.568589] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/cmake/motor_feedbackConfig-version.cmake\n'}
+[6.569091] (motor_feedback) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/install/motor_feedback/share/motor_feedback/package.xml\n'}
+[6.570034] (motor_feedback) CommandEnded: {'returncode': 0}
+[6.603923] (motor_feedback) JobEnded: {'identifier': 'motor_feedback', 'rc': 0}
+[6.605425] (-) EventReactorShutdown: {}

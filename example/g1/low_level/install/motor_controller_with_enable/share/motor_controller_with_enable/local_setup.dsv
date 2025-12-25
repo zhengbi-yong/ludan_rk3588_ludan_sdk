@@ -1,0 +1,2 @@
+source;share/motor_controller_with_enable/environment/ament_prefix_path.sh
+source;share/motor_controller_with_enable/environment/path.sh

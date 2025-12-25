@@ -1,0 +1,13 @@
+[  2%] Built target motor_feedback__cpp
+[  2%] Built target ament_cmake_python_copy_motor_feedback
+[  8%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/motor_feedback/msg/detail/motor_feedback__type_support.cpp.o
+[  8%] Building C object CMakeFiles/motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/motor_feedback/msg/detail/motor_feedback__functions.c.o
+[ 11%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/motor_feedback/msg/motor_feedback__type_support.cpp.o
+[ 14%] Building CXX object CMakeFiles/motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/motor_feedback/msg/detail/dds_fastrtps/motor_feedback__type_support.cpp.o
+running egg_info
+writing motor_feedback.egg-info/PKG-INFO
+writing dependency_links to motor_feedback.egg-info/dependency_links.txt
+writing top-level names to motor_feedback.egg-info/top_level.txt
+reading manifest file 'motor_feedback.egg-info/SOURCES.txt'
+writing manifest file 'motor_feedback.egg-info/SOURCES.txt'
+[ 14%] Built target ament_cmake_python_build_motor_feedback_egg

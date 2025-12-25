@@ -1,0 +1,14 @@
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller.cpp: In member function ‘void ROS2_to_TCP_Bridge::SendMotorCommandTCP(const MotorCommandCan&)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller.cpp:663:33: warning: converting a packed ‘ROS2_to_TCP_Bridge::SendMotorCommandTCP(const MotorCommandCan&)::MotorCommandPacket’ pointer (alignment 1) to a ‘uint32_t’ {aka ‘unsigned int’} pointer (alignment 4) may result in an unaligned pointer value [-Waddress-of-packed-member]
+  663 |         packet.crc32 = Crc32Core((uint32_t*)&packet, sizeof(packet) / sizeof(uint32_t) - 1);
+      |                        ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller.cpp:642:16: note: defined here
+  642 |         struct MotorCommandPacket {
+      |                ^~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable_zhengbi.cpp: In member function ‘void ROS2_to_TCP_Bridge::SendMotorCommandTCP(const MotorCommandCan&)’:
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable_zhengbi.cpp:870:33: warning: converting a packed ‘ROS2_to_TCP_Bridge::SendMotorCommandTCP(const MotorCommandCan&)::MotorCommandPacket’ pointer (alignment 1) to a ‘uint32_t’ {aka ‘unsigned int’} pointer (alignment 4) may result in an unaligned pointer value [-Waddress-of-packed-member]
+  870 |         packet.crc32 = Crc32Core((uint32_t*)&packet, sizeof(packet) / sizeof(uint32_t) - 1);
+      |                        ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable_zhengbi.cpp:851:16: note: defined here
+  851 |         struct MotorCommandPacket {
+      |                ^~~~~~~~~~~~~~~~~~

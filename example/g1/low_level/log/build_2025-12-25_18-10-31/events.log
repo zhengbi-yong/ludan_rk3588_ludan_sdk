@@ -1,0 +1,118 @@
+[0.000000] (-) TimerEvent: {}
+[0.000419] (motor_controller_with_enable) JobQueued: {'identifier': 'motor_controller_with_enable', 'dependencies': OrderedDict()}
+[0.000814] (motor_controller_with_enable) JobStarted: {'identifier': 'motor_controller_with_enable'}
+[0.017096] (motor_controller_with_enable) JobProgress: {'identifier': 'motor_controller_with_enable', 'progress': 'cmake'}
+[0.018055] (motor_controller_with_enable) JobProgress: {'identifier': 'motor_controller_with_enable', 'progress': 'build'}
+[0.019064] (motor_controller_with_enable) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable', '--', '-j8', '-l8'], 'cwd': '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable', 'env': OrderedDict([('PYTHON_BASIC_REPL', '1'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('GST_V4L2_PREFERRED_FOURCC', 'NV12:YU12:NV16:YUY2'), ('USER', 'linaro'), ('SSH_CLIENT', '192.168.0.237 60646 22'), ('CLAUDE_CODE_ENTRYPOINT', 'cli'), ('GIT_EDITOR', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('GIT_ASKPASS', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('USB_FUNCS', 'adb'), ('LD_LIBRARY_PATH', '/home/linaro/controller_ws/install/motor_feedback/lib:/home/linaro/controller_ws/install/xixilowcmd/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('BROWSER', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/linaro'), ('TERM_PROGRAM_VERSION', '1.107.1'), ('NVM_BIN', '/home/linaro/.nvm/versions/node/v24.12.0/bin'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-86b64b1e-cb0a-452b-9709-29c4c60597e7.sock'), ('NVM_INC', '/home/linaro/.nvm/versions/node/v24.12.0/include/node'), ('GST_INSPECT_NO_COLORS', '1'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'glm-4.7'), ('USB_VENDOR_ID', '0x2207'), ('GST_MPP_NO_RGA', '1'), ('ROS_PYTHON_VERSION', '3'), ('COGL_DRIVER', 'gles2'), ('PLAYBIN2_PREFERRED_VIDEOSINK', 'xvimagesink'), ('VSCODE_GIT_ASKPASS_MAIN', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/node'), ('SSL_CERT_FILE', '/usr/lib/ssl/certs/ca-certificates.crt'), ('VSCODE_PYTHON_AUTOACTIVATE_GUARD', '1'), ('USB_PRODUCT', 'rk3xxx'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('QTWEBENGINE_CHROMIUM_FLAGS', '--no-sandbox --disable-es3-gl-context --ignore-gpu-blacklist --ignore-gpu-blocklist --enable-accelerated-video-decode'), ('NVM_DIR', '/home/linaro/.nvm'), ('COLCON_PREFIX_PATH', '/home/linaro/controller_ws/install'), ('API_TIMEOUT_MS', '3000000'), ('GST_V4L2SRC_MAX_RESOLUTION', '3840x2160'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'linaro'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('CLAUDE_CODE_SSE_PORT', '40745'), ('XDG_SESSION_CLASS', 'user'), ('ANTHROPIC_BASE_URL', 'https://open.bigmodel.cn/api/anthropic'), ('TERM', 'xterm-256color'), ('GST_GL_API', 'gles2'), ('XDG_SESSION_ID', 'c5'), ('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', 'delta'), ('GST_VIDEO_CONVERT_PREFERRED_FORMAT', 'NV12:NV16:I420:YUY2'), ('GST_V4L2SRC_RK_DEVICES', 'scale'), ('ROS_LOCALHOST_ONLY', '0'), ('XSERVER_FREEZE_DISPLAY', '/tmp/.freeze_xserver'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'glm-4.7'), ('PATH', '/home/linaro/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/linaro/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/bin/remote-cli:/home/linaro/.local/bin:/home/linaro/bin:/home/linaro/.local/bin:/home/linaro/.nvm/versions/node/v24.12.0/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GST_GL_PLATFORM', 'egl'), ('GST_DEBUG_NO_COLOR', '1'), ('SSL_CERT_DIR', '/usr/lib/ssl/certs'), ('GST_V4L2SRC_DEFAULT_DEVICE', '/dev/video-camera0'), ('ADBD_SHELL', '/bin/bash'), ('DISPLAY', ':0'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'en_US.UTF-8'), ('PYTHONSTARTUP', '/home/linaro/.vscode-server/data/User/workspaceStorage/ac9e08301f524bb7d84285bd43e54648-2/ms-python.python/pythonrc.py'), ('USB_MANUFACTURER', 'Rockchip'), ('ANTHROPIC_DEFAULT_HAIKU_MODEL', 'glm-4.5-air'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-2bd4f01b53.sock'), ('TERM_PROGRAM', 'vscode'), ('GST_V4L2_USE_LIBV4L2', '1'), ('AMENT_PREFIX_PATH', '/home/linaro/controller_ws/install/motor_feedback:/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'ef9efeb8dccc474298c976660f083f98.Nmjw9VWQdJ074aH8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('PWD', '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable'), ('ENABLE_IDE_INTEGRATION', 'true'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.0.237 60646 192.168.0.198 22'), ('AUTOVIDEOSINK_PREFERRED', 'xvimagesink'), ('USB_FW_VERSION', '0x0310'), ('NVM_CD_FLAGS', ''), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('ADB_TCP_PORT', '5555'), ('PYTHONPATH', '/home/linaro/controller_ws/install/motor_feedback/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/xixilowcmd/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/linaro/controller_ws/install/motor_feedback:/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/opt/ros/humble')]), 'shell': False}
+[0.099646] (-) TimerEvent: {}
+[0.118112] (motor_controller_with_enable) StdoutLine: {'line': b'Consolidate compiler generated dependencies of target enable_motor_publisher\n'}
+[0.134654] (motor_controller_with_enable) StdoutLine: {'line': b'[ 16%] Building CXX object CMakeFiles/enable_motor_publisher.dir/enable_motor_publisher.cpp.o\n'}
+[0.143892] (motor_controller_with_enable) StdoutLine: {'line': b'[ 50%] Built target motor_controller_with_enable\n'}
+[0.152082] (motor_controller_with_enable) StdoutLine: {'line': b'[ 83%] Built target motor_control_example\n'}
+[0.199853] (-) TimerEvent: {}
+[0.300362] (-) TimerEvent: {}
+[0.403934] (-) TimerEvent: {}
+[0.504327] (-) TimerEvent: {}
+[0.604581] (-) TimerEvent: {}
+[0.704831] (-) TimerEvent: {}
+[0.805231] (-) TimerEvent: {}
+[0.905646] (-) TimerEvent: {}
+[1.005895] (-) TimerEvent: {}
+[1.106138] (-) TimerEvent: {}
+[1.206389] (-) TimerEvent: {}
+[1.306618] (-) TimerEvent: {}
+[1.406854] (-) TimerEvent: {}
+[1.507087] (-) TimerEvent: {}
+[1.607442] (-) TimerEvent: {}
+[1.707891] (-) TimerEvent: {}
+[1.808368] (-) TimerEvent: {}
+[1.908904] (-) TimerEvent: {}
+[2.009402] (-) TimerEvent: {}
+[2.109854] (-) TimerEvent: {}
+[2.210290] (-) TimerEvent: {}
+[2.310782] (-) TimerEvent: {}
+[2.411260] (-) TimerEvent: {}
+[2.511746] (-) TimerEvent: {}
+[2.612219] (-) TimerEvent: {}
+[2.712694] (-) TimerEvent: {}
+[2.813190] (-) TimerEvent: {}
+[2.913553] (-) TimerEvent: {}
+[3.013795] (-) TimerEvent: {}
+[3.114035] (-) TimerEvent: {}
+[3.214282] (-) TimerEvent: {}
+[3.314525] (-) TimerEvent: {}
+[3.414885] (-) TimerEvent: {}
+[3.515356] (-) TimerEvent: {}
+[3.615858] (-) TimerEvent: {}
+[3.716366] (-) TimerEvent: {}
+[3.816857] (-) TimerEvent: {}
+[3.917324] (-) TimerEvent: {}
+[4.017724] (-) TimerEvent: {}
+[4.117990] (-) TimerEvent: {}
+[4.218239] (-) TimerEvent: {}
+[4.318564] (-) TimerEvent: {}
+[4.419424] (-) TimerEvent: {}
+[4.519865] (-) TimerEvent: {}
+[4.620148] (-) TimerEvent: {}
+[4.720421] (-) TimerEvent: {}
+[4.820659] (-) TimerEvent: {}
+[4.921033] (-) TimerEvent: {}
+[5.021528] (-) TimerEvent: {}
+[5.121970] (-) TimerEvent: {}
+[5.222417] (-) TimerEvent: {}
+[5.322938] (-) TimerEvent: {}
+[5.423396] (-) TimerEvent: {}
+[5.523839] (-) TimerEvent: {}
+[5.624274] (-) TimerEvent: {}
+[5.724751] (-) TimerEvent: {}
+[5.825250] (-) TimerEvent: {}
+[5.925730] (-) TimerEvent: {}
+[6.026224] (-) TimerEvent: {}
+[6.126654] (-) TimerEvent: {}
+[6.227085] (-) TimerEvent: {}
+[6.327519] (-) TimerEvent: {}
+[6.427996] (-) TimerEvent: {}
+[6.528410] (-) TimerEvent: {}
+[6.628899] (-) TimerEvent: {}
+[6.729327] (-) TimerEvent: {}
+[6.829772] (-) TimerEvent: {}
+[6.930185] (-) TimerEvent: {}
+[7.030629] (-) TimerEvent: {}
+[7.131089] (-) TimerEvent: {}
+[7.231549] (-) TimerEvent: {}
+[7.331976] (-) TimerEvent: {}
+[7.432405] (-) TimerEvent: {}
+[7.532895] (-) TimerEvent: {}
+[7.633349] (-) TimerEvent: {}
+[7.733869] (-) TimerEvent: {}
+[7.779665] (motor_controller_with_enable) StdoutLine: {'line': b'[100%] Linking CXX executable enable_motor_publisher\n'}
+[7.833975] (-) TimerEvent: {}
+[7.934233] (-) TimerEvent: {}
+[7.987069] (motor_controller_with_enable) StdoutLine: {'line': b'[100%] Built target enable_motor_publisher\n'}
+[8.004097] (motor_controller_with_enable) CommandEnded: {'returncode': 0}
+[8.005146] (motor_controller_with_enable) JobProgress: {'identifier': 'motor_controller_with_enable', 'progress': 'install'}
+[8.018423] (motor_controller_with_enable) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable'], 'cwd': '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable', 'env': OrderedDict([('PYTHON_BASIC_REPL', '1'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('GST_V4L2_PREFERRED_FOURCC', 'NV12:YU12:NV16:YUY2'), ('USER', 'linaro'), ('SSH_CLIENT', '192.168.0.237 60646 22'), ('CLAUDE_CODE_ENTRYPOINT', 'cli'), ('GIT_EDITOR', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('GIT_ASKPASS', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('USB_FUNCS', 'adb'), ('LD_LIBRARY_PATH', '/home/linaro/controller_ws/install/motor_feedback/lib:/home/linaro/controller_ws/install/xixilowcmd/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('BROWSER', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/linaro'), ('TERM_PROGRAM_VERSION', '1.107.1'), ('NVM_BIN', '/home/linaro/.nvm/versions/node/v24.12.0/bin'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-86b64b1e-cb0a-452b-9709-29c4c60597e7.sock'), ('NVM_INC', '/home/linaro/.nvm/versions/node/v24.12.0/include/node'), ('GST_INSPECT_NO_COLORS', '1'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'glm-4.7'), ('USB_VENDOR_ID', '0x2207'), ('GST_MPP_NO_RGA', '1'), ('ROS_PYTHON_VERSION', '3'), ('COGL_DRIVER', 'gles2'), ('PLAYBIN2_PREFERRED_VIDEOSINK', 'xvimagesink'), ('VSCODE_GIT_ASKPASS_MAIN', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/node'), ('SSL_CERT_FILE', '/usr/lib/ssl/certs/ca-certificates.crt'), ('VSCODE_PYTHON_AUTOACTIVATE_GUARD', '1'), ('USB_PRODUCT', 'rk3xxx'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('QTWEBENGINE_CHROMIUM_FLAGS', '--no-sandbox --disable-es3-gl-context --ignore-gpu-blacklist --ignore-gpu-blocklist --enable-accelerated-video-decode'), ('NVM_DIR', '/home/linaro/.nvm'), ('COLCON_PREFIX_PATH', '/home/linaro/controller_ws/install'), ('API_TIMEOUT_MS', '3000000'), ('GST_V4L2SRC_MAX_RESOLUTION', '3840x2160'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'linaro'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('CLAUDE_CODE_SSE_PORT', '40745'), ('XDG_SESSION_CLASS', 'user'), ('ANTHROPIC_BASE_URL', 'https://open.bigmodel.cn/api/anthropic'), ('TERM', 'xterm-256color'), ('GST_GL_API', 'gles2'), ('XDG_SESSION_ID', 'c5'), ('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', 'delta'), ('GST_VIDEO_CONVERT_PREFERRED_FORMAT', 'NV12:NV16:I420:YUY2'), ('GST_V4L2SRC_RK_DEVICES', 'scale'), ('ROS_LOCALHOST_ONLY', '0'), ('XSERVER_FREEZE_DISPLAY', '/tmp/.freeze_xserver'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'glm-4.7'), ('PATH', '/home/linaro/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/linaro/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/bin/remote-cli:/home/linaro/.local/bin:/home/linaro/bin:/home/linaro/.local/bin:/home/linaro/.nvm/versions/node/v24.12.0/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GST_GL_PLATFORM', 'egl'), ('GST_DEBUG_NO_COLOR', '1'), ('SSL_CERT_DIR', '/usr/lib/ssl/certs'), ('GST_V4L2SRC_DEFAULT_DEVICE', '/dev/video-camera0'), ('ADBD_SHELL', '/bin/bash'), ('DISPLAY', ':0'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'en_US.UTF-8'), ('PYTHONSTARTUP', '/home/linaro/.vscode-server/data/User/workspaceStorage/ac9e08301f524bb7d84285bd43e54648-2/ms-python.python/pythonrc.py'), ('USB_MANUFACTURER', 'Rockchip'), ('ANTHROPIC_DEFAULT_HAIKU_MODEL', 'glm-4.5-air'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-2bd4f01b53.sock'), ('TERM_PROGRAM', 'vscode'), ('GST_V4L2_USE_LIBV4L2', '1'), ('AMENT_PREFIX_PATH', '/home/linaro/controller_ws/install/motor_feedback:/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'ef9efeb8dccc474298c976660f083f98.Nmjw9VWQdJ074aH8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('PWD', '/home/linaro/ludan_sdk/example/g1/low_level/build/motor_controller_with_enable'), ('ENABLE_IDE_INTEGRATION', 'true'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.0.237 60646 192.168.0.198 22'), ('AUTOVIDEOSINK_PREFERRED', 'xvimagesink'), ('USB_FW_VERSION', '0x0310'), ('NVM_CD_FLAGS', ''), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('ADB_TCP_PORT', '5555'), ('PYTHONPATH', '/home/linaro/controller_ws/install/motor_feedback/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/xixilowcmd/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/linaro/controller_ws/install/motor_feedback:/home/linaro/controller_ws/install/xixilowcmd_pub:/home/linaro/controller_ws/install/xixilowcmd:/opt/ros/humble')]), 'shell': False}
+[8.034440] (-) TimerEvent: {}
+[8.044430] (motor_controller_with_enable) StdoutLine: {'line': b'-- Install configuration: "Release"\n'}
+[8.048841] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/motor_controller_with_enable\n'}
+[8.051604] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/motor_control_example\n'}
+[8.052233] (motor_controller_with_enable) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/enable_motor_publisher\n'}
+[8.052750] (motor_controller_with_enable) StdoutLine: {'line': b'-- Set runtime path of "/home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/lib/motor_controller_with_enable/enable_motor_publisher" to ""\n'}
+[8.053267] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/ament_index/resource_index/package_run_dependencies/motor_controller_with_enable\n'}
+[8.053737] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/ament_index/resource_index/parent_prefix_path/motor_controller_with_enable\n'}
+[8.054192] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/ament_prefix_path.sh\n'}
+[8.054632] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/ament_prefix_path.dsv\n'}
+[8.055067] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/path.sh\n'}
+[8.055507] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/environment/path.dsv\n'}
+[8.055905] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.bash\n'}
+[8.056311] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.sh\n'}
+[8.057149] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.zsh\n'}
+[8.057551] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/local_setup.dsv\n'}
+[8.058323] (motor_controller_with_enable) StdoutLine: {'line': b'-- Installing: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/package.dsv\n'}
+[8.058957] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/ament_index/resource_index/packages/motor_controller_with_enable\n'}
+[8.059893] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/cmake/motor_controller_with_enableConfig.cmake\n'}
+[8.060638] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/cmake/motor_controller_with_enableConfig-version.cmake\n'}
+[8.061724] (motor_controller_with_enable) StdoutLine: {'line': b'-- Up-to-date: /home/linaro/ludan_sdk/example/g1/low_level/install/motor_controller_with_enable/share/motor_controller_with_enable/package.xml\n'}
+[8.062741] (motor_controller_with_enable) CommandEnded: {'returncode': 0}
+[8.112010] (motor_controller_with_enable) JobEnded: {'identifier': 'motor_controller_with_enable', 'rc': 0}
+[8.113371] (-) EventReactorShutdown: {}

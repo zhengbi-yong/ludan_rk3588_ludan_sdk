@@ -358,7 +358,143 @@ static inline int get_can_id_for_motor(int motor_id) {
     return 0;
 }
 
-// ==================== MIT 电机响应解析 ====================
+// ==================== DM Motor Format Decoder ====================
+// DM motor feedback format:
+// D[0] D[1] D[2] D[3] D[4] D[5] D[6] D[7]
+// ID|ERR<<4, POS[15:8], POS[7:0], VEL[11:4], VEL[3:0]|T[11:8], T[7:0], T_MOS, T_Rotor
+//
+// Encoding (float to fixed-point linear mapping):
+//   POS_16bit  = position_rad  / (PMAX - PMIN) * 2^16 + 2^15
+//   VEL_12bit = velocity_rad_s / (VMAX - VMIN) * 2^12 + 2^11
+//   T_12bit   = torque_nm      / (TMAX - TMIN) * 2^12 + 2^11
+//
+// Decoding (fixed-point to float):
+//   position_rad  = (POS_16bit  - 2^15) / 2^16 * (PMAX - PMIN)
+//   velocity_rad_s = (VEL_12bit - 2^11) / 2^12 * (VMAX - VMIN)
+//   torque_nm      = (T_12bit   - 2^11) / 2^12 * (TMAX - TMIN)
+
+class DMMotorFrameDecoder {
+public:
+    // DM motor range limits (adjust based on your motor specifications)
+    static constexpr double PMAX = 3.14159;    // Position max: π rad (180°)
+    static constexpr double PMIN = -3.14159;   // Position min: -π rad (-180°)
+    static constexpr double VMAX = 45.0;       // Velocity max: 45 rad/s
+    static constexpr double VMIN = -45.0;      // Velocity min: -45 rad/s
+    static constexpr double TMAX = 20.0;       // Torque max: 20 Nm
+    static constexpr double TMIN = -20.0;      // Torque min: -20 Nm
+
+    struct DMMotorData {
+        // Raw CAN frame data
+        uint8_t raw[8];      // Raw CAN data bytes
+
+        // Decoded values (DM motor format, fixed-point)
+        uint8_t  motor_id;   // Motor ID (4 bits from D[0] lower)
+        uint8_t  error;      // Error code (4 bits from D[0] upper)
+        int16_t  position;   // Position raw (16-bit signed from D[1], D[2])
+        int16_t  velocity;   // Velocity raw (12-bit signed from D[3], D[4] lower)
+        int16_t  torque;     // Torque raw (12-bit signed from D[4] upper, D[5])
+        int8_t   temp_mos;   // MOS temperature (8-bit signed from D[6])
+        int8_t   temp_rotor; // Rotor temperature (8-bit signed from D[7])
+
+        // Decoded physical values (linear mapping from fixed-point)
+        double position_rad;   // Position in radians
+        double velocity_rad_s; // Velocity in rad/s
+        double torque_nm;      // Torque in Nm
+    };
+
+    // Decode CAN FD frame (DM motor format with physical value conversion)
+    static DMMotorData DecodeFrameFD(const ZCAN_ReceiveFD_Data& frame) {
+        DMMotorData data;
+        memset(&data, 0, sizeof(data));
+
+        const uint8_t* d = frame.frame.data;
+
+        // Store raw data
+        memcpy(data.raw, d, 8);
+
+        // D[0]: ID[3:0] | ERR[3:0]<<4
+        data.motor_id = d[0] & 0x0F;           // Lower 4 bits: Motor ID
+        data.error = (d[0] >> 4) & 0x0F;       // Upper 4 bits: Error code
+
+        // D[1-2]: Position (16-bit signed)
+        // Encoding: POS_16bit = position_rad / (PMAX - PMIN) * 2^16 + 2^15
+        // Decoding: position_rad = (POS_16bit - 2^15) / 2^16 * (PMAX - PMIN)
+        data.position = static_cast<int16_t>((d[1] << 8) | d[2]);
+        data.position_rad = (data.position - 32768.0) / 65536.0 * (PMAX - PMIN);
+
+        // D[3-4]: Velocity (12-bit signed)
+        // Encoding: VEL_12bit = velocity_rad_s / (VMAX - VMIN) * 2^12 + 2^11
+        // Decoding: velocity_rad_s = (VEL_12bit - 2^11) / 2^12 * (VMAX - VMIN)
+        int16_t vel_raw = ((d[3] & 0xFF) << 4) | (d[4] & 0x0F);
+        if (vel_raw & 0x800) {
+            vel_raw |= 0xF000;  // Sign extension for negative 12-bit values
+        }
+        data.velocity = vel_raw;
+        data.velocity_rad_s = (vel_raw - 2048.0) / 4096.0 * (VMAX - VMIN);
+
+        // D[4-5]: Torque (12-bit signed)
+        // Encoding: T_12bit = torque_nm / (TMAX - TMIN) * 2^12 + 2^11
+        // Decoding: torque_nm = (T_12bit - 2^11) / 2^12 * (TMAX - TMIN)
+        int16_t torque_raw = (((d[4] >> 4) & 0x0F) << 8) | d[5];
+        if (torque_raw & 0x800) {
+            torque_raw |= 0xF000;
+        }
+        data.torque = torque_raw;
+        data.torque_nm = (torque_raw - 2048.0) / 4096.0 * (TMAX - TMIN);
+
+        // D[6-7]: Temperatures
+        data.temp_mos = static_cast<int8_t>(d[6]);
+        data.temp_rotor = static_cast<int8_t>(d[7]);
+
+        return data;
+    }
+
+    // Format decoded data as string (physical values)
+    static std::string FormatDecoded(const DMMotorData& data) {
+        std::stringstream ss;
+        ss << "ID=" << std::setw(2) << (int)data.motor_id << " | ";
+        ss << "Pos=" << std::fixed << std::setprecision(3) << data.position_rad << " rad ";
+        ss << "(raw=" << data.position << ") | ";
+        ss << "Vel=" << std::setprecision(2) << data.velocity_rad_s << " rad/s ";
+        ss << "(raw=" << data.velocity << ") | ";
+        ss << "Tau=" << std::setprecision(2) << data.torque_nm << " Nm ";
+        ss << "(raw=" << data.torque << ") | ";
+        ss << "Tmos=" << std::setw(3) << (int)data.temp_mos << " | ";
+        ss << "Trt=" << std::setw(3) << (int)data.temp_rotor << " | ";
+        ss << "Err=0x" << std::hex << (int)data.error << std::dec;
+        return ss.str();
+    }
+
+    // Format raw data as hex string
+    static std::string FormatRaw(const DMMotorData& data) {
+        std::stringstream ss;
+        ss << "RAW: ";
+        for (int i = 0; i < 8; i++) {
+            ss << std::hex << std::setw(2) << std::setfill('0') << (int)data.raw[i];
+            if (i < 7) ss << " ";
+        }
+        ss << std::dec << std::setfill(' ');
+        return ss.str();
+    }
+
+    // Get error description
+    static std::string GetErrorDescription(uint8_t error) {
+        switch (error) {
+            case 0x0: return "OK/Disabled";
+            case 0x1: return "Enabled";
+            case 0x8: return "Over-voltage";
+            case 0x9: return "Under-voltage";
+            case 0xA: return "Over-current";
+            case 0xB: return "MOS Over-temp";
+            case 0xC: return "Coil Over-temp";
+            case 0xD: return "Comms Lost";
+            case 0xE: return "Overload";
+            default: return "Unknown(0x" + std::to_string(error) + ")";
+        }
+    }
+};
+
+// ==================== MIT 电机响应解析 (Legacy, 兼容保留) ====================
 // MIT 协议电机返回数据格式:
 // Bytes 0-1: Position (int16, ±12.5 rad -> ±32767)
 // Bytes 2-3: Velocity (int16, ±30 rad/s -> ±32767)
@@ -986,42 +1122,35 @@ static void CANReceiveThread(CHANNEL_HANDLE channel_handle, uint8_t channel, boo
                     std::cout << "  ===========================================" << std::endl;
                 }
 
-                // 如果是电机响应 (ID 1-30)，解析并保存
+                // 如果是电机响应 (ID 1-30)，使用 DM 格式解析并保存
                 if (can_id >= 1 && can_id <= 30) {
-                    MotorResponse resp = {0};
-                    resp.motor_id = can_id;
-                    resp.timestamp = receive_buffer[i].timestamp;
-
                     if (receive_buffer[i].frame.len >= 8) {
+                        // 使用 DM 格式解码器
+                        DMMotorFrameDecoder::DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(receive_buffer[i]);
+
                         // 打印原始数据流（始终显示，不受 verbose 控制）
-                        std::cout << "\n  [MOTOR_ID=" << can_id << "] Raw: ";
-                        for (uint8_t j = 0; j < receive_buffer[i].frame.len && j < 8; j++) {
-                            std::cout << std::hex << std::setw(2) << std::setfill('0') << std::uppercase
-                                      << static_cast<int>(receive_buffer[i].frame.data[j]) << " ";
+                        std::cout << "\n  [DM Motor ID=" << can_id << "] " << DMMotorFrameDecoder::FormatRaw(dm_data) << std::endl;
+
+                        // 打印解码后的数据
+                        std::cout << "  [DECODED] " << DMMotorFrameDecoder::FormatDecoded(dm_data) << std::endl;
+
+                        // 打印错误描述
+                        if (dm_data.error != 0x0 && dm_data.error != 0x1) {
+                            std::cout << "  [ERROR] " << DMMotorFrameDecoder::GetErrorDescription(dm_data.error) << std::endl;
                         }
-                        std::cout << std::dec << std::nouppercase << std::endl;
 
-                        // 解析位置 (int16)
-                        resp.raw_pos = static_cast<int16_t>(receive_buffer[i].frame.data[0] |
-                                                            (receive_buffer[i].frame.data[1] << 8));
-                        resp.pos = static_cast<float>(resp.raw_pos) * 12.5f / 32767.0f;
-
-                        // 解析速度 (int16)
-                        resp.raw_vel = static_cast<int16_t>(receive_buffer[i].frame.data[2] |
-                                                            (receive_buffer[i].frame.data[3] << 8));
-                        resp.vel = static_cast<float>(resp.raw_vel) * 30.0f / 32767.0f;
-
-                        // 解析力矩 (int16)
-                        resp.raw_torque = static_cast<int16_t>(receive_buffer[i].frame.data[4] |
-                                                              (receive_buffer[i].frame.data[5] << 8));
-                        resp.torque = static_cast<float>(resp.raw_torque) * 18.0f / 32767.0f;
-
-                        // 解析温度和状态
-                        resp.temp = receive_buffer[i].frame.data[6];
-                        resp.status = receive_buffer[i].frame.data[7];
-
-                        resp.valid = true;
                         motor_response_count_++;
+
+                        // 同时更新旧的 MotorResponse 结构（兼容保留）
+                        MotorResponse resp = {0};
+                        resp.motor_id = dm_data.motor_id;
+                        resp.timestamp = receive_buffer[i].timestamp;
+                        resp.raw_pos = dm_data.position;
+                        resp.raw_vel = dm_data.velocity;
+                        resp.raw_torque = dm_data.torque;
+                        resp.temp = dm_data.temp_mos;
+                        resp.status = dm_data.error;
+                        resp.valid = true;
 
                         // 更新最新状态
                         {
@@ -1030,7 +1159,9 @@ static void CANReceiveThread(CHANNEL_HANDLE channel_handle, uint8_t channel, boo
                         }
 
                         if (verbose) {
-                            PrintMotorResponse(resp);
+                            std::cout << "  [DM Format] Position: " << dm_data.position
+                                      << ", Velocity: " << dm_data.velocity
+                                      << ", Torque: " << dm_data.torque << std::endl;
                         }
                     }
                 }
@@ -1914,6 +2045,7 @@ int main(int argc, char* argv[]) {
         std::cout << "\nCAN Receive Mode (monitor CAN bus):" << std::endl;
         std::cout << "  --receive-only          Receive CAN frames only (no transmission)" << std::endl;
         std::cout << "  --receive-and-enable    Send enable command and then monitor responses" << std::endl;
+        std::cout << "  --receive-and-disable   Send disable command and then monitor responses" << std::endl;
         std::cout << "  --receive-duration <s>  Receive duration in seconds (0=infinite, default: 0)" << std::endl;
         std::cout << "\nExamples:" << std::endl;
         std::cout << "  # ROS2 mode - CAN2 with motor commands" << std::endl;
@@ -2006,6 +2138,13 @@ int main(int argc, char* argv[]) {
             params.motor_id_str = argv[++i];  // 保存为字符串，用于范围解析
             params.direct_motor_id = std::atoi(params.motor_id_str.c_str());  // 同时保存为整数
         }
+        else if (arg == "--receive-and-disable" && i + 1 < argc) {
+            params.receive_mode = true;
+            params.direct_mode = true;
+            params.direct_enable = false;  // disable 模式
+            params.motor_id_str = argv[++i];  // 保存为字符串，用于范围解析
+            params.direct_motor_id = std::atoi(params.motor_id_str.c_str());  // 同时保存为整数
+        }
         else if (arg == "--receive-duration" && i + 1 < argc) {
             params.receive_duration = std::atoi(argv[++i]);
         }
@@ -2064,10 +2203,14 @@ int main(int argc, char* argv[]) {
             return 0;
         }
 
-        // ==================== 接收 + 使能模式 ====================
+        // ==================== 接收 + 使能/失能模式 ====================
         if (params.receive_mode) {
-            std::cout << "\n=== Receive-and-Enable Mode ===" << std::endl;
-            std::cout << "Sending enable command and monitoring motor responses..." << std::endl;
+            bool is_enable = params.direct_enable;
+            std::string mode_name = is_enable ? "Receive-and-Enable" : "Receive-and-Disable";
+            std::string action = is_enable ? "ENABLE" : "DISABLE";
+
+            std::cout << "\n=== " << mode_name << " Mode ===" << std::endl;
+            std::cout << "Sending " << action << " command and monitoring motor responses..." << std::endl;
 
             // 初始化 ZCAN 连接
             if (!InitializeDirectZCAN(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud)) {
@@ -2089,18 +2232,26 @@ int main(int argc, char* argv[]) {
                 int start_id = std::atoi(params.motor_id_str.substr(0, dash_pos).c_str());
                 int end_id = std::atoi(params.motor_id_str.substr(dash_pos + 1).c_str());
 
-                std::cout << "\n>>> Enabling motors " << start_id << " - " << end_id << " <<<" << std::endl;
+                std::cout << "\n>>> " << action << " motors " << start_id << " - " << end_id << " <<<" << std::endl;
 
                 for (int motor_id = start_id; motor_id <= end_id; motor_id++) {
                     motor_ids.push_back(motor_id);
-                    SendDirectEnableCommand(motor_id);
+                    if (is_enable) {
+                        SendDirectEnableCommand(motor_id);
+                    } else {
+                        SendDirectDisableCommand(motor_id);
+                    }
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 }
-                std::cout << ">>> Total " << motor_ids.size() << " motors enabled <<<\n" << std::endl;
+                std::cout << ">>> Total " << motor_ids.size() << " motors " << (is_enable ? "enabled" : "disabled") << " <<<\n" << std::endl;
             } else {
                 // 单个电机模式
                 motor_ids.push_back(params.direct_motor_id);
-                SendDirectEnableCommand(params.direct_motor_id);
+                if (is_enable) {
+                    SendDirectEnableCommand(params.direct_motor_id);
+                } else {
+                    SendDirectDisableCommand(params.direct_motor_id);
+                }
             }
 
             // 等待指定时间或无限等待
@@ -2114,13 +2265,13 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            // 停止接收线程（不自动失能电机）
+            // 停止接收线程
             StopCANReceiveThread();
             CloseDirectZCAN();
             std::cout << "\n=== Monitoring Complete ===" << std::endl;
             std::cout << "Total frames received: " << receive_count_.load() << std::endl;
             std::cout << "Motor responses: " << motor_response_count_.load() << std::endl;
-            std::cout << "Motors remain ENABLED (use --disable to turn off)" << std::endl;
+            std::cout << "Motors remain " << (is_enable ? "ENABLED" : "DISABLED") << std::endl;
             return 0;
         }
 

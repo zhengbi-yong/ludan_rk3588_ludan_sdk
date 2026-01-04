@@ -1,0 +1,64 @@
+//本地测试
+
+终端1 - 启动CAN接收程序
+
+cd /home/linaro/ludan_sdk/multi_port_motor_feedback/build
+./multi_port_motor_feedback --udp-ip 192.168.1.10 //本地IP
+
+终端2 - 监听UDP输出
+
+nc -u -l 192.168.1.10 8990 | xxd
+
+终端3 - 电机    
+
+使能
+cd /home/linaro/ludan_sdk/example/g1/motor_test
+/home/linaro/ludan_sdk/build/bin/motor_controller_with_enable 192.168.1.5:8002 -c 2 --enable 1-10
+
+rk3588直接控制电机
+cd /home/linaro/ludan_sdk/example/g1/motor_test
+./build/motor_test --motor-id 4 --start-freq 1.2 --end-freq 5.0 --freq-step 0.2 --cycles 10.0
+
+
+
+
+UDP部分运行机制总结
+1. UDP Socket初始化 (UdpForwarder::Initialize)
+创建UDP socket：socket(AF_INET, SOCK_DGRAM, 0)
+配置目标地址（IP: 192.168.1.20, 端口: 8990）
+UDP是无连接协议，不需要建立连接，直接发送即可
+2. UDP发送函数 (UdpForwarder::SendMotorData)
+使用 sendto() 函数发送数据
+发送内容：30个电机 × 6字节 = 180字节 的数据包
+每次发送前加锁保护数据缓冲区（防止与CAN接收线程冲突）
+3. UDP转发线程主循环 (CanToUdpManager::ForwardLoop)
+阶段1 - 等待首帧：
+
+等待接收第一帧CAN数据 → 通知管理器 → first_frame_received_ = true
+阶段2 - 2ms延迟：
+
+首帧到达 → 再等待2ms → 让CAN接收线程有时间收集更多初始数据
+阶段3 - 固定500Hz发送循环：
+
+每隔2ms发送一次UDP数据包
+使用 "sleep + 忙等待" 混合策略确保精确的2ms间隔
+4. 时序图
+
+时间轴:  ──────────────────────────────────────────────────────────>
+         │                              │                    │
+启动     │ 收到首帧CAN                    │ +2ms后              │ 之后每2ms
+         │                              │                    │
+         ▼                              ▼                    ▼
+   [等待首帧...]  ──→  [再等2ms...]  ──→  [UDP@500Hz固定发送]
+                        ↑                                ↑
+                   给CAN时间                          精确定时
+                   收集初始数据                        (sleep+spin)
+5. 数据流
+
+CAN设备 → PortReceiver::ReceiveLoop (4个线程)
+           ↓
+       更新 MotorDataBuffer (180字节共享缓冲区)
+           ↓
+       UdpForwarder::SendMotorData (每2ms读取一次)
+           ↓
+       UDP发送到 192.168.1.20:8990 (500Hz)

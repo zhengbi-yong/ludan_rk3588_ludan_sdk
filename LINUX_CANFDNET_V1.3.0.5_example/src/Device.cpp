@@ -29,7 +29,7 @@
 
 using namespace std;
 
-const int REQUEST_TIMEOUT = 1500;           //ÉèÖÃÃüÁî³¬Ê±Ê±¼ä
+const int REQUEST_TIMEOUT = 1500;           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î³¬Ê±Ê±ï¿½ï¿½
 
 
 std::string UtilGetcJSONString(cJSON* obj)
@@ -131,10 +131,10 @@ std::string UtilStringAppendIndex(const char* strSrc, int nIndex)
 static struct DeviceInfo
 {
     UINT            devType;
-    UINT            devChnlCount;   //CANÍ¨µÀÊýÁ¿
-    UINT            devLINCount;    //LINÍ¨µÀÊýÁ¿
-    UINT            devTCP;         //±êÊ¶ tcp or udp£¬ 1£ºtcp£¬ 0£ºudp
-    UINT            devTxEcho;      //Éè±¸ÊÇ·ñÖ§³Ö·¢ËÍ»ØÏÔ£¬ZCANPROÖÐÖ§³Ö·¢ËÍ»ØÏÔµÄ»áÍ¬Ê±Ê¹ÓÃÍ¨µÀºÏ²¢¹¦ÄÜ
+    UINT            devChnlCount;   //CANÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    UINT            devLINCount;    //LINÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    UINT            devTCP;         //ï¿½ï¿½Ê¶ tcp or udpï¿½ï¿½ 1ï¿½ï¿½tcpï¿½ï¿½ 0ï¿½ï¿½udp
+    UINT            devTxEcho;      //ï¿½è±¸ï¿½Ç·ï¿½Ö§ï¿½Ö·ï¿½ï¿½Í»ï¿½ï¿½Ô£ï¿½ZCANPROï¿½ï¿½Ö§ï¿½Ö·ï¿½ï¿½Í»ï¿½ï¿½ÔµÄ»ï¿½Í¬Ê±Ê¹ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½
     const char*     devName;
 } s_devinfo[] = {
     /* DevType                   CHNL    LIN     TCP     TxEcho  Name*/
@@ -521,7 +521,7 @@ bool Device::SetReference(UINT chnIdx, UINT refType, void* pData)
         break;
     case CMD_DESPORT:
         m_destPort = (USHORT)*(UINT*)pData;
-        LOG_ALWAYS("Set dest port:%d", m_destPort);
+        // LOG_ALWAYS("Set dest port:%d", m_destPort);
         break;
     case CMD_SRCPORT:
         m_srcPort = (USHORT)*(UINT*)pData;
@@ -782,7 +782,7 @@ void Device::ClearBuffer(UINT chnIdx)
         m_frmCAN[chnIdx].clear();
         m_frmCANFD[chnIdx].clear();
         m_errQueue[chnIdx].clear();
-		m_frmMerge.clear();//2023.03.28ÐÂ¼ÓÇå¿ÕºÏ²¢½ÓÊÕ»º´æÊý¾Ý
+		m_frmMerge.clear();//2023.03.28ï¿½Â¼ï¿½ï¿½ï¿½ÕºÏ²ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         memset(&m_chnlStatus[chnIdx], 0, sizeof(ZCAN_CHANNEL_STATUS));
 
         m_devAutoSendList.chnl[chnIdx].vecCAN.clear();
@@ -1216,7 +1216,7 @@ bool Device::StartCAN(UINT chnIdx)
     {
         m_bitChnlStarted.set(chnIdx);
 
-        //TCP¿Í»§¶ËÄ£Ê½,UDPÄ£Ê½»áÔÚÉè±¸Æô¶¯Ê±»ñÈ¡Ò»´ÎÉè±¸ÐÅÏ¢
+        //TCPï¿½Í»ï¿½ï¿½ï¿½Ä£Ê½,UDPÄ£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Ï¢
         if (!m_devTCP || TCP_SERVER != m_workMode)
         {
             GetDeviceInfo(m_stDevInfo);
@@ -1225,7 +1225,7 @@ bool Device::StartCAN(UINT chnIdx)
 			m_devType == ZCAN_CANFDNET_400U_UDP || m_devType == ZCAN_CANFDNET_100U_TCP || m_devType == ZCAN_CANFDNET_100U_UDP ||
 			m_devType == ZCAN_CANFDNET_800U_TCP || m_devType == ZCAN_CANFDNET_800U_UDP)
 		{
-			SyncDevClock();//Í¬²½Éè±¸Ê±¼ä
+			SyncDevClock();//Í¬ï¿½ï¿½ï¿½è±¸Ê±ï¿½ï¿½
 		}
         LOG_ALWAYS("Device start success!");
         return true;
@@ -1334,7 +1334,7 @@ bool Device::_StopAndClear()
 	LARGE_INTEGER nFreq;
 	LARGE_INTEGER nBeginTime;
 	LARGE_INTEGER nEndTime;
-	QueryPerformanceFrequency(&nFreq);//»ñÈ¡Ê±ÖÓÖÜÆÚ
+	QueryPerformanceFrequency(&nFreq);//ï¿½ï¿½È¡Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	QueryPerformanceCounter(&nBeginTime);
 #endif
 
@@ -1406,7 +1406,7 @@ bool Device::_StopAndClear()
 
     memset(&m_statistic, 0, sizeof(m_statistic));
 
-	//Ö»ÓÐclosedeviceµÄÊ±ºò²Å»áÇå¿Õ resetcan/resetlin²»Çå¿Õ
+	//Ö»ï¿½ï¿½closedeviceï¿½ï¿½Ê±ï¿½ï¿½Å»ï¿½ï¿½ï¿½ï¿½ resetcan/resetlinï¿½ï¿½ï¿½ï¿½ï¿½
     //m_bTxEcho = false;
     //m_bRecvMerge = false;
 
@@ -1446,7 +1446,7 @@ bool Device::InitLIN(UINT chnIdx, PZCAN_LIN_INIT_CONFIG pLINInitConfig)
 		m_linConfig[chnIdx].IsMaster = pLINInitConfig->linMode;
 		m_linConfig[chnIdx].nEnable = 0;
 		m_linConfig[chnIdx].stFeature.rawVal = 0;
-		//ÅäÖÃÐÅÏ¢µÄchkSumMode¸ú±¨ÎÄÐÅÏ¢chkSumMode²»Ò»ÖÂ¡¢´Ë´¦½øÐÐ×ª»»ÊÊÅä
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½chkSumModeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢chkSumModeï¿½ï¿½Ò»ï¿½Â¡ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (pLINInitConfig->chkSumMode == CLASSIC_CHKSUM)
 		{
 			m_linConfig[chnIdx].stFeature.unionVal.bEnhancedChksum = 0;
@@ -1481,7 +1481,7 @@ UINT Device::StartLIN(UINT chnIdx)
 
     if (CreateAndStartService())
     {
-        //TCP¿Í»§¶ËÄ£Ê½,UDPÄ£Ê½»áÔÚÉè±¸Æô¶¯Ê±»ñÈ¡Ò»´ÎÉè±¸ÐÅÏ¢
+        //TCPï¿½Í»ï¿½ï¿½ï¿½Ä£Ê½,UDPÄ£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Ï¢
         if (!m_devTCP || TCP_SERVER != m_workMode)
         {
             GetDeviceInfo(m_stDevInfo);
@@ -1503,7 +1503,7 @@ UINT Device::StartLIN(UINT chnIdx)
 			m_devType == ZCAN_CANFDNET_400U_UDP || m_devType == ZCAN_CANFDNET_100U_TCP || m_devType == ZCAN_CANFDNET_100U_UDP ||
 			m_devType == ZCAN_CANFDNET_800U_TCP || m_devType == ZCAN_CANFDNET_800U_UDP)
 		{
-			SyncDevClock();//Í¬²½Éè±¸Ê±¼ä
+			SyncDevClock();//Í¬ï¿½ï¿½ï¿½è±¸Ê±ï¿½ï¿½
 		}
         return bRet;
     }
@@ -1617,7 +1617,7 @@ UINT Device::ReceiveLIN(UINT chnIdx, PZCAN_LIN_MSG pReceive, UINT Len, int WaitT
 
 UINT Device::SetLINSlaveMsg(UINT chnIdx, PZCAN_LIN_MSG pSend, UINT nMsgCount)
 {
-    //´ÓÕ¾Ä£Ê½Ê±Ö±½Ó·¢ËÍ£¬¼´ÎªÉèÖÃ´ÓÕ¾ÏìÓ¦ÐÅÏ¢
+    //ï¿½ï¿½Õ¾Ä£Ê½Ê±Ö±ï¿½Ó·ï¿½ï¿½Í£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ã´ï¿½Õ¾ï¿½ï¿½Ó¦ï¿½ï¿½Ï¢
     if (chnIdx < m_devLINCount && m_linConfig[chnIdx].IsMaster == 0)
     {
         return SendLINMsgs(chnIdx, pSend, nMsgCount);
@@ -1627,8 +1627,8 @@ UINT Device::SetLINSlaveMsg(UINT chnIdx, PZCAN_LIN_MSG pSend, UINT nMsgCount)
 
 UINT Device::ClearLINSlaveMsg(UINT chnIdx, BYTE* pLINID, UINT nIDCount)
 {
-    //Ð­ÒéÖÐÖ»ÓÐÇå³ýµ¥¸öÍ¨µÀµÄlin´ÓÕ¾ÏìÓ¦ÃüÁî£¬Èç¹ûÐèÒªÇå³ýµ¥¸öidµÄÏìÓ¦
-    //Ö±½ÓÔÚ´ÓÕ¾ÖÐ·¢ËÍ¶ÔÓ¦µÄid£¬½«Êý¾Ý³¤¶ÈÖÃÎª0¼´ÎªÇå³ý¶ÔÓ¦idµÄÏìÓ¦
+    //Ð­ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½linï¿½ï¿½Õ¾ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½î£¬ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½idï¿½ï¿½ï¿½ï¿½Ó¦
+    //Ö±ï¿½ï¿½ï¿½Ú´ï¿½Õ¾ï¿½Ð·ï¿½ï¿½Í¶ï¿½Ó¦ï¿½ï¿½idï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ó¦idï¿½ï¿½ï¿½ï¿½Ó¦
 	/*if (chnIdx < m_devLINCount && m_linConfig[chnIdx].IsMaster == 0)
 	{
 	if (pLINID == nullptr || nIDCount == 0)
@@ -1963,7 +1963,7 @@ bool Device::RequestDevData(PacketDataRequest& devRequest, PacketDataResponse& d
     BYTE nSeq = CreatePktRequestSeq();
     uint32_t nTID = CreatePktTID();
 
-    // ¾ÉµÄÇëÇó°ü£¬TIDÖ»ÓÐÒ»¸ö×Ö½Ú
+    // ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TIDÖ»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
     if (!autoProtocol || !IsSupportRequestResponseEx()) {
         nTID &= 0xFF;
     }
@@ -2086,7 +2086,7 @@ bool Device::GetDevInfo(std::string& strDevInfo)
     PacketDataRequest request;
     PacketDataResponse response;
     GenGetDevInfoRequest(request);
-    // Ö»ÄÜÊ¹ÓÃ¾ÉµÄÇëÇóÃüÁîÈ¥»ñÈ¡, ·ñÔò»áµÝ¹éÇëÇó
+    // Ö»ï¿½ï¿½Ê¹ï¿½Ã¾Éµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½È¡, ï¿½ï¿½ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½
     if (RequestDevData(request, response, false))
     {
         if (response.nResult)
@@ -2118,7 +2118,7 @@ bool Device::GetDevState(BYTE nType, std::string& strDevState)
 
 bool Device::GetDevAutoSendList(UINT chnIdx, std::vector<PacketDataAutoSend>& vecAutoSend)
 {
-    //ÓÉÓÚÖ¡³¤¶ÈÏÞÖÆ£¬Ò»Ö¡¶¨Ê±·¢ËÍÕ¼ÓÃ88×Ö½Ú£¬Ò»¸öÒÔÌ«ÍøÖ¡¿ÉÒÔ°ü×°(1460-6-1)/88 = 16 Ö¡
+    //ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ò»Ö¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½88ï¿½Ö½Ú£ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ì«ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½Ô°ï¿½×°(1460-6-1)/88 = 16 Ö¡
     UINT nTotalCount = DEV_AUTO_SEND_INDEX_MAX;
     UINT nReaded = 0;
     PacketDataRequest request;
@@ -2127,15 +2127,15 @@ bool Device::GetDevAutoSendList(UINT chnIdx, std::vector<PacketDataAutoSend>& ve
     std::vector<PacketDataAutoSend> vecAutoSendOnce;
     while (nReaded < nTotalCount)
     {
-        //ÓÉÓÚÒ»´ÎÍ¨Ñ¶ÐèÒªÔÚµ¥°üÄÚÍê³É´«Êä£¬Ò»´Î»ñÈ¡Á¿¹ý´ó»áµ¼ÖÂÏìÓ¦Êý¾Ý³¬³öµ¥°üµÄÊý¾Ý³¤¶È
-        //ÕâÀïÏÞÖÆÒ»´Î»ñÈ¡µÄÌõÄ¿ÊýÁ¿ÉèÖÃÎª4
+        //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¨Ñ¶ï¿½ï¿½Òªï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É´ï¿½ï¿½ä£¬Ò»ï¿½Î»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½áµ¼ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î»ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª4
         UINT nReadOnce = min((UINT)4, nTotalCount - nReaded);
         GenGetAutoSendListRequest(chnIdx, nReaded, nReadOnce, request);
         if (RequestDevData(request, response))
         {
             if (response.nResult)
             {
-                //responseÖÐµÄvecData°üº¬¶¨Ê±±¨ÎÄµÄjson×Ö·û´®
+                //responseï¿½Ðµï¿½vecDataï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Äµï¿½jsonï¿½Ö·ï¿½ï¿½ï¿½
                 std::string strResult(response.vecData.begin(), response.vecData.end());
                 UINT nCount = GetAutoSendListFromJsonStr(chnIdx, nReaded, nReadOnce, strResult, vecAutoSendOnce);
                 vecAutoSend.insert(vecAutoSend.end(), vecAutoSendOnce.begin(), vecAutoSendOnce.end());
@@ -2209,7 +2209,7 @@ bool Device::GetDevInfoFromJsonStr(const std::string& strDevInfo, ZCAN_DEVICE_IN
         std::string strHardware = UtilGetcJSONString(cJSON_GetObjectItemCaseSensitive(pDevInfo, "Hardware"));
         std::string strSN = UtilGetcJSONString(cJSON_GetObjectItemCaseSensitive(pDevInfo, "SN"));
         
-        // 20201105£¬Í¨Ñ¶Ð­Òé°æ±¾£¬V1.10ºó´æÔÚ´Ë×Ö¶Î
+        // 20201105ï¿½ï¿½Í¨Ñ¶Ð­ï¿½ï¿½æ±¾ï¿½ï¿½V1.10ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½Ö¶ï¿½
         std::string protoVer = UtilGetcJSONString(cJSON_GetObjectItemCaseSensitive(pDevInfo, "ProtoVer"));   
         memset(m_protocolVersion, 0, sizeof(m_protocolVersion));
         std::replace(protoVer.begin(), protoVer.end(), 'V', '0');
@@ -2229,7 +2229,7 @@ bool Device::GetDevInfoFromJsonStr(const std::string& strDevInfo, ZCAN_DEVICE_IN
         pInfo->fw_Version = UtilVersionString2USHORT(strFirmware.c_str());
         pInfo->hw_Version = UtilVersionString2USHORT(strHardware.c_str());
 
-		//2023.03.23ÐÂ¼Ócan linÍ¨µÀÊý»ñÈ¡
+		//2023.03.23ï¿½Â¼ï¿½can linÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡
 		UINT nCanChnNum = (UINT)UtilGetcJSONNumber(cJSON_GetObjectItemCaseSensitive(pDevInfo, "CanChnNum"));
 		UINT nLinChnNum = (UINT)UtilGetcJSONNumber(cJSON_GetObjectItemCaseSensitive(pDevInfo, "LinChnNum"));
 		pInfo->can_Num = nCanChnNum;
@@ -2275,7 +2275,7 @@ void Device::GetAutoSendFromJson(UINT nChnIdx, UINT nIndex, cJSON* config, Packe
     if (!config) return;
     memset(&autoSend, 0, sizeof(autoSend));
 
-    //20201106 Ð­Òé°æ±¾¸üÐÂV1.10Ö®ºóÌí¼Ó·¢ËÍÖÜÆÚµ¥Î»×Ö¶Î£¬ÎÞ²ÎÊý»òÕß²ÎÊýÖµÎª0±íÊ¾µ¥Î»ÊÇms£¬ÖµÎª1±íÊ¾Ê±¼äµ¥Î»Îª100us(0.1ms)
+    //20201106 Ð­ï¿½ï¿½æ±¾ï¿½ï¿½ï¿½ï¿½V1.10Ö®ï¿½ï¿½ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½Î»ï¿½Ö¶Î£ï¿½ï¿½Þ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß²ï¿½ï¿½ï¿½ÖµÎª0ï¿½ï¿½Ê¾ï¿½ï¿½Î»ï¿½ï¿½msï¿½ï¿½ÖµÎª1ï¿½ï¿½Ê¾Ê±ï¿½äµ¥Î»Îª100us(0.1ms)
     int nPeriodUnit = (int)UtilGetcJSONNumber(cJSON_GetObjectItemCaseSensitive(config, "PeriodUnit"));
     nPeriodUnit = !!nPeriodUnit;
     int nPeriodValue = (int)UtilGetcJSONNumber(cJSON_GetObjectItemCaseSensitive(config, "Period"));
@@ -2475,7 +2475,7 @@ void Device::GenSetLINConfigRequest(UINT chnIdx, const LINConfig& linConfig, Pac
     cJSON* pChnlConfig = cJSON_CreateObject();
     cJSON_AddItemToObject(pChnlConfig, chnlKey, pChnlObj);
 
-    //20210818,ÏÂÎ»»úÐèÒªÔÚLIN¶¯Ì¬ÅäÖÃÊ±Ìí¼Ó×îÍâ²ãµÄLIN½Úµã
+    //20210818,ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½LINï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LINï¿½Úµï¿½
     cJSON* pLINConfig = cJSON_CreateObject();
     cJSON_AddItemToObject(pLINConfig, "LIN", pChnlConfig);
 
@@ -2664,7 +2664,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_DEV_REQ == pktType)
         {
-            //Éè±¸·¢ËÍÇëÇó£¬¿â½øÐÐÄ£ÄâÏìÓ¦
+            //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬¿ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½Ó¦
             FrameData vecFrame;
             BYTE pktTypeParam = 0;
             if (CPacketUtil::GetPacketDataDevReq(packet, vecFrame, pktTypeParam) > 0)
@@ -2678,7 +2678,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_DEV_RES == pktType)
         {
-            //¿â·¢ËÍÇëÇó£¬Éè±¸½øÐÐÏìÓ¦
+            //ï¿½â·¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
             FrameData vecFrame;
             BYTE pktTypeParam = 0;
             if (CPacketUtil::GetPacketDataDevRes(packet, vecFrame, pktTypeParam) > 0)
@@ -2692,12 +2692,12 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_REQUEST_RESPONSE == pktType)
         {
-            //¿Í»§¶ËÇëÇóÉè±¸Êý¾Ý
+            //ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
             PacketTypeRequestResponseParam pktTypeParam;
             pktTypeParam.rawValue = CPacketUtil::GetPacketFrameTypeParam(packet);
             if (pktTypeParam.unionValue.bResponse)
             {
-                //ÏìÓ¦°ü,Éè±¸·µ»ØµÄÊý¾Ý
+                //ï¿½ï¿½Ó¦ï¿½ï¿½,ï¿½è±¸ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
                 PacketDataResponse responseData;
                 if (CPacketUtil::GetPacketDataResponse(packet, responseData) > 0)
                 {
@@ -2706,7 +2706,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
             }
             else
             {
-                //ÇëÇó°ü£¬×Ô¼º×÷ÎªServerÊ±£¬¿Í»§¶Ë¹ýÀ´ÇëÇóÊý¾Ý
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ÎªServerÊ±ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 PacketDataRequest requestData;
                 if (CPacketUtil::GetPacketDataRequest(packet, requestData) > 0)
                 {
@@ -2716,12 +2716,12 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_REQUEST_RESPONSE_EX == pktType)
         {
-            //¿Í»§¶ËÇëÇóÉè±¸Êý¾Ý
+            //ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
             PacketTypeRequestResponseParam pktTypeParam;
             pktTypeParam.rawValue = CPacketUtil::GetPacketFrameTypeParam(packet);
             if (pktTypeParam.unionValue.bResponse)
             {
-                //ÏìÓ¦°ü,Éè±¸·µ»ØµÄÊý¾Ý
+                //ï¿½ï¿½Ó¦ï¿½ï¿½,ï¿½è±¸ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
                 PacketDataResponse responseData;
                 if (CPacketUtil::GetPacketDataResponseEx(packet, responseData) > 0)
                 {
@@ -2730,7 +2730,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
             }
             else
             {
-                //ÇëÇó°ü£¬×Ô¼º×÷ÎªServerÊ±£¬¿Í»§¶Ë¹ýÀ´ÇëÇóÊý¾Ý
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ÎªServerÊ±ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 PacketDataRequest requestData;
                 if (CPacketUtil::GetPacketDataRequestEx(packet, requestData) > 0)
                 {
@@ -2740,7 +2740,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_DEV_STATE == pktType)
         {
-            //Éè±¸ÖÜÆÚÉÏ±¨µÄ×´Ì¬Êý¾Ý
+            //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
             FrameData vecFrame;
             BYTE pktTypeParam = CPacketUtil::GetPacketFrameTypeParam(packet);
             if (CPacketUtil::GetPacketDataDevState(packet, vecFrame, pktTypeParam) > 0)
@@ -2750,7 +2750,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_GPS == pktType)
         {
-            //gpsÊý¾Ý
+            //gpsï¿½ï¿½ï¿½ï¿½
             std::vector<PacketDataGPS> vecFrame;
             if (CPacketUtil::GetPacketDataGPS(packet, vecFrame) > 0)
             {
@@ -2763,7 +2763,7 @@ void Device::ProcessPackets(VecPackets& vecPackets)
         }
         else if (PACKET_TYPE_LIN == pktType)
         {
-            //LINÊý¾Ý
+            //LINï¿½ï¿½ï¿½ï¿½
             std::vector<PacketDataLIN> vecFrame;
             if (CPacketUtil::GetPacketDataLIN(packet, vecFrame) > 0)
             {
@@ -2791,7 +2791,7 @@ void Device::HandleCANFrame(const std::vector<PacketDataCAN>& vecFrame)
         {
             if (m_bitChnlStarted.test(pkt.canHead.nChnl) || bStartfor1Second)
             {
-                //ÅÐ¶ÏÊÇ·ñZCANPRO·¢ËÍµÄÇëÇó»ØÏÔÖ¡
+                //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ZCANPROï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡
                 HandleEchoRequestFrame(pkt);
 
                 if (m_bRecvMerge)
@@ -2835,7 +2835,7 @@ void Device::HandleCANFrame(const std::vector<PacketDataCAN>& vecFrame)
                     }
                 }
 
-                //Í³¼ÆÐÅÏ¢
+                //Í³ï¿½ï¿½ï¿½ï¿½Ï¢
                 if (pkt.canHead.frameInfo.unionVal.nTx)
                 {
                     m_statistic.chnl[pkt.canHead.nChnl].nTxEcho++;
@@ -2862,7 +2862,7 @@ void Device::HandleCANFDFrame(const std::vector<PacketDataCANFD>& vecFrame)
         {
             if (m_bitChnlStarted.test(pkt.canHead.nChnl) || bStartfor1Second)
             {
-                //ÅÐ¶ÏÊÇ·ñZCANPRO·¢ËÍµÄÇëÇó»ØÏÔÖ¡
+                //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ZCANPROï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡
                 HandleEchoRequestFrame(pkt);
 
                 if (m_bRecvMerge)
@@ -2895,7 +2895,7 @@ void Device::HandleCANFDFrame(const std::vector<PacketDataCANFD>& vecFrame)
                     }
                     else
                     {
-                        //CANFD°üÀï¿ÉÄÜÓÐCANÊý¾Ý
+                        //CANFDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CANï¿½ï¿½ï¿½ï¿½
                         if (pkt.canHead.frameInfo.unionVal.bFD)
                         {
                             CanDataQueue<PacketDataCANFD>& canData = m_frmCANFD[pkt.canHead.nChnl];
@@ -2923,7 +2923,7 @@ void Device::HandleCANFDFrame(const std::vector<PacketDataCANFD>& vecFrame)
                     }
                 }
 
-                //Í³¼ÆÐÅÏ¢
+                //Í³ï¿½ï¿½ï¿½ï¿½Ï¢
                 if (pkt.canHead.frameInfo.unionVal.nTx)
                 {
                     m_statistic.chnl[pkt.canHead.nChnl].nTxEcho++;
@@ -2982,7 +2982,7 @@ void Device::HandleLINFrame(const std::vector<PacketDataLIN>& vecFrame)
         for (auto & pkt : vecFrame)
 		{
 			UINT nLINIndex = DEV_CHNL_COUNT_MAX + pkt.nChnl;
-			if (!m_bitChnlStarted.test(nLINIndex))//linÍ¨µÀÃ»¿ªÔò¹ýÂËµôÊý¾Ý
+			if (!m_bitChnlStarted.test(nLINIndex))//linÍ¨ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				continue;
 			}
@@ -3000,7 +3000,7 @@ void Device::HandleLINFrame(const std::vector<PacketDataLIN>& vecFrame)
 		for (auto & pkt : vecFrame)
 		{
 			UINT nLINIndex = DEV_CHNL_COUNT_MAX + pkt.nChnl;
-			if (!m_bitChnlStarted.test(nLINIndex))//linÍ¨µÀÃ»¿ªÔò¹ýÂËµôÊý¾Ý
+			if (!m_bitChnlStarted.test(nLINIndex))//linÍ¨ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				continue;
 			}
@@ -3049,7 +3049,7 @@ void Device::HandleBusUsageFrame(const PacketDataBusUsage& pktBusUsage)
     }
 	if (m_bRecvMerge)
 	{
-		//ÐÂÔöÍ¨µÀÀûÓÃÂÊ»º´æ
+		//ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê»ï¿½ï¿½ï¿½
 		CanDataQueue<ZCANDataObj>& canData = m_frmMerge;
 		ZCANDataObj dataObj;
 		if (CPacketUtil::PacketData2ZCANDataObj(pktBusUsage, dataObj))
@@ -3071,11 +3071,11 @@ void Device::HandleDevReqFrame(const FrameData& vecDevReq, BYTE pktTypeParam)
     reqParam.rawValue = pktTypeParam;
     if (reqParam.unionValue.nReqVal == PACKET_TYPE_PARAM_DEV_REQ_RES_TIMESTAMP)
     {
-        //¿Í»§Ä£Äâ·¢ËÍÇëÇó£¬Ö±½Ó·¢ËÍÏìÓ¦±íÊ¾³É¹¦¡£
+        //ï¿½Í»ï¿½Ä£ï¿½â·¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ê¾ï¿½É¹ï¿½ï¿½ï¿½
         PacketTypeRESParam resParam;
         resParam.rawValue = 0;
         resParam.unionValue.nReqVal = reqParam.unionValue.nReqVal;
-        resParam.unionValue.nResult = 1; // 1:±íÊ¾Ö´ÐÐ³É¹¦
+        resParam.unionValue.nResult = 1; // 1:ï¿½ï¿½Ê¾Ö´ï¿½Ð³É¹ï¿½
         Packet packet = CPacketEncoder::BuildPacketDevReqRes(false, nullptr, 0, pktTypeParam);
         SendData(packet.data(), packet.size());
     }
@@ -3087,7 +3087,7 @@ void Device::HandleDevResFrame(const FrameData& vecDevRes, BYTE pktTypeParam)
     param.rawValue = pktTypeParam;
     if (param.unionValue.nReqVal == PACKET_TYPE_PARAM_DEV_REQ_RES_TIMESTAMP)
     {
-        // param.unionValue.nResult ±íÊ¾Éè±¸ÏìÓ¦½á¹û£¬1£º³É¹¦£¬0£ºÊ§°Ü
+        // param.unionValue.nResult ï¿½ï¿½Ê¾ï¿½è±¸ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½ï¿½
         // param.unionValue.nResult;
     }
 }
@@ -3125,15 +3125,15 @@ void Device::HandleEchoRequestFrame(const PacketDataCANFD& canFrame)
     }
 }
 
-//PktType 0x50Êý¾ÝÇëÇóÏìÓ¦
+//PktType 0x50ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
 void Device::HandleRequestData(BYTE nSeq, PacketDataRequest& requestData)
 {
-    //¿â½ÓÊÕµ½ÆäËû¿Í»§¶ËµÄÇëÇó£¬Ä£ÄâÉè±¸·¢³öÏìÓ¦
+    //ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
     Packet packet = CPacketEncoder::BuildPacketEmulateResponse(nSeq, requestData);
     SendData(packet.data(), packet.size());
 }
 
-//PktType 0x50Êý¾ÝÇëÇóÏìÓ¦
+//PktType 0x50ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
 void Device::HandleResponseData(BYTE nSeq, PacketDataResponse& responseData)
 {
     std::unique_lock<std::mutex> lk_(m_pktRequestMutex);
@@ -3154,15 +3154,15 @@ void Device::HandleResponseData(BYTE nSeq, PacketDataResponse& responseData)
     }
 }
 
-//PktType 0x52Êý¾ÝÇëÇóÏìÓ¦
+//PktType 0x52ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
 void Device::HandleRequestDataEx(BYTE nSeq, PacketDataRequest& requestData)
 {
-    //¿â½ÓÊÕµ½ÆäËû¿Í»§¶ËµÄÇëÇó£¬Ä£ÄâÉè±¸·¢³öÏìÓ¦
+    //ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
     Packet packet = CPacketEncoder::BuildPacketEmulateResponseEx(nSeq, requestData);
     SendData(packet.data(), packet.size());
 }
 
-//PktType 0x52Êý¾ÝÇëÇóÏìÓ¦
+//PktType 0x52ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
 void Device::HandleResponseDataEx(BYTE nSeq, PacketDataResponse& responseData)
 {
     std::unique_lock<std::mutex> lk_(m_pktRequestMutex);
@@ -3183,7 +3183,7 @@ void Device::HandleResponseDataEx(BYTE nSeq, PacketDataResponse& responseData)
     }
 }
 
-//PktType 0x04 Éè±¸×´Ì¬Êý¾Ý
+//PktType 0x04 ï¿½è±¸×´Ì¬ï¿½ï¿½ï¿½ï¿½
 void Device::HandleDevStateData(const FrameData& vecDevState, BYTE pktTypeParam)
 {
     switch (pktTypeParam)
@@ -3250,7 +3250,7 @@ bool Device::UDSRequest(UINT reqID, const std::string& reqParam, const BYTE* req
     BYTE nSeq = CreatePktRequestSeq();
     uint32_t nTID = CreatePktTID();
 
-    // ¾ÉµÄÇëÇó°ü£¬TIDÖ»ÓÐÒ»¸ö×Ö½Ú
+    // ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½TIDÖ»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö½ï¿½
     if (!IsSupportRequestResponseEx()) {
         nTID &= 0xFF;
     }
@@ -3297,7 +3297,7 @@ bool Device::UDSRequest(UINT reqID, const std::string& reqParam, const BYTE* req
             if (!data->cv.wait_for(ulk, std::chrono::milliseconds(REQUEST_TIMEOUT), [&data]{
                 return data->responsed; }))
 				{
-                // ³¬Ê±ºó»ñÈ¡UDSµ±Ç°×´Ì¬£¬Èç¹û»¹ÔÚÇëÇóÖÐ£¬Ôò¼ÌÐøµÈ´ý
+                // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½È¡UDSï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½
                 UDS_STATUS status = UDS_STATUS_IDLE;
                 if (!GetUdsStatus(reqID, status)) {
                     LOG_ERR("GetUdsStatus failed\n");
@@ -3313,7 +3313,7 @@ bool Device::UDSRequest(UINT reqID, const std::string& reqParam, const BYTE* req
                     }
                 }
             }
-            // ½ÓÊÕµ½ÏìÓ¦»òÕßUDSµ±Ç°²»ÔÚÇëÇóÖÐ
+            // ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½UDSï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (data->responsed) {
                 if (data->responseData.nResult == 0) {
                     LOG_ERR("response result error\n");
@@ -3572,14 +3572,14 @@ bool Device::addDynamicCfg(UINT chnIdx, const ZCAN_DYNAMIC_CONFIG_DATA* pObj)
 
 struct BaudTiming
 {
-	UINT    nBaudVal;       //²¨ÌØÂÊÖµ
-	UINT    nTSEG1;         //²¨ÌØÂÊÖµ¶ÔÓ¦µÄÎ»¶¨Ê±Öµ
+	UINT    nBaudVal;       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+	UINT    nTSEG1;         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½Ê±Öµ
 	UINT    nTSEG2;
 	UINT    nSJW;
 	UINT    nBRP;
 };
 
-// USBCANFD800(ÒÔ¼°ÏàÍ¬Ê±ÖÓÆµÂÊµÄÉè±¸)ÓÃµÄ²¨ÌØÂÊ²ÎÊý
+// USBCANFD800(ï¿½Ô¼ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½Æµï¿½Êµï¿½ï¿½è±¸)ï¿½ÃµÄ²ï¿½ï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½
 static struct BaudTiming kUSBCANFD800AbitBaudrate[] =
 {
 	{ 1000000, 31, 8, 8, 1 },  //80%
@@ -3604,7 +3604,7 @@ static struct BaudTiming kUSBCANFD800DbitBaudrate[] =
 	{ 100000, 7, 2, 2, 40 }, //80%
 };
 
-// CANFDDTU-300(ÒÔ¼°ÏàÍ¬Ê±ÖÓÆµÂÊµÄÉè±¸)ÓÃµÄ²¨ÌØÂÊ²ÎÊý
+// CANFDDTU-300(ï¿½Ô¼ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½Æµï¿½Êµï¿½ï¿½è±¸)ï¿½ÃµÄ²ï¿½ï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½
 static struct BaudTiming kCANFDDTU300AbitBaudrate[] =
 {
 	{ 1000000, 63, 16, 16, 1 },  //80%
@@ -3663,7 +3663,7 @@ bool Device::ApplyDynamicCfg(UINT chnIdx, UINT isPersist)
 				}
 				else
 				{
-					if (i == tokens.size() - 1)//×îµ×²ãµÄitem
+					if (i == tokens.size() - 1)//ï¿½ï¿½×²ï¿½ï¿½item
 					{
 						if (!CheckDynamicCfgIsBaud(tokens[i], cfg.second, m_list[tokens[i - 1]]))
 						{
@@ -3751,9 +3751,9 @@ cJSON* Device::_GenCANFDFilterRuleItemJson(const CANFD_FILTER_RULE& rConfig)
 	{
 		cJSON_AddNumberToObject(config, "Chn", rConfig.nChnl);
 	}
-	//µ±Í¬Ê±½ÓÊÕERRºÍCAN/CANFDÊý¾ÝÊ±( rConfig.presentFlag.unionValue.bErr == 0)£¬
-	//»òÕßÖ»½ÓÊÕ´íÎóÖ¡Ê±( rConfig.presentFlag.unionValue.bErr == 1 && rConfig.nErr != 0)
-	//Ö»ÐèÒªÍ¨µÀ²ÎÊý¼´¿É£¬²»ÔÙÉú³ÉºóÐøµÄÅäÖÃ
+	//ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ERRï¿½ï¿½CAN/CANFDï¿½ï¿½ï¿½ï¿½Ê±( rConfig.presentFlag.unionValue.bErr == 0)ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½Õ´ï¿½ï¿½ï¿½Ö¡Ê±( rConfig.presentFlag.unionValue.bErr == 1 && rConfig.nErr != 0)
+	//Ö»ï¿½ï¿½ÒªÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (!rConfig.presentFlag.unionValue.bErr ||
 		(rConfig.presentFlag.unionValue.bErr && rConfig.nErr))
 	{
@@ -3943,7 +3943,7 @@ bool Device::ApplyCANFilter()
 		cJSON* filter = cJSON_CreateObject();
 
 		cJSON_AddNumberToObject(filter, "Enable", 1);
-		cJSON_AddNumberToObject(filter, "Whitelist", 1);//Ä¬ÈÏÊÇ°×Ãûµ¥
+		cJSON_AddNumberToObject(filter, "Whitelist", 1);//Ä¬ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½
 		cJSON * rules = cJSON_CreateObject();
 		cJSON_AddItemToObject(filter, "Rules", rules);
 		int nValidFilterCount = min(nCount, CANFDNET_FILTER_COUNT_MAX);
@@ -3965,7 +3965,7 @@ bool Device::ApplyCANFilter()
 		//LOG_ALWAYS("reqParam = %s\n", reqParam.c_str());
 		cJSON_free(pStr);
 		cJSON_Delete(root);
-		return SendDynamicCfg(0, reqParam, 0);//Ä¬ÈÏÊÇ¶¯Ì¬ÅäÖÃ
+		return SendDynamicCfg(0, reqParam, 0);//Ä¬ï¿½ï¿½ï¿½Ç¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
@@ -3973,7 +3973,7 @@ bool Device::ApplyCANFilter()
 		cJSON* filter = cJSON_CreateObject();
 
 		cJSON_AddNumberToObject(filter, "Enable", 0);
-		cJSON_AddNumberToObject(filter, "Whitelist", 1);//Ä¬ÈÏÊÇ°×Ãûµ¥
+		cJSON_AddNumberToObject(filter, "Whitelist", 1);//Ä¬ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½
 		cJSON_AddItemToObject(root, "Filter", filter);
 		cJSON * rules = cJSON_CreateObject();
 		cJSON_AddItemToObject(filter, "Rules", rules);
@@ -3982,7 +3982,7 @@ bool Device::ApplyCANFilter()
 		//LOG_ALWAYS("reqParam = %s\n", reqParam.c_str());
 		cJSON_free(pStr);
 		cJSON_Delete(root);
-		return SendDynamicCfg(0, reqParam, 0);//Ä¬ÈÏÊÇ¶¯Ì¬ÅäÖÃ
+		return SendDynamicCfg(0, reqParam, 0);//Ä¬ï¿½ï¿½ï¿½Ç¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½
 	}
 }
 
@@ -4070,7 +4070,7 @@ ZCAN_RET_STATUS Device::UDS_Request(const ZCAN_UDS_REQUEST* req, ZCAN_UDS_RESPON
         return STATUS_ERR;
     }
 
-    // ÎÞÐè½âÎöÏìÓ¦
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
     if (!resp) {
         return STATUS_OK;
     }
@@ -4136,7 +4136,7 @@ ZCAN_RET_STATUS Device::UDS_Control(const ZCAN_UDS_CTRL_REQ *ctrl, ZCAN_UDS_CTRL
         return STATUS_ERR;
     }
 
-    // ÎÞÐè½âÎöÏìÓ¦
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
     if (!resp) {
         return STATUS_OK;
     }
@@ -4204,12 +4204,12 @@ ZCAN_RET_STATUS Device::UDS_ControlEX(ZCAN_UDS_DATA_DEF dataType, const ZCAN_UDS
 
 bool Device::IsSupportRequestResponseEx()
 {
-    // »ñÈ¡Í¨Ñ¶Ð­Òé°æ±¾ºÅ
+    // ï¿½ï¿½È¡Í¨Ñ¶Ð­ï¿½ï¿½æ±¾ï¿½ï¿½
     if (!m_bDevInfoUpdated) {
         GetDeviceInfo(m_stDevInfo);
     }
 
-    // ´ÓV1.19°æ±¾ÆðÖ§³ÖÀ©Õ¹µÄÇëÇóÓ¦´ð°ü
+    // ï¿½ï¿½V1.19ï¿½æ±¾ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½
     if (m_bDevInfoUpdated) {
         uint32_t ver = (m_protocolVersion[0] << 8) | m_protocolVersion[1];
         if (ver >= ((1 << 8) | 19)) {

@@ -174,6 +174,39 @@ if(DEFINED ENV{ROS_DISTRO})
 
             message(STATUS "Building zlg_5min_decode_test with ZLG CANFDNET support")
 
+            # Build motor_test7 with ZLG CANFDNET SDK
+            add_executable(motor_test7 motor_test7/src/motor_test7.cpp)
+
+            # Set include directories
+            target_include_directories(motor_test7 PRIVATE
+                "${ZLG_SDK_DIR}/src"
+                "${ZLG_SDK_DIR}/src/zlgcan"
+            )
+
+            # Set RPATH for runtime library search
+            set_target_properties(motor_test7 PROPERTIES
+                INSTALL_RPATH "${ZLG_SDK_DIR}/lib/linux_x64"
+                BUILD_WITH_INSTALL_RPATH TRUE
+            )
+
+            # Link libraries - ZLG CANFDNET
+            target_link_libraries(motor_test7
+                "${ZLG_SDK_DIR}/lib/linux_x64/libCANFDNET.so"
+                pthread
+            )
+
+            message(STATUS "Building motor_test7 with ZLG CANFDNET support")
+
+            # Build motor_test8 with ZLG CANFDNET SDK
+            add_subdirectory(motor_test8)
+
+            message(STATUS "Building motor_test8 with ZLG CANFDNET support")
+
+            # Build motor_test9 with ZLG CANFDNET SDK
+            add_subdirectory(motor_test9)
+
+            message(STATUS "Building motor_test9 with ZLG CANFDNET support")
+
             # Build motor_controller_with_enable_zhengbi with ROS2 and xixilowcmd support
             add_executable(motor_controller_with_enable_zhengbi_ros2 low_level/motor_controller_with_enable_zhengbi.cpp)
 

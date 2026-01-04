@@ -110,6 +110,22 @@ struct MotorCommandCan {
     float torq;
 };
 
+// ==================== Multi-Port Configuration ====================
+// Port configuration for 4-port motor control (matches cantoudp.cpp mapping)
+struct PortConfig {
+    int port;         // TCP port (8000-8003)
+    int motor_count;  // Number of motors on this port
+    int motor_offset; // Starting motor index (0-based)
+    int channel;      // CAN channel number
+};
+
+constexpr PortConfig PORT_CONFIGS[4] = {
+    {8000, 8, 0, 0},   // Motors 1-8   -> Local CAN ID 1-8
+    {8001, 8, 8, 1},   // Motors 9-16  -> Local CAN ID 1-8
+    {8002, 8, 16, 2},  // Motors 17-24 -> Local CAN ID 1-8
+    {8003, 6, 24, 3}   // Motors 25-30 -> Local CAN ID 1-6
+};
+
 // ==================== MIT Motor Protocol Helper (使用ZCAN官方封装) ====================
 // Convert motor command to CAN data bytes (MIT motor protocol format)
 // Bytes 0-1: Position (float to int16, ±12.5 rad -> ±32767)
@@ -1247,11 +1263,274 @@ static void CloseDirectZCAN() {
     }
 }
 
+// ==================== Single Port Sender ====================
+// Encapsulates sending logic for a single CAN port
+class PortSender {
+public:
+    PortSender(const PortConfig& port_config, const std::string& zlg_ip,
+               int arb_baud, int data_baud)
+        : port_config_(port_config), zlg_ip_(zlg_ip),
+          arb_baud_(arb_baud), data_baud_(data_baud) {}
+
+    ~PortSender() {
+        if (channel_handle_ && channel_handle_ != INVALID_CHANNEL_HANDLE) {
+            ZCAN_ResetCAN(channel_handle_);
+        }
+        if (device_handle_ && device_handle_ != INVALID_DEVICE_HANDLE) {
+            ZCAN_CloseDevice(device_handle_);
+        }
+    }
+
+    bool Initialize() {
+        std::cout << "  [Port " << port_config_.port << "] Initializing..." << std::endl;
+
+        // 1. Open device
+        device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP,
+                                         port_config_.channel, 0);
+        if (device_handle_ == INVALID_DEVICE_HANDLE) {
+            std::cerr << "  [Port " << port_config_.port << "] Failed to open device" << std::endl;
+            return false;
+        }
+
+        // 2. Initialize CAN channel
+        ZCAN_CHANNEL_INIT_CONFIG init_config;
+        memset(&init_config, 0, sizeof(init_config));
+        init_config.can_type = TYPE_CANFD;
+        init_config.canfd.acc_code = 0;
+        init_config.canfd.acc_mask = 0;
+        init_config.canfd.abit_timing = arb_baud_;
+        init_config.canfd.dbit_timing = data_baud_;
+        init_config.canfd.brp = 0;
+        init_config.canfd.filter = 0;
+        init_config.canfd.mode = 0;
+
+        channel_handle_ = ZCAN_InitCAN(device_handle_, port_config_.channel, &init_config);
+        if (channel_handle_ == INVALID_CHANNEL_HANDLE) {
+            std::cerr << "  [Port " << port_config_.port << "] Failed to init CAN" << std::endl;
+            ZCAN_CloseDevice(device_handle_);
+            return false;
+        }
+
+        // 3. Set IP and port
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, port_config_.channel, port_config_.channel,
+                         CMD_DESIP, (void*)zlg_ip_.c_str());
+        uint32_t port_val = port_config_.port;
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, port_config_.channel, port_config_.channel,
+                         CMD_DESPORT, &port_val);
+
+        // 4. Start CAN
+        if (ZCAN_StartCAN(channel_handle_) == STATUS_ERR) {
+            std::cerr << "  [Port " << port_config_.port << "] Failed to start CAN" << std::endl;
+            ZCAN_CloseDevice(device_handle_);
+            return false;
+        }
+
+        std::cout << "  [Port " << port_config_.port << "] Initialized (motors "
+                  << (port_config_.motor_offset + 1) << "-"
+                  << (port_config_.motor_offset + port_config_.motor_count) << ")" << std::endl;
+
+        initialized_ = true;
+        return true;
+    }
+
+    int SendMotorCommands(const std::vector<MotorCommandCan>& commands) {
+        if (!initialized_) {
+            error_count_ += commands.size();
+            return 0;
+        }
+
+        std::vector<ZCAN_Transmit_Data> frames;
+        frames.reserve(commands.size());
+
+        for (const auto& cmd : commands) {
+            ZCAN_Transmit_Data transmit_data;
+            memset(&transmit_data, 0, sizeof(transmit_data));
+
+            transmit_data.frame.can_id = MAKE_CAN_ID(cmd.motor_id, 0, 0, 0);
+            transmit_data.frame.can_dlc = 8;
+
+            uint8_t can_data[8];
+            MotorCommandToCanData(cmd, can_data);
+            for (int i = 0; i < 8; i++) {
+                transmit_data.frame.data[i] = can_data[i];
+            }
+
+            transmit_data.transmit_type = 0;
+            frames.push_back(transmit_data);
+        }
+
+        uint32_t ret = ZCAN_Transmit(channel_handle_, frames.data(), frames.size());
+
+        send_count_ += commands.size();
+        if (ret == commands.size()) {
+            send_success_count_ += ret;
+        } else {
+            send_success_count_ += ret;
+            error_count_ += (commands.size() - ret);
+        }
+
+        return ret;
+    }
+
+    bool SendEnableCommand(int local_motor_id) {
+        if (!initialized_) return false;
+        uint8_t enable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC};
+        ZCAN_Transmit_Data transmit_data;
+        memset(&transmit_data, 0, sizeof(transmit_data));
+        transmit_data.frame.can_id = MAKE_CAN_ID(local_motor_id, 0, 0, 0);
+        transmit_data.frame.can_dlc = 8;
+        memcpy(transmit_data.frame.data, enable_frame, 8);
+        transmit_data.transmit_type = 0;
+        return ZCAN_Transmit(channel_handle_, &transmit_data, 1) == 1;
+    }
+
+    bool SendDisableCommand(int local_motor_id) {
+        if (!initialized_) return false;
+        uint8_t disable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD};
+        ZCAN_Transmit_Data transmit_data;
+        memset(&transmit_data, 0, sizeof(transmit_data));
+        transmit_data.frame.can_id = MAKE_CAN_ID(local_motor_id, 0, 0, 0);
+        transmit_data.frame.can_dlc = 8;
+        memcpy(transmit_data.frame.data, disable_frame, 8);
+        transmit_data.transmit_type = 0;
+        return ZCAN_Transmit(channel_handle_, &transmit_data, 1) == 1;
+    }
+
+    bool IsInitialized() const { return initialized_; }
+    uint64_t GetSendCount() const { return send_count_; }
+    uint64_t GetErrorCount() const { return error_count_; }
+
+private:
+    PortConfig port_config_;
+    std::string zlg_ip_;
+    int arb_baud_;
+    int data_baud_;
+
+    DEVICE_HANDLE device_handle_ = INVALID_DEVICE_HANDLE;
+    CHANNEL_HANDLE channel_handle_ = INVALID_CHANNEL_HANDLE;
+    bool initialized_ = false;
+
+    std::atomic<uint64_t> send_count_{0};
+    std::atomic<uint64_t> send_success_count_{0};
+    std::atomic<uint64_t> error_count_{0};
+};
+
+// ==================== Multi-Port Motor Manager ====================
+// Coordinates sending to 4 CAN ports
+class MultiPortMotorManager {
+public:
+    MultiPortMotorManager(const std::string& zlg_ip, int arb_baud, int data_baud)
+        : zlg_ip_(zlg_ip), arb_baud_(arb_baud), data_baud_(data_baud) {}
+
+    ~MultiPortMotorManager() {
+        // Auto cleanup handled by PortSender destructors
+    }
+
+    bool Initialize() {
+        std::cout << "\n=== Initializing Multi-Port Motor Manager ===" << std::endl;
+        std::cout << "ZLG IP: " << zlg_ip_ << std::endl;
+        std::cout << "Arbitration Baud: " << arb_baud_ << " bps" << std::endl;
+        std::cout << "Data Baud: " << data_baud_ << " bps" << std::endl;
+
+        for (int i = 0; i < 4; i++) {
+            port_senders_[i] = std::make_unique<PortSender>(
+                PORT_CONFIGS[i], zlg_ip_, arb_baud_, data_baud_);
+            if (!port_senders_[i]->Initialize()) {
+                std::cerr << "Failed to initialize port " << PORT_CONFIGS[i].port << std::endl;
+                return false;
+            }
+        }
+
+        std::cout << "=== All 4 Ports Initialized ===" << std::endl;
+        return true;
+    }
+
+    int SendAllMotorCommands(const std::vector<MotorCommandCan>& all_commands) {
+        // Group commands by port
+        std::array<std::vector<MotorCommandCan>, 4> port_commands;
+
+        for (const auto& cmd : all_commands) {
+            int port_idx = GetPortIndexForMotor(cmd.motor_id);
+            if (port_idx >= 0 && port_senders_[port_idx]->IsInitialized()) {
+                MotorCommandCan local_cmd = cmd;
+                local_cmd.motor_id = GetLocalCanId(cmd.motor_id);
+                port_commands[port_idx].push_back(local_cmd);
+            }
+        }
+
+        // Send to each port sequentially
+        int total_sent = 0;
+        for (int i = 0; i < 4; i++) {
+            if (!port_commands[i].empty()) {
+                int sent = port_senders_[i]->SendMotorCommands(port_commands[i]);
+                total_sent += sent;
+            }
+        }
+
+        return total_sent;
+    }
+
+    bool SendEnableCommand(int global_motor_id) {
+        int port_idx = GetPortIndexForMotor(global_motor_id);
+        if (port_idx < 0 || !port_senders_[port_idx]->IsInitialized()) {
+            return false;
+        }
+        int local_can_id = GetLocalCanId(global_motor_id);
+        return port_senders_[port_idx]->SendEnableCommand(local_can_id);
+    }
+
+    bool SendDisableCommand(int global_motor_id) {
+        int port_idx = GetPortIndexForMotor(global_motor_id);
+        if (port_idx < 0 || !port_senders_[port_idx]->IsInitialized()) {
+            return false;
+        }
+        int local_can_id = GetLocalCanId(global_motor_id);
+        return port_senders_[port_idx]->SendDisableCommand(local_can_id);
+    }
+
+    void PrintStatus() {
+        std::cout << "\n=== Multi-Port Status ===" << std::endl;
+        for (int i = 0; i < 4; i++) {
+            std::cout << "  Port " << PORT_CONFIGS[i].port << ": ";
+            if (port_senders_[i] && port_senders_[i]->IsInitialized()) {
+                std::cout << "OK, Sent=" << port_senders_[i]->GetSendCount()
+                          << ", Errors=" << port_senders_[i]->GetErrorCount();
+            } else {
+                std::cout << "NOT INITIALIZED";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "=========================" << std::endl;
+    }
+
+private:
+    int GetPortIndexForMotor(int global_motor_id) const {
+        if (global_motor_id >= 1 && global_motor_id <= 8)   return 0;
+        if (global_motor_id >= 9 && global_motor_id <= 16)  return 1;
+        if (global_motor_id >= 17 && global_motor_id <= 24) return 2;
+        if (global_motor_id >= 25 && global_motor_id <= 30) return 3;
+        return -1;
+    }
+
+    int GetLocalCanId(int global_motor_id) const {
+        int port_idx = GetPortIndexForMotor(global_motor_id);
+        if (port_idx < 0) return -1;
+        return global_motor_id - PORT_CONFIGS[port_idx].motor_offset;
+    }
+
+private:
+    std::string zlg_ip_;
+    int arb_baud_;
+    int data_baud_;
+    std::array<std::unique_ptr<PortSender>, 4> port_senders_;
+};
+
 // ROS2 桥接类 (继承自 rclcpp::Node)
 class ROS2_to_TCP_Bridge : public rclcpp::Node {
 private:
     TcpConfig tcp_config_;
-    ZhilgongConfig zhilgong_config_;
+    // Replace single ZhilgongConfig with multi-port manager
+    std::unique_ptr<MultiPortMotorManager> multi_port_manager_;
 
     struct MotorEnableMsg {
         int motor_id;
@@ -1295,8 +1574,9 @@ public:
         verbose_logging_ = verbose;
         motor_cmd_enabled_ = motor_cmd_enabled;
 
+        // motor_id should start from 1, not 0
         for (int i = 0; i < G1_NUM_MOTOR; i++) {
-            motor_commands_[i] = {static_cast<uint16_t>(i), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+            motor_commands_[i] = {static_cast<uint16_t>(i + 1), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
         }
 
         std::cout << "ROS2-to-TCP Bridge Initializing..." << std::endl;
@@ -1304,25 +1584,10 @@ public:
         std::cout << "  Motor command: " << (motor_cmd_enabled_ ? "ENABLED" : "DISABLED") << std::endl;
     }
 
-    // 设置 ZLG 配置 (从 main 函数调用)
-    void SetZlgConfig(const std::string& ip, int port, int channel) {
-        zhilgong_config_.remote_ip = ip;
-        zhilgong_config_.remote_port = port;
-        zhilgong_config_.channel = channel;
-
-        std::cout << "ZLG Config set: IP=" << ip << ", Port=" << port << ", Channel=" << channel << std::endl;
-    }
-
-    // 设置 ZLG 配置 (含波特率)
-    void SetZlgConfig(const std::string& ip, int port, int channel, int arb_baud, int data_baud) {
-        zhilgong_config_.remote_ip = ip;
-        zhilgong_config_.remote_port = port;
-        zhilgong_config_.channel = channel;
-        zhilgong_config_.arbitration_baud = arb_baud;
-        zhilgong_config_.data_baud = data_baud;
-
-        std::cout << "ZLG Config set: IP=" << ip << ", Port=" << port << ", Channel=" << channel << std::endl;
-        std::cout << "  Arbitration Baud: " << arb_baud << " bps, Data Baud: " << data_baud << " bps" << std::endl;
+    // Initialize multi-port manager (replaces SetZlgConfig)
+    bool InitializeMultiPortManager(const std::string& zlg_ip, int arb_baud, int data_baud) {
+        multi_port_manager_ = std::make_unique<MultiPortMotorManager>(zlg_ip, arb_baud, data_baud);
+        return multi_port_manager_->Initialize();
     }
 
     ~ROS2_to_TCP_Bridge() {
@@ -1335,7 +1600,7 @@ public:
             close(tcp_config_.socket_fd);
         }
 
-        CloseZhilgongConnection();
+        // multi_port_manager_ auto-cleanup via unique_ptr destructor
     }
 
     bool InitializeTCP(const std::string& tcp_endpoint) {
@@ -1381,75 +1646,6 @@ public:
 
         tcp_config_.initialized = true;
         std::cout << "TCP connection established successfully" << std::endl;
-        return true;
-    }
-
-    // Initialize ZCAN connection (使用ZLG官方封装函数)
-    bool InitializeZhilgongConnection() {
-        if (zhilgong_config_.initialized) {
-            return true;
-        }
-
-        std::cout << "\n=== Initializing ZCAN Connection ===" << std::endl;
-        std::cout << "Target: " << zhilgong_config_.remote_ip << ":" << zhilgong_config_.remote_port << std::endl;
-        std::cout << "Channel: CAN" << zhilgong_config_.channel << std::endl;
-
-        // 1. ZCAN_OpenDevice - 打开设备
-        zhilgong_config_.device_handle = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP, 0, 0);
-        if (zhilgong_config_.device_handle == INVALID_DEVICE_HANDLE) {
-            std::cerr << "Failed to open ZCAN device" << std::endl;
-            return false;
-        }
-        std::cout << "[1/5] Device opened (ZCAN_OpenDevice)" << std::endl;
-
-        // 2. ZCAN_InitCAN - 初始化CAN通道 (使用CAN-FD模式，显式配置)
-        ZCAN_CHANNEL_INIT_CONFIG init_config;
-        memset(&init_config, 0, sizeof(init_config));
-
-        // 使用 CAN-FD 模式，显式设置波特率
-        init_config.can_type = TYPE_CANFD;                // CAN-FD模式
-        init_config.canfd.acc_code = 0;                  // 接受码
-        init_config.canfd.acc_mask = 0;                  // 接受掩码
-        init_config.canfd.abit_timing = zhilgong_config_.arbitration_baud;  // 仲裁域波特率: 1000000 = 1Mbps
-        init_config.canfd.dbit_timing = zhilgong_config_.data_baud;       // 数据域波特率: 5000000 = 5Mbps
-        init_config.canfd.brp = 0;                           // 波特率预分频器
-        init_config.canfd.filter = 0;                          // 过滤器
-        init_config.canfd.mode = 0;                             // 正常模式
-
-        zhilgong_config_.channel_handle = ZCAN_InitCAN(zhilgong_config_.device_handle, zhilgong_config_.channel, &init_config);
-        if (zhilgong_config_.channel_handle == INVALID_CHANNEL_HANDLE) {
-            std::cerr << "Failed to initialize CAN channel " << zhilgong_config_.channel << std::endl;
-            ZCAN_CloseDevice(zhilgong_config_.device_handle);
-            return false;
-        }
-        std::cout << "[2/5] CAN channel initialized (ZCAN_InitCAN)" << std::endl;
-
-        // 3. ZCAN_SetReference - 设置工作模式和连接参数
-        UINT val = 0;  // 0 = TCP client mode
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, zhilgong_config_.channel, CMD_TCP_TYPE, &val);
-
-        // 设置目标 IP
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, zhilgong_config_.channel, CMD_DESIP, (void*)zhilgong_config_.remote_ip.c_str());
-
-        // 设置目标端口
-        val = zhilgong_config_.remote_port;
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, zhilgong_config_.channel, CMD_DESPORT, &val);
-        std::cout << "[3/5] Connection parameters set (ZCAN_SetReference)" << std::endl;
-
-        // 4. ZCAN_StartCAN - 启动CAN通道
-        if (ZCAN_StartCAN(zhilgong_config_.channel_handle) == STATUS_ERR) {
-            std::cerr << "Failed to start CAN channel" << std::endl;
-            ZCAN_CloseDevice(zhilgong_config_.device_handle);
-            return false;
-        }
-        std::cout << "[4/5] CAN channel started (ZCAN_StartCAN)" << std::endl;
-
-        // 5. 短暂延迟等待连接稳定
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        std::cout << "[5/5] Connection established!" << std::endl;
-        std::cout << "=====================================" << std::endl << std::endl;
-
-        zhilgong_config_.initialized = true;
         return true;
     }
 
@@ -1561,275 +1757,88 @@ public:
         std::cout << ">>> 500Hz motor command sending STARTED <<<" << std::endl;
     }
 
-    // Send enable command using ZLG network packet format
+    // Send enable command via multi-port manager
     void SendEnableCommandToZhilgong(int motor_id) {
-        if (!InitializeZhilgongConnection()) {
+        if (!multi_port_manager_) {
+            std::cerr << "Multi-port manager not initialized" << std::endl;
             return;
         }
 
-        int can_id = get_can_id_for_motor(motor_id);
-        if (can_id <= 0) {
+        if (motor_id < 1 || motor_id > 30) {
             std::cerr << "Invalid motor ID: " << motor_id << std::endl;
             return;
         }
 
-        // Enable frame: FF FF FF FF FF FF FF FC
-        uint8_t enable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC};
-
-        std::cout << "\n>>> Sending ENABLE Command via ZLG Network Packet <<<" << std::endl;
+        std::cout << "\n>>> Sending ENABLE Command <<<" << std::endl;
         std::cout << "  Motor ID: " << motor_id << std::endl;
-        std::cout << "  CAN ID:   0x" << std::hex << can_id << std::dec << std::endl;
-        std::cout << "  Command:  ENABLE (0xFC)" << std::endl;
-        std::cout << "  Data:     FF FF FF FF FF FF FF FC" << std::endl;
 
-        SendZlgNetworkPacket(can_id, enable_frame, sizeof(enable_frame));
-        std::cout << ">>> Enable command sent <<<" << std::endl;
+        if (multi_port_manager_->SendEnableCommand(motor_id)) {
+            std::cout << ">>> Enable command sent <<<" << std::endl;
+        } else {
+            std::cerr << ">>> Enable command FAILED <<<" << std::endl;
+        }
     }
 
-    // Send disable command using ZLG network packet format
+    // Send disable command via multi-port manager
     void SendDisableCommandToZhilgong(int motor_id) {
-        if (!InitializeZhilgongConnection()) {
+        if (!multi_port_manager_) {
+            std::cerr << "Multi-port manager not initialized" << std::endl;
             return;
         }
 
-        int can_id = get_can_id_for_motor(motor_id);
-        if (can_id <= 0) {
+        if (motor_id < 1 || motor_id > 30) {
             std::cerr << "Invalid motor ID: " << motor_id << std::endl;
             return;
         }
 
-        // Disable frame: FF FF FF FF FF FF FF FD
-        uint8_t disable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD};
-
-        std::cout << "\n>>> Sending DISABLE Command via ZLG Network Packet <<<" << std::endl;
+        std::cout << "\n>>> Sending DISABLE Command <<<" << std::endl;
         std::cout << "  Motor ID: " << motor_id << std::endl;
-        std::cout << "  CAN ID:   0x" << std::hex << can_id << std::dec << std::endl;
-        std::cout << "  Command:  DISABLE (0xFD)" << std::endl;
-        std::cout << "  Data:     FF FF FF FF FF FF FF FD" << std::endl;
 
-        SendZlgNetworkPacket(can_id, disable_frame, sizeof(disable_frame));
-        std::cout << ">>> Disable command sent <<<" << std::endl;
+        if (multi_port_manager_->SendDisableCommand(motor_id)) {
+            std::cout << ">>> Disable command sent <<<" << std::endl;
+        } else {
+            std::cerr << ">>> Disable command FAILED <<<" << std::endl;
+        }
     }
 
-    // Send custom enable command using ZLG network packet format
+    // Send custom enable command via multi-port manager
     void SendCustomEnableCommandToZhilgong(int motor_id, uint8_t command) {
-        if (!InitializeZhilgongConnection()) {
+        if (!multi_port_manager_) {
+            std::cerr << "Multi-port manager not initialized" << std::endl;
             return;
         }
 
-        int can_id = get_can_id_for_motor(motor_id);
-        if (can_id <= 0) {
+        if (motor_id < 1 || motor_id > 30) {
             std::cerr << "Invalid motor ID: " << motor_id << std::endl;
             return;
         }
 
-        // Custom frame: FF FF FF FF FF FF FF [command]
-        uint8_t custom_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, command};
-
-        std::cout << "\n>>> Sending CUSTOM Command via ZLG Network Packet <<<" << std::endl;
-        std::cout << "  Motor ID: " << motor_id << std::endl;
-        std::cout << "  CAN ID:   0x" << std::hex << can_id << std::dec << std::endl;
-        std::cout << "  Command:  0x" << std::hex << static_cast<int>(command) << std::dec << std::endl;
-        std::cout << "  Data:     FF FF FF FF FF FF FF " << std::hex << static_cast<int>(command) << std::dec << std::endl;
-
-        SendZlgNetworkPacket(can_id, custom_frame, sizeof(custom_frame));
-        std::cout << ">>> Custom command sent <<<" << std::endl;
-    }
-
-    // Send ZLG CAN frame using ZCAN_Transmit (使用ZLG官方封装函数)
-    void SendZlgNetworkPacket(int can_id, const uint8_t* data, size_t data_len) {
-        if (!zhilgong_config_.initialized || zhilgong_config_.channel_handle == INVALID_CHANNEL_HANDLE) {
-            std::cerr << "ZCAN device not connected" << std::endl;
-            return;
-        }
-
-        // 构建 ZCAN_Transmit_Data 结构
-        ZCAN_Transmit_Data transmit_data;
-        memset(&transmit_data, 0, sizeof(transmit_data));
-
-        // 设置 CAN ID (使用 MAKE_CAN_ID 宏)
-        transmit_data.frame.can_id = MAKE_CAN_ID(can_id, 0, 0, 0);
-
-        // 设置 DLC
-        uint8_t dlc = (data_len > 8) ? 8 : data_len;
-        transmit_data.frame.can_dlc = dlc;
-
-        // 设置数据
-        for (uint8_t i = 0; i < dlc; i++) {
-            transmit_data.frame.data[i] = data[i];
-        }
-
-        // 发送类型 (0=正常发送)
-        transmit_data.transmit_type = 0;
-
-        // ==================== 打印 TCP 字节流 ====================
-        std::cout << "\n  >>> Sending ZLG Network Packet <<<" << std::endl;
-        std::cout << "  CAN Frame: ID=0x" << std::hex << can_id << std::dec << " Data=";
-        for (uint8_t i = 0; i < dlc; i++) {
-            std::cout << std::hex << std::setw(2) << std::setfill('0')
-                      << static_cast<int>(data[i]) << " ";
-        }
-        std::cout << std::dec << std::setfill(' ') << std::endl;
-
-        // 打印完整的 TCP 字节流
-        PrintZLGRawPacket(can_id, data, dlc, zhilgong_config_.channel, true);
-
-        // 使用 ZCAN_Transmit 发送
-        uint32_t ret = ZCAN_Transmit(zhilgong_config_.channel_handle, &transmit_data, 1);
-
-        if (ret == 1) {
-            std::cout << "  [OK] Sent via ZCAN_Transmit" << std::endl;
+        // For custom commands, send as enable (0xFC) or disable (0xFD)
+        // Other custom values can be added if needed
+        if (command == 0xFC) {
+            SendEnableCommandToZhilgong(motor_id);
+        } else if (command == 0xFD) {
+            SendDisableCommandToZhilgong(motor_id);
         } else {
-            std::cerr << "  [FAIL] Send failed (ret=" << ret << ")" << std::endl;
+            std::cout << "\n>>> Sending CUSTOM Command <<<" << std::endl;
+            std::cout << "  Motor ID: " << motor_id << std::endl;
+            std::cout << "  Command:  0x" << std::hex << static_cast<int>(command) << std::dec << std::endl;
+            std::cout << "  Note: Custom command 0x" << std::hex << static_cast<int>(command) << std::dec
+                      << " not directly supported, using enable/disable logic" << std::endl;
         }
     }
 
-    void CloseZhilgongConnection() {
-        if (zhilgong_config_.initialized) {
-            if (zhilgong_config_.channel_handle != INVALID_CHANNEL_HANDLE) {
-                ZCAN_ResetCAN(zhilgong_config_.channel_handle);
-                zhilgong_config_.channel_handle = INVALID_CHANNEL_HANDLE;
-            }
-            if (zhilgong_config_.device_handle != INVALID_DEVICE_HANDLE) {
-                ZCAN_CloseDevice(zhilgong_config_.device_handle);
-                zhilgong_config_.device_handle = INVALID_DEVICE_HANDLE;
-            }
-            zhilgong_config_.initialized = false;
-            std::cout << "ZCAN connection closed" << std::endl;
-        }
-    }
-
-    // Send motor command using ZCAN_Transmit (使用ZLG官方封装函数)
-    void SendMotorCommandTCP(const MotorCommandCan& cmd) {
-        send_count_++;
-
-        if (!zhilgong_config_.initialized || zhilgong_config_.channel_handle == INVALID_CHANNEL_HANDLE) {
-            send_error_count_++;
-            return;
-        }
-
-        // Convert motor command to CAN data bytes (MIT motor protocol)
-        // 将电机命令转换为 CAN 数据字节 (MIT 电机协议)
-        uint8_t can_data[8];
-        MotorCommandToCanData(cmd, can_data);
-
-        // Build ZCAN_Transmit_Data structure
-        ZCAN_Transmit_Data transmit_data;
-        memset(&transmit_data, 0, sizeof(transmit_data));
-
-        // 设置 CAN ID (使用 MAKE_CAN_ID 宏)
-        uint32_t can_id = cmd.motor_id;
-        transmit_data.frame.can_id = MAKE_CAN_ID(can_id, 0, 0, 0);
-        transmit_data.frame.can_dlc = 8;
-
-        // 设置数据
-        for (int i = 0; i < 8; i++) {
-            transmit_data.frame.data[i] = can_data[i];
-        }
-
-        // 发送类型 (0=正常发送)
-        transmit_data.transmit_type = 0;
-
-        // 使用 ZCAN_Transmit 发送
-        uint32_t ret = ZCAN_Transmit(zhilgong_config_.channel_handle, &transmit_data, 1);
-
-        if (ret == 1) {
-            send_success_count_++;
-        } else {
-            send_error_count_++;
-        }
-    }
-
-    // ==================== 批量队列发送功能 ====================
-    // 使用 ZLG SDK 的队列批量发送功能，一次性发送多个电机命令
-    // 这样可以显著提高发送效率，减少 TCP 通信开销
-    int SendMotorCommandBatch(const std::vector<MotorCommandCan>& commands, bool verbose = false) {
-        if (!zhilgong_config_.initialized || zhilgong_config_.channel_handle == INVALID_CHANNEL_HANDLE) {
+    // Send all motor commands via multi-port manager
+    int SendAllMotorCommands(const std::vector<MotorCommandCan>& commands) {
+        if (!multi_port_manager_) {
             send_error_count_ += commands.size();
             return 0;
         }
-
-        if (commands.empty()) {
-            return 0;
-        }
-
-        // 准备批量发送的 CAN 帧数组
-        std::vector<ZCAN_Transmit_Data> frames;
-        frames.reserve(commands.size());
-
-        for (const auto& cmd : commands) {
-            ZCAN_Transmit_Data transmit_data;
-            memset(&transmit_data, 0, sizeof(transmit_data));
-
-            // 设置 CAN ID
-            uint32_t can_id = cmd.motor_id;
-            transmit_data.frame.can_id = MAKE_CAN_ID(can_id, 0, 0, 0);
-            transmit_data.frame.can_dlc = 8;
-
-            // 转换电机命令为 CAN 数据
-            uint8_t can_data[8];
-            MotorCommandToCanData(cmd, can_data);
-
-            for (int i = 0; i < 8; i++) {
-                transmit_data.frame.data[i] = can_data[i];
-            }
-
-            transmit_data.transmit_type = 0;
-            frames.push_back(transmit_data);
-        }
-
-        // 打印批量发送信息（完整包结构 + TCP 字节流）
-        if (verbose) {
-            std::cout << "  >>> [BATCH] Sending " << frames.size() << " Motor Commands <<<" << std::endl;
-
-            // 打印 TCP 字节流（前5个帧的详细包）
-            PrintZLGRawPacketBatch(frames.data(), frames.size(), zhilgong_config_.channel);
-
-            // 显示前5个帧的 ZCAN_Transmit_Data 结构信息
-            std::cout << "\n  [ZCAN_Structure]" << std::endl;
-            uint32_t show_count = std::min(static_cast<uint32_t>(frames.size()), static_cast<uint32_t>(5));
-            for (uint32_t i = 0; i < show_count; i++) {
-                uint32_t can_id = GET_ID(frames[i].frame.can_id);
-                std::cout << "    [Frame " << i << "] ";
-                std::cout << "can_id_raw=0x" << std::hex << std::setw(8) << std::setfill('0') << frames[i].frame.can_id << std::dec;
-                std::cout << " (ID=0x" << std::hex << std::setw(3) << std::setfill('0') << can_id << std::dec << ") ";
-                std::cout << "dlc=" << static_cast<int>(frames[i].frame.can_dlc) << " ";
-                std::cout << "data=";
-                for (uint8_t j = 0; j < frames[i].frame.can_dlc && j < 8; j++) {
-                    std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(frames[i].frame.data[j]);
-                    if (j < frames[i].frame.can_dlc - 1) std::cout << " ";
-                }
-                std::cout << std::dec << std::endl;
-            }
-            if (frames.size() > 5) {
-                std::cout << "    ... and " << (frames.size() - 5) << " more frames" << std::endl;
-            }
-        }
-
-        // 使用 ZCAN_Transmit 批量发送（一次发送多个帧）
-        // ==================== 验证队列发送：测量发送时间 ====================
-        auto start_time = std::chrono::high_resolution_clock::now();
-        uint32_t ret = ZCAN_Transmit(zhilgong_config_.channel_handle, frames.data(), frames.size());
-        auto end_time = std::chrono::high_resolution_clock::now();
-        auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-
-        if (verbose) {
-            std::cout << "    [BATCH] Result: " << ret << "/" << frames.size() << " frames sent" << std::endl;
-            std::cout << "    [TIME] Single ZCAN_Transmit call took: " << duration_us << " us" << std::endl;
-            std::cout << "    [TIME] Average per frame: " << (duration_us / frames.size()) << " us/frame" << std::endl;
-            std::cout << "    [VERIFY] Queue send confirmed: " << frames.size() << " frames in ONE API call" << std::endl;
-        }
-
-        // 更新统计
         send_count_ += commands.size();
-        if (ret > 0) {
-            send_success_count_ += ret;
-            send_error_count_ += (commands.size() - ret);
-        } else {
-            send_error_count_ += commands.size();
-        }
-
-        return ret;
+        int sent = multi_port_manager_->SendAllMotorCommands(commands);
+        send_success_count_ += sent;
+        send_error_count_ += (commands.size() - sent);
+        return sent;
     }
 
     // 收集所有需要发送的电机命令到批量数组
@@ -1919,10 +1928,10 @@ public:
                     // 收集所有电机命令到批量数组
                     std::vector<MotorCommandCan> motor_commands = CollectMotorCommands(now);
 
-                    // 使用批量发送功能一次性发送所有电机命令
-                    // 这样可以显著提高效率，从原来的 30*50us = 1500us 降低到单次发送时间
+                    // 使用多端口管理器发送所有电机命令
+                    // 自动分发到对应的端口 (8000, 8001, 8002, 8003)
                     if (!motor_commands.empty()) {
-                        SendMotorCommandBatch(motor_commands, verbose_logging_);
+                        SendAllMotorCommands(motor_commands);
                     }
 
                     // 更新下次发送时间
@@ -1950,7 +1959,7 @@ public:
                     // 等待使能命令阶段
                     std::cout << "[WAIT] Waiting for enable command via /motor_enable topic... "
                               << "ROS2_msg: " << current_ros2_count << " (+" << ros2_delta << "/s) | "
-                              << "ZLG: " << (zhilgong_config_.initialized ? "Connected" : "Disconnected")
+                              << "4-Port: " << (multi_port_manager_ ? "Connected" : "Disconnected")
                               << std::endl;
                 } else if (first_log) {
                     // 第一次开始发送，打印标题
@@ -1960,7 +1969,7 @@ public:
                               << "Send: " << current_send_count << " (+" << sends_delta << "/s) | "
                               << "Success: " << current_success_count << " (+" << success_delta << "/s) | "
                               << "Error: " << current_error_count << " (+" << error_delta << "/s) | "
-                              << "ZLG: " << (zhilgong_config_.initialized ? "Connected" : "Disconnected")
+                              << "4-Port: " << (multi_port_manager_ ? "Connected" : "Disconnected")
                               << std::endl;
                     first_log = false;
                 } else {
@@ -1970,7 +1979,7 @@ public:
                               << "Send: " << current_send_count << " (+" << sends_delta << "/s) | "
                               << "Success: " << current_success_count << " (+" << success_delta << "/s) | "
                               << "Error: " << current_error_count << " (+" << error_delta << "/s) | "
-                              << "ZLG: " << (zhilgong_config_.initialized ? "Connected" : "Disconnected")
+                              << "4-Port: " << (multi_port_manager_ ? "Connected" : "Disconnected")
                               << std::endl;
                 }
 
@@ -2003,8 +2012,6 @@ int main(int argc, char* argv[]) {
     // 命令行参数结构
     struct {
         std::string zlg_ip = "192.168.1.5";
-        int zlg_port = 8003;
-        int channel = 2;  // CAN2 (默认改为CAN2)
         bool verbose = false;
         bool motor_cmd_enabled = false;
         bool quiet = true;  // 默认启用 quiet 模式，屏蔽 ZLG [SYS] 输出
@@ -2026,13 +2033,8 @@ int main(int argc, char* argv[]) {
     } params;
 
     if (argc < 2) {
-        std::cout << "Usage: motor_controller_with_enable [zlg_endpoint] [options]" << std::endl;
-        std::cout << "\nPositional Arguments:" << std::endl;
-        std::cout << "  zlg_endpoint       ZLG device endpoint (e.g., 192.168.1.5:8002, default: 192.168.1.5:8003)" << std::endl;
-        std::cout << "                     If omitted, port is determined by -p option" << std::endl;
+        std::cout << "Usage: motor_controller_with_enable [options]" << std::endl;
         std::cout << "\nOptions:" << std::endl;
-        std::cout << "  -p, --port <port>       ZLG device TCP port (default: 8003)" << std::endl;
-        std::cout << "  -c, --channel <ch>      CAN channel 0-3 (default: 2)" << std::endl;
         std::cout << "  -v, --verbose           Enable verbose logging" << std::endl;
         std::cout << "  --no-quiet              Show ZLG SDK [SYS] debug output (default: HIDDEN)" << std::endl;
         std::cout << "  --enable-motor-cmd      Enable motor command sending (default: DISABLED)" << std::endl;
@@ -2048,43 +2050,22 @@ int main(int argc, char* argv[]) {
         std::cout << "  --receive-and-disable   Send disable command and then monitor responses" << std::endl;
         std::cout << "  --receive-duration <s>  Receive duration in seconds (0=infinite, default: 0)" << std::endl;
         std::cout << "\nExamples:" << std::endl;
-        std::cout << "  # ROS2 mode - CAN2 with motor commands" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --enable-motor-cmd" << std::endl;
-        std::cout << "\n  # ROS2 mode - CAN3 with verbose logging" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8003 -c 3 -v --enable-motor-cmd" << std::endl;
-        std::cout << "\n  # Custom baud rate (arbitration 1M, data 5M)" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --arb-baud 1000000 --data-baud 5000000" << std::endl;
-        std::cout << "\n  # Direct enable/disable mode" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 --enable 1" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --disable 5" << std::endl;
-        std::cout << "\n  # Enable all motors (1-10) on CAN2" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --enable 1-10" << std::endl;
+        std::cout << "  # ROS2 mode with motor commands (4-port mode: 8000, 8001, 8002, 8003)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --enable-motor-cmd" << std::endl;
+        std::cout << "\n  # ROS2 mode with verbose logging" << std::endl;
+        std::cout << "  ./motor_controller_with_enable -v --enable-motor-cmd" << std::endl;
+        std::cout << "\n  # Direct enable mode" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --enable 1" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --disable 5" << std::endl;
+        std::cout << "\n  # Enable range of motors (1-10)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --enable 1-10" << std::endl;
         std::cout << "\n  # Receive mode - monitor CAN bus (verbose)" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --receive-only -v" << std::endl;
-        std::cout << "\n  # Enable motor 1 and monitor responses for 30 seconds" << std::endl;
-        std::cout << "  ./motor_controller_with_enable 192.168.1.5:8002 -c 2 --receive-and-enable 1 --receive-duration 30" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --receive-only -v" << std::endl;
         return 1;
     }
 
-    // 解析第一个位置参数 (ZLG endpoint，格式: IP:PORT 或仅 PORT)
-    std::string first_arg = argv[1];
-    size_t colon_pos = first_arg.find(':');
-    if (colon_pos != std::string::npos) {
-        // 格式: IP:PORT
-        params.zlg_ip = first_arg.substr(0, colon_pos);
-        params.zlg_port = std::stoi(first_arg.substr(colon_pos + 1));
-    } else {
-        // 尝试解析为端口号
-        try {
-            params.zlg_port = std::stoi(first_arg);
-        } catch (...) {
-            // 不是数字，当作 IP 处理（使用默认端口）
-            params.zlg_ip = first_arg;
-        }
-    }
-
     // 解析可选参数
-    for (int i = 2; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
 
         if (arg == "-v" || arg == "--verbose") {
@@ -2095,12 +2076,6 @@ int main(int argc, char* argv[]) {
         }
         else if (arg == "--enable-motor-cmd") {
             params.motor_cmd_enabled = true;
-        }
-        else if ((arg == "-p" || arg == "--port") && i + 1 < argc) {
-            params.zlg_port = std::atoi(argv[++i]);
-        }
-        else if ((arg == "-c" || arg == "--channel") && i + 1 < argc) {
-            params.channel = std::atoi(argv[++i]);
         }
         else if (arg == "--arb-baud" && i + 1 < argc) {
             params.arb_baud = std::atoi(argv[++i]);
@@ -2153,8 +2128,8 @@ int main(int argc, char* argv[]) {
     std::cout << "========================================" << std::endl;
     std::cout << "ROS2 Motor Controller with ZLG Enable" << std::endl;
     std::cout << "========================================" << std::endl;
-    std::cout << "ZLG Device: " << params.zlg_ip << ":" << params.zlg_port << std::endl;
-    std::cout << "CAN Channel: " << params.channel << " (CAN" << params.channel << ")" << std::endl;
+    std::cout << "ZLG Device IP: " << params.zlg_ip << std::endl;
+    std::cout << "Ports: 8000, 8001, 8002, 8003 (4-port mode)" << std::endl;
     std::cout << "CAN-FD Arbitration Baud: " << params.arb_baud << " bps (" << (params.arb_baud / 1000000) << "M)" << std::endl;
     std::cout << "CAN-FD Data Baud: " << params.data_baud << " bps (" << (params.data_baud / 1000000) << "M)" << std::endl;
     std::cout << "Mode: " << (params.direct_mode ? "Direct Command" : "ROS2 Bridge") << std::endl;
@@ -2174,14 +2149,14 @@ int main(int argc, char* argv[]) {
             std::cout << "\n=== Receive-Only Mode ===" << std::endl;
             std::cout << "Monitoring CAN bus without transmission..." << std::endl;
 
-            // 初始化 ZCAN 连接
-            if (!InitializeDirectZCAN(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud)) {
+            // 初始化 ZCAN 连接 (使用默认端口 8000, channel 0)
+            if (!InitializeDirectZCAN(params.zlg_ip, 8000, 0, params.arb_baud, params.data_baud)) {
                 std::cerr << "Failed to initialize ZCAN connection" << std::endl;
                 return 1;
             }
 
             // 启动接收线程
-            StartCANReceiveThread(direct_zlg_config.channel_handle, params.channel, params.verbose);
+            StartCANReceiveThread(direct_zlg_config.channel_handle, 0, params.verbose);
 
             // 等待指定时间或无限等待
             if (params.receive_duration > 0) {
@@ -2212,14 +2187,14 @@ int main(int argc, char* argv[]) {
             std::cout << "\n=== " << mode_name << " Mode ===" << std::endl;
             std::cout << "Sending " << action << " command and monitoring motor responses..." << std::endl;
 
-            // 初始化 ZCAN 连接
-            if (!InitializeDirectZCAN(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud)) {
+            // 初始化 ZCAN 连接 (使用默认端口 8000, channel 0)
+            if (!InitializeDirectZCAN(params.zlg_ip, 8000, 0, params.arb_baud, params.data_baud)) {
                 std::cerr << "Failed to initialize ZCAN connection" << std::endl;
                 return 1;
             }
 
             // 先启动接收线程
-            StartCANReceiveThread(direct_zlg_config.channel_handle, params.channel, params.verbose);
+            StartCANReceiveThread(direct_zlg_config.channel_handle, 0, params.verbose);
 
             // 短暂延迟等待接收线程就绪
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -2278,8 +2253,8 @@ int main(int argc, char* argv[]) {
         // ==================== 标准直接命令模式 ====================
         std::cout << "\n=== Direct Command Mode ===" << std::endl;
 
-        // 初始化 ZCAN 连接
-        if (!InitializeDirectZCAN(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud)) {
+        // 初始化 ZCAN 连接 (使用默认端口 8000, channel 0)
+        if (!InitializeDirectZCAN(params.zlg_ip, 8000, 0, params.arb_baud, params.data_baud)) {
             std::cerr << "Failed to initialize ZCAN connection" << std::endl;
             return 1;
         }
@@ -2327,20 +2302,9 @@ int main(int argc, char* argv[]) {
     try {
         auto bridge = std::make_shared<ROS2_to_TCP_Bridge>(params.verbose, params.motor_cmd_enabled);
 
-        // 设置 ZLG 配置 (含波特率)
-        bridge->SetZlgConfig(params.zlg_ip, params.zlg_port, params.channel, params.arb_baud, params.data_baud);
-
-        // 初始化 TCP 连接 (用于上位机通信，如果需要)
-        // 注意：如果不需要连接到上位机 TCP 服务器，可以跳过
-        // if (!bridge->InitializeTCP(params.tcp_endpoint)) {
-        //     std::cerr << "Failed to initialize TCP connection" << std::endl;
-        //     rclcpp::shutdown();
-        //     return 1;
-        // }
-
-        // 初始化周立功设备连接 (用于发送 CAN 命令)
-        if (!bridge->InitializeZhilgongConnection()) {
-            std::cerr << "Failed to initialize ZLG connection" << std::endl;
+        // 初始化多端口管理器 (4-port mode: 8000, 8001, 8002, 8003)
+        if (!bridge->InitializeMultiPortManager(params.zlg_ip, params.arb_baud, params.data_baud)) {
+            std::cerr << "Failed to initialize multi-port manager" << std::endl;
             rclcpp::shutdown();
             return 1;
         }

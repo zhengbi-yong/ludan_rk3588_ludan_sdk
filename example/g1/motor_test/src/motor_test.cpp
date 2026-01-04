@@ -37,12 +37,13 @@ struct MotorTestConfig {
     // Sine wave configuration
     double amplitude = 0.5;    // Amplitude in radians
     double start_freq = 0.1;   // Start frequency in Hz
-    double end_freq = 10.0;    // End frequency in Hz
-    double sweep_duration = 60.0;  // Sweep duration in seconds
+    double end_freq = 20.0;    // End frequency in Hz
+    double freq_step = 0.05;   // Frequency step in Hz (discrete points)
+    double cycles_per_freq = 1.0;  // Number of cycles to hold per frequency
     double offset = 0.0;       // Offset in radians
 
     // Control loop configuration
-    double control_rate = 500.0;  // Control rate in Hz
+    double control_rate = 50.0;   // Control rate in Hz (reduced to 1/10th of original 500 Hz)
     bool enable_motor = true;     // Auto-enable motor on start
 
     // Logging configuration
@@ -149,6 +150,7 @@ struct MotorFeedback {
     int16_t  raw_torque;
     int8_t   temp_mos;
     int8_t   temp_rotor;
+    double  frequency;      // Command frequency in Hz
     bool valid;
 };
 
@@ -194,7 +196,7 @@ public:
         std::cout << "Motor ID: " << config_.motor_id << std::endl;
         std::cout << "Control Rate: " << config_.control_rate << " Hz" << std::endl;
         std::cout << "Frequency Sweep: " << config_.start_freq << " -> " << config_.end_freq
-                  << " Hz over " << config_.sweep_duration << " s" << std::endl;
+                  << " Hz, step=" << config_.freq_step << " Hz" << std::endl;
         std::cout << "Amplitude: " << config_.amplitude << " rad" << std::endl;
         std::cout << "Gains: kp=" << config_.kp << ", kd=" << config_.kd << std::endl;
 
@@ -227,13 +229,18 @@ public:
         std::cout << "[2/5] CAN channel initialized (CAN-FD " << config_.arb_baud << "/"
                   << config_.data_baud << ")" << std::endl;
 
-        // 3. Set IP and port
-        uint32_t val = 0;
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, config_.channel, CMD_DESIP,
+        // 3. Configure network settings (before StartCAN)
+        // Note: ZCAN_SetReference uses device_type as 1st param, channel_index is always 0
+        uint32_t val = 1;
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, 0, SETREF_SET_DATA_RECV_MERGE, &val);
+
+        val = 0;  // 0 = TCP client mode
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, 0, CMD_TCP_TYPE, &val);
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, 0, CMD_DESIP,
                          (void*)config_.zlg_ip.c_str());
         val = config_.zlg_port;
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, config_.channel, CMD_DESPORT, &val);
-        std::cout << "[3/5] IP:Port configured" << std::endl;
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, 0, CMD_DESPORT, &val);
+        std::cout << "[3/5] TCP client mode, IP:Port configured" << std::endl;
 
         // 4. Start CAN
         if (ZCAN_StartCAN(channel_handle_) != STATUS_OK) {
@@ -282,6 +289,26 @@ public:
 
     void RunControlLoop() {
         std::cout << "\n=== Starting Control Loop at " << config_.control_rate << " Hz ===" << std::endl;
+
+        // Generate discrete frequency points
+        std::vector<double> freq_points;
+        std::vector<double> freq_durations;
+        double total_duration = 0.0;
+
+        for (double f = config_.start_freq; f <= config_.end_freq + 1e-9; f += config_.freq_step) {
+            freq_points.push_back(f);
+            // Hold for at least N complete cycles: duration = cycles / frequency
+            double duration = config_.cycles_per_freq / f;
+            freq_durations.push_back(duration);
+            total_duration += duration;
+        }
+
+        std::cout << "Frequency Sweep: " << config_.start_freq << " -> " << config_.end_freq
+                  << " Hz, step=" << config_.freq_step << " Hz" << std::endl;
+        std::cout << "Number of frequency points: " << freq_points.size() << std::endl;
+        std::cout << "Cycles per frequency: " << config_.cycles_per_freq << std::endl;
+        std::cout << "Estimated total duration: " << std::fixed << std::setprecision(1)
+                  << total_duration << " s (" << total_duration / 60.0 << " min)" << std::endl;
         std::cout << "Press Ctrl+C to stop..." << std::endl;
         std::cout << std::fixed << std::setprecision(4);
 
@@ -297,27 +324,43 @@ public:
         uint64_t print_counter = 0;
         uint64_t feedback_count = 0;
         MotorFeedback last_feedback = {0};
+        size_t freq_index = 0;
+        double freq_start_time = 0.0;
+        double current_freq = freq_points[0];
 
-        while (running_) {
-            // Calculate target position with frequency sweep
+        // Initialize current command frequency
+        current_cmd_frequency_.store(current_freq);
+
+        std::cout << "\n>>> Starting Frequency Point " << (freq_index + 1) << "/" << freq_points.size()
+                  << ": " << current_freq << " Hz (duration: " << freq_durations[0] << " s) <<<" << std::endl;
+
+        while (running_ && freq_index < freq_points.size()) {
+            // Calculate target position with current discrete frequency
             auto current_time = std::chrono::steady_clock::now();
             double elapsed = std::chrono::duration<double>(current_time - start_time).count();
+            double freq_elapsed = elapsed - freq_start_time;
 
-            // Calculate current frequency (logarithmic sweep)
-            double sweep_progress = std::min(elapsed / config_.sweep_duration, 1.0);
-            double current_freq = config_.start_freq *
-                std::pow(config_.end_freq / config_.start_freq, sweep_progress);
+            // Check if it's time to switch to next frequency
+            if (freq_elapsed >= freq_durations[freq_index]) {
+                freq_index++;
+                if (freq_index >= freq_points.size()) {
+                    break;  // All frequency points completed
+                }
+                current_freq = freq_points[freq_index];
+                freq_start_time = elapsed;
+                std::cout << "\n>>> Switching to Frequency Point " << (freq_index + 1) << "/"
+                          << freq_points.size() << ": " << current_freq << " Hz (duration: "
+                          << freq_durations[freq_index] << " s) <<<" << std::endl;
+            }
 
-            // Calculate phase: integral of frequency over time
-            // For logarithmic sweep: phase = f0 * T / ln(f1/f0) * (exp(t/T * ln(f1/f0)) - 1)
-            double k = std::log(config_.end_freq / config_.start_freq) / config_.sweep_duration;
-            double phase = (config_.start_freq / k) * (std::exp(k * elapsed) - 1.0);
+            // Calculate phase for current frequency (continuous phase accumulation)
+            double phase = current_freq * elapsed;
 
             // Sine wave: position = A * sin(2π * phase) + offset
             double target_pos = config_.amplitude * std::sin(2.0 * M_PI * phase) + config_.offset;
 
-            // Calculate target velocity (derivative of position with varying frequency)
-            // velocity = A * 2π * f(t) * cos(2π * phase)
+            // Calculate target velocity
+            // velocity = A * 2π * f * cos(2π * phase)
             double target_vel = config_.amplitude * 2.0 * M_PI * current_freq *
                               std::cos(2.0 * M_PI * phase);
 
@@ -333,6 +376,9 @@ public:
             // Send motor command
             SendMotorCommand(cmd);
 
+            // Update current command frequency for logging
+            current_cmd_frequency_.store(current_freq);
+
             // Get latest feedback
             {
                 std::lock_guard<std::mutex> lock(feedback_mutex_);
@@ -344,14 +390,18 @@ public:
 
             // Print status every 50 iterations
             if (++print_counter >= 50) {
+                double progress = (freq_elapsed / freq_durations[freq_index]) * 100.0;
                 std::cout << "[" << std::setw(8) << elapsed << "s] "
-                          << "freq=" << std::setw(6) << current_freq << " Hz, "
-                          << "target_pos=" << std::setw(8) << target_pos << " rad, "
-                          << "target_vel=" << std::setw(8) << target_vel << " rad/s";
+                          << "Freq[" << (freq_index + 1) << "/" << freq_points.size() << "] "
+                          << std::setw(6) << current_freq << " Hz "
+                          << "(" << std::setw(5) << std::setprecision(1) << progress << "%), "
+                          << "pos=" << std::setw(8) << target_pos << " rad, "
+                          << "vel=" << std::setw(8) << target_vel << " rad/s";
                 if (last_feedback.valid) {
-                    std::cout << " | actual_pos=" << std::setw(8) << last_feedback.position << " rad"
-                              << ", actual_vel=" << std::setw(8) << last_feedback.velocity << " rad/s";
+                    std::cout << " | act_pos=" << std::setw(8) << last_feedback.position << " rad"
+                              << ", act_vel=" << std::setw(8) << last_feedback.velocity << " rad/s";
                 }
+                std::cout << std::setprecision(4);
                 std::cout << ", iter=" << iteration << std::endl;
                 print_counter = 0;
             }
@@ -366,6 +416,7 @@ public:
         std::cout << "\n=== Control Loop Stopped ===" << std::endl;
         std::cout << "Total iterations: " << iteration << std::endl;
         std::cout << "Total feedback received: " << feedback_count << std::endl;
+        std::cout << "Frequency points completed: " << freq_index << "/" << freq_points.size() << std::endl;
     }
 
     void Stop() {
@@ -414,7 +465,7 @@ private:
         log_file_.open(log_file_path_);
         if (log_file_.is_open()) {
             // Write header
-            log_file_ << "timestamp,motor_id,error,position,velocity,torque,raw_pos,raw_vel,raw_torque,temp_mos,temp_rotor\n";
+            log_file_ << "timestamp,motor_id,error,position,velocity,torque,raw_pos,raw_vel,raw_torque,temp_mos,temp_rotor,frequency\n";
             log_file_ << std::fixed << std::setprecision(6);
             log_count_ = 0;
         } else {
@@ -456,6 +507,7 @@ private:
                         fb.raw_torque = dm_data.torque;
                         fb.temp_mos = dm_data.temp_mos;
                         fb.temp_rotor = dm_data.temp_rotor;
+                        fb.frequency = current_cmd_frequency_.load();  // Get current command frequency
                         fb.valid = true;
 
                         // Store latest feedback
@@ -477,7 +529,8 @@ private:
                                      << fb.raw_vel << ","
                                      << fb.raw_torque << ","
                                      << static_cast<int>(fb.temp_mos) << ","
-                                     << static_cast<int>(fb.temp_rotor) << "\n";
+                                     << static_cast<int>(fb.temp_rotor) << ","
+                                     << fb.frequency << "\n";
                             log_count_++;
 
                             // Flush periodically
@@ -527,6 +580,9 @@ private:
     MotorFeedback latest_feedback_{0};
     std::mutex feedback_mutex_;
 
+    // Current command frequency (shared between control and receive threads)
+    std::atomic<double> current_cmd_frequency_{0.0};
+
     // Logging
     std::ofstream log_file_;
     std::string log_file_path_;
@@ -554,8 +610,9 @@ void PrintUsage(const char* program_name) {
     std::cout << "  --motor-id <id>       Motor ID to control (default: 9)" << std::endl;
     std::cout << "  --amplitude <rad>     Sine wave amplitude in rad (default: 0.5)" << std::endl;
     std::cout << "  --start-freq <hz>     Start frequency in Hz (default: 0.1)" << std::endl;
-    std::cout << "  --end-freq <hz>       End frequency in Hz (default: 10.0)" << std::endl;
-    std::cout << "  --sweep-time <sec>    Sweep duration in seconds (default: 60.0)" << std::endl;
+    std::cout << "  --end-freq <hz>       End frequency in Hz (default: 20.0)" << std::endl;
+    std::cout << "  --freq-step <hz>      Frequency step in Hz (default: 0.05)" << std::endl;
+    std::cout << "  --cycles <n>          Cycles per frequency point (default: 1.0)" << std::endl;
     std::cout << "  --offset <rad>        Position offset in rad (default: 0.0)" << std::endl;
     std::cout << "  --kp <value>          Position gain (default: 10.0)" << std::endl;
     std::cout << "  --kd <value>          Velocity gain (default: 1.5)" << std::endl;
@@ -565,10 +622,11 @@ void PrintUsage(const char* program_name) {
     std::cout << "  --no-enable           Don't auto-enable motor" << std::endl;
     std::cout << "  -h, --help            Show this help message" << std::endl;
     std::cout << "\nFrequency Sweep Mode:" << std::endl;
-    std::cout << "  The frequency sweeps logarithmically from --start-freq to --end-freq" << std::endl;
-    std::cout << "  over the duration specified by --sweep-time, then repeats." << std::endl;
+    std::cout << "  Discrete frequency sweep from --start-freq to --end-freq" << std::endl;
+    std::cout << "  with step size --freq-step. Each frequency is held for --cycles" << std::endl;
+    std::cout << "  complete cycles (duration = cycles / frequency)." << std::endl;
     std::cout << "\nExample:" << std::endl;
-    std::cout << "  " << program_name << " --motor-id 9 --amplitude 0.3 --start-freq 0.5 --end-freq 5.0 --sweep-time 30" << std::endl;
+    std::cout << "  " << program_name << " --motor-id 9 --amplitude 0.3 --start-freq 0.5 --end-freq 5.0 --freq-step 0.1" << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -595,8 +653,10 @@ int main(int argc, char** argv) {
             config.start_freq = std::atof(argv[++i]);
         } else if (arg == "--end-freq" && i + 1 < argc) {
             config.end_freq = std::atof(argv[++i]);
-        } else if (arg == "--sweep-time" && i + 1 < argc) {
-            config.sweep_duration = std::atof(argv[++i]);
+        } else if (arg == "--freq-step" && i + 1 < argc) {
+            config.freq_step = std::atof(argv[++i]);
+        } else if (arg == "--cycles" && i + 1 < argc) {
+            config.cycles_per_freq = std::atof(argv[++i]);
         } else if (arg == "--offset" && i + 1 < argc) {
             config.offset = std::atof(argv[++i]);
         } else if (arg == "--kp" && i + 1 < argc) {

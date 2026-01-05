@@ -131,14 +131,14 @@ public:
 private:
     void SendLoop() {
         // Prepare frames for all motors on this port
-        // Motor ID 0x000-0x00F -> received CAN ID 0x010-0x01F (with +0x10 offset)
+        // Motor ID 1-30 directly as CAN ID (matches motor_feedback_publisher expectations)
         std::vector<ZCAN_TransmitFD_Data> frames(config_.motor_count);
         for (int i = 0; i < config_.motor_count; i++) {
             memset(&frames[i], 0, sizeof(frames[i]));
-            // Calculate motor_id (0-based global motor index)
-            int motor_id = config_.motor_offset + i;
-            // CAN ID with 0x010 offset: Motor ID 0x000 -> CAN ID 0x010
-            frames[i].frame.can_id = 0x010 + motor_id;
+            // Calculate motor_id (1-based global motor index)
+            int motor_id = config_.motor_offset + i + 1;  // 1-based motor ID
+            // CAN ID = motor ID (1-30)
+            frames[i].frame.can_id = motor_id;
             frames[i].frame.len = 8;
             // Initial data: motor number in each byte
             for (int j = 0; j < 8; j++) {

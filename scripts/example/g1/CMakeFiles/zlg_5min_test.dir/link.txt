@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/zlg_5min_test.dir/low_level/zlg_5min_test.cpp.o -o ../../bin/zlg_5min_test  -Wl,-rpath,/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/lib/linux_x64 ../../../LINUX_CANFDNET_V1.3.0.5_example/lib/linux_x64/libCANFDNET.so -lpthread 

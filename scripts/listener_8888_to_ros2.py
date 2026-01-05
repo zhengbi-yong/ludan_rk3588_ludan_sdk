@@ -267,14 +267,14 @@ class LowCmdUDPToROS2(Node):
                 try:
                     lowcmd_msg = LowCmd()
 
-                    # 创建 MotorCmd 数组 (30个电机)
+                    # 创建 30 个电机命令（ROS2 要求固定长度）
                     ros_motor_cmds = []
                     for i in range(30):
                         motor_cmd = MotorCmd()
                         motor_cmd.id = i
 
                         # 从字典中查找对应ID的电机
-                        motor_key = str(i)  # JSON中的键是字符串格式
+                        motor_key = str(i)
                         if motor_key in motor_cmd_dict:
                             # 从UDP数据获取电机信息
                             jetson_motor = motor_cmd_dict[motor_key]
@@ -286,7 +286,7 @@ class LowCmdUDPToROS2(Node):
                                 motor_cmd.kp = jetson_motor.get('kp', 0.0)
                                 motor_cmd.kd = jetson_motor.get('kd', 0.0)
 
-                                if self.message_count <= 10 and i in [4, 5, 10, 11]:
+                                if self.message_count <= 10 and i in [4, 5, 6, 10, 11]:
                                     self.get_logger().info(f"✅ Motor {i}: q={motor_cmd.q:.4f}, dq={motor_cmd.dq:.3f}, tau={motor_cmd.tau:.3f}, mode={motor_cmd.mode}, kp={motor_cmd.kp:.1f}, kd={motor_cmd.kd:.1f}")
                             else:
                                 # 数据格式错误，使用默认值
@@ -298,7 +298,7 @@ class LowCmdUDPToROS2(Node):
                                 motor_cmd.kp = 0.0
                                 motor_cmd.kd = 0.0
                         else:
-                            # 该电机ID不在消息中，使用默认值
+                            # 该电机ID不在消息中，使用 mode=0 标记为非活跃
                             motor_cmd.mode = 0
                             motor_cmd.q = 0.0
                             motor_cmd.dq = 0.0

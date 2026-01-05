@@ -1,7 +1,7 @@
 // motor_test8.cpp
 // Test program for multi-port motor control with auto-enable
 // Controls motors on ports 8001 (ID 12), 8002 (ID 21), 8003 (ID 30)
-// Command: pos=0, vel=1, kp=1, kd=1, tau=0
+// Command: pos=1, vel=0, kp=1, kd=1, tau=0
 // Features: Auto-enable motors before starting control loop
 
 #include <iostream>
@@ -337,17 +337,17 @@ int main(int argc, char* argv[]) {
     // Port 8001, Local ID 4 -> Global ID 12
     // Port 8002, Local ID 5 -> Global ID 21
     // Port 8003, Local ID 6 -> Global ID 30
-    // Command: pos=0, vel=0.3, kp=1, kd=1, tau=0
+    // Command: pos=1, vel=0, kp=1, kd=1, tau=0
     std::vector<MotorCommand> commands = {
-        {12, 0.0f, 0.3f, 1.0f, 1.0f, 0.0f},  // Port 8001, Local ID 4
-        {21, 0.0f, 0.3f, 1.0f, 1.0f, 0.0f},  // Port 8002, Local ID 5
-        {30, 0.0f, 0.3f, 1.0f, 1.0f, 0.0f}   // Port 8003, Local ID 6
+        {12, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f},  // Port 8001, Local ID 4
+        {21, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f},  // Port 8002, Local ID 5
+        {30, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f}   // Port 8003, Local ID 6
     };
 
     std::cout << "\n=== Test Commands ===" << std::endl;
-    std::cout << "Motor 12 (Port 8001, Local ID 4): pos=0, vel=0.3, kp=1, kd=1, tau=0" << std::endl;
-    std::cout << "Motor 21 (Port 8002, Local ID 5): pos=0, vel=0.3, kp=1, kd=1, tau=0" << std::endl;
-    std::cout << "Motor 30 (Port 8003, Local ID 6): pos=0, vel=0.3, kp=1, kd=1, tau=0" << std::endl;
+    std::cout << "Motor 12 (Port 8001, Local ID 4): pos=1, vel=0, kp=1, kd=1, tau=0" << std::endl;
+    std::cout << "Motor 21 (Port 8002, Local ID 5): pos=1, vel=0, kp=1, kd=1, tau=0" << std::endl;
+    std::cout << "Motor 30 (Port 8003, Local ID 6): pos=1, vel=0, kp=1, kd=1, tau=0" << std::endl;
     std::cout << "========================" << std::endl;
 
     // ==================== Auto-Enable Motors ====================

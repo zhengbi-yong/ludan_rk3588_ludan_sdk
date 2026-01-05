@@ -32,6 +32,11 @@
 static const std::string ROS2_CMD_TOPIC = "/lowcmd";
 const int G1_NUM_MOTOR = 30;
 
+// 全局控制：发送命令时是否自动使能电机
+// false: 发送命令时电机保持失能状态（需要手动使能）
+// true:  发送命令时自动使能电机
+static bool g_auto_enable_on_send = false;
+
 // ==================== 禁用 ZLG SDK 调试输出 ====================
 // 在运行时将 ZLG 库的 [SYS] 输出重定向到 /dev/null
 static void DisableZlgDebugOutput() {
@@ -149,9 +154,21 @@ static inline void MotorCommandToCanData(const MotorCommandCan& cmd, uint8_t* ca
     can_data[5] = (kp_int >> 8) & 0xFF;
 
     // Convert Kd to int16 (scale: 0-50 -> 0-32767)
+    // MIT 协议: can_data[7] 的最低位控制电机使能状态
+    //   bit 0 = 1: 使能电机
+    //   bit 0 = 0: 失能电机
     int16_t kd_int = static_cast<int16_t>(cmd.kd * 32767.0f / 50.0f);
     can_data[6] = kd_int & 0xFF;
-    can_data[7] = (kd_int >> 8) & 0xFF;
+
+    // 根据 g_auto_enable_on_send 设置使能位
+    uint8_t kd_high_byte = (kd_int >> 8) & 0xFF;
+    if (g_auto_enable_on_send) {
+        // 自动使能：设置最低位为 1
+        can_data[7] = kd_high_byte | 0x01;
+    } else {
+        // 不自动使能：强制最低位为 0
+        can_data[7] = kd_high_byte & 0xFE;
+    }
 }
 
 // ==================== ZLG TCP 协议原始数据包显示 ====================
@@ -630,6 +647,24 @@ static inline void PrintMotorResponse(const MotorResponse& resp) {
 // 用于直接命令模式的简化 ZCAN 操作
 
 static ZhilgongConfig direct_zlg_config;
+
+// 获取电机对应的端口和通道配置（根据实际硬件连接）
+static inline void GetPortConfigForMotor(int motor_id, int& port, int& channel) {
+    // 特殊电机映射（根据实际硬件连接）
+    if (motor_id == 4) { port = 8001; channel = 1; return; }  // 电机4 → 端口8001 (CAN1)
+    if (motor_id == 5) { port = 8002; channel = 2; return; }  // 电机5 → 端口8002 (CAN2)
+    if (motor_id == 6) { port = 8003; channel = 3; return; }  // 电机6 → 端口8003 (CAN3)
+
+    // 默认映射
+    if (motor_id >= 1 && motor_id <= 8)   { port = 8000; channel = 0; return; }
+    if (motor_id >= 9 && motor_id <= 16)  { port = 8001; channel = 1; return; }
+    if (motor_id >= 17 && motor_id <= 24) { port = 8002; channel = 2; return; }
+    if (motor_id >= 25 && motor_id <= 30) { port = 8003; channel = 3; return; }
+
+    // 默认值
+    port = 8000;
+    channel = 0;
+}
 
 // 读取并显示 CAN 通道状态
 // ==================== CAN 总线状态和错误定义 ====================
@@ -1458,6 +1493,17 @@ public:
             }
         }
 
+        // 调试输出：显示每个端口的电机数量
+        static int debug_count = 0;
+        if (debug_count < 3) {
+            std::cout << "[DEBUG] 端口分配: ";
+            for (int i = 0; i < 4; i++) {
+                std::cout << "800" << i << "=" << port_commands[i].size() << " ";
+            }
+            std::cout << "(总计=" << all_commands.size() << ")" << std::endl;
+            debug_count++;
+        }
+
         // Send to each port sequentially
         int total_sent = 0;
         for (int i = 0; i < 4; i++) {
@@ -1505,6 +1551,12 @@ public:
 
 private:
     int GetPortIndexForMotor(int global_motor_id) const {
+        // 特殊电机映射（根据实际硬件连接）
+        if (global_motor_id == 4) return 1;  // 电机4 → 端口8001 (CAN1)
+        if (global_motor_id == 5) return 2;  // 电机5 → 端口8002 (CAN2)
+        if (global_motor_id == 6) return 3;  // 电机6 → 端口8003 (CAN3)
+
+        // 默认映射
         if (global_motor_id >= 1 && global_motor_id <= 8)   return 0;
         if (global_motor_id >= 9 && global_motor_id <= 16)  return 1;
         if (global_motor_id >= 17 && global_motor_id <= 24) return 2;
@@ -1515,6 +1567,13 @@ private:
     int GetLocalCanId(int global_motor_id) const {
         int port_idx = GetPortIndexForMotor(global_motor_id);
         if (port_idx < 0) return -1;
+
+        // 特殊电机映射：直接使用电机 ID 作为本地 CAN ID
+        if (global_motor_id == 4 || global_motor_id == 5 || global_motor_id == 6) {
+            return global_motor_id;  // 电机 4,5,6 → 本地 CAN ID 也是 4,5,6
+        }
+
+        // 默认映射：使用 motor_offset 计算
         return global_motor_id - PORT_CONFIGS[port_idx].motor_offset;
     }
 
@@ -1560,6 +1619,9 @@ private:
     std::atomic<uint64_t> send_error_count_{0};
     std::atomic<uint64_t> ros2_msg_count_{0};
 
+    // 追踪活跃的电机（收到过 ROS2 命令的电机）
+    std::array<bool, G1_NUM_MOTOR> active_motors_;
+
     struct MotorCommandHistory {
         MotorCommandCan current;
         MotorCommandCan previous;
@@ -1577,6 +1639,7 @@ public:
         // motor_id should start from 1, not 0
         for (int i = 0; i < G1_NUM_MOTOR; i++) {
             motor_commands_[i] = {static_cast<uint16_t>(i + 1), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+            active_motors_[i] = false;  // 初始化为非活跃状态
         }
 
         std::cout << "ROS2-to-TCP Bridge Initializing..." << std::endl;
@@ -1673,6 +1736,15 @@ public:
         // 增加 ROS2 消息计数
         ros2_msg_count_++;
 
+        // 调试输出：显示收到的电机 ID
+        if (msg->motor_cmd.size() > 0 && ros2_msg_count_ <= 5) {
+            std::cout << "[DEBUG] 收到 " << msg->motor_cmd.size() << " 个电机命令: ";
+            for (const auto& cmd : msg->motor_cmd) {
+                std::cout << "ID" << cmd.id << " ";
+            }
+            std::cout << std::endl;
+        }
+
         // 使用互斥锁保护 motor_commands_ 和 command_history_
         std::lock_guard<std::mutex> lock(motor_commands_mutex_);
 
@@ -1690,6 +1762,11 @@ public:
                 int can_id = get_can_id_for_motor(motor_id);
                 if (can_id > 0) {
                     motor_commands_[motor_id].motor_id = can_id;
+
+                    // 只有当 mode != 0 时才标记为活跃（mode=0 表示没有有效控制数据）
+                    if (motor_cmd.mode != 0) {
+                        active_motors_[motor_id] = true;
+                    }
 
                     auto& history = command_history_[motor_id];
 
@@ -1828,6 +1905,13 @@ public:
         }
     }
 
+    // Auto-start sending (for testing, bypass /motor_enable requirement)
+    void SetAutoStart() {
+        std::cout << "\n>>> AUTO-START mode enabled <<<<" << std::endl;
+        std::cout << ">>> 500Hz motor command sending STARTED <<<" << std::endl;
+        can_send_started_ = true;
+    }
+
     // Send all motor commands via multi-port manager
     int SendAllMotorCommands(const std::vector<MotorCommandCan>& commands) {
         if (!multi_port_manager_) {
@@ -1841,15 +1925,40 @@ public:
         return sent;
     }
 
-    // 收集所有需要发送的电机命令到批量数组
+    // 收集所有需要发送的电机命令到批量数组（只收集活跃的电机）
+    // 添加超时检测：如果超过一定时间没有收到新数据，停止发送该电机
     std::vector<MotorCommandCan> CollectMotorCommands(std::chrono::high_resolution_clock::time_point current_time) {
         std::vector<MotorCommandCan> commands;
         commands.reserve(G1_NUM_MOTOR);
 
-        for (int motor_id = 1; motor_id <= 30; motor_id++) {
+        // 超时阈值（秒）：如果超过这个时间没有收到新数据，停止发送
+        const double COMMAND_TIMEOUT_SECONDS = 0.5;  // 500ms 超时
+        auto current_timestamp_double = std::chrono::duration<double>(current_time.time_since_epoch()).count();
+
+        for (int motor_id = 1; motor_id < G1_NUM_MOTOR; motor_id++) {
+            // 只收集活跃的电机（收到过 ROS2 命令的电机）
+            if (!active_motors_[motor_id]) {
+                continue;
+            }
+
             int can_id = get_can_id_for_motor(motor_id);
             if (can_id > 0) {
                 auto& history = command_history_[motor_id];
+
+                // ⭐ 新增：检查是否超时
+                double last_command_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
+                double time_since_last_command = current_timestamp_double - last_command_time;
+
+                if (time_since_last_command > COMMAND_TIMEOUT_SECONDS) {
+                    // 超时：取消该电机的活跃状态
+                    if (verbose_logging_ || motor_id <= 6) {  // 只打印前6个电机的超时信息
+                        std::cout << "[TIMEOUT] Motor " << motor_id
+                                  << " 超时 (" << time_since_last_command << "s > "
+                                  << COMMAND_TIMEOUT_SECONDS << "s), 停止发送" << std::endl;
+                    }
+                    active_motors_[motor_id] = false;  // 取消活跃状态
+                    continue;  // 跳过该电机
+                }
 
                 MotorCommandCan cmd_to_send;
                 auto current_timestamp = std::chrono::duration<double>(current_time.time_since_epoch()).count();
@@ -2014,6 +2123,7 @@ int main(int argc, char* argv[]) {
         std::string zlg_ip = "192.168.1.5";
         bool verbose = false;
         bool motor_cmd_enabled = false;
+        bool auto_start = false;  // 自动开始发送，无需等待/motor_enable话题
         bool quiet = true;  // 默认启用 quiet 模式，屏蔽 ZLG [SYS] 输出
 
         // CAN-FD 波特率配置
@@ -2038,6 +2148,8 @@ int main(int argc, char* argv[]) {
         std::cout << "  -v, --verbose           Enable verbose logging" << std::endl;
         std::cout << "  --no-quiet              Show ZLG SDK [SYS] debug output (default: HIDDEN)" << std::endl;
         std::cout << "  --enable-motor-cmd      Enable motor command sending (default: DISABLED)" << std::endl;
+        std::cout << "  --auto-start            Auto-start sending without /motor_enable (for testing)" << std::endl;
+        std::cout << "  --auto-enable           Auto-enable motors when sending commands (default: DISABLED)" << std::endl;
         std::cout << "\nCAN-FD Baud Rate Configuration:" << std::endl;
         std::cout << "  --arb-baud <rate>       Arbitration baud rate in bps (default: 1000000 = 1M)" << std::endl;
         std::cout << "  --data-baud <rate>      Data baud rate in bps (default: 5000000 = 5M)" << std::endl;
@@ -2076,6 +2188,13 @@ int main(int argc, char* argv[]) {
         }
         else if (arg == "--enable-motor-cmd") {
             params.motor_cmd_enabled = true;
+        }
+        else if (arg == "--auto-start") {
+            params.auto_start = true;
+        }
+        else if (arg == "--auto-enable") {
+            g_auto_enable_on_send = true;
+            std::cout << ">>> AUTO-ENABLE mode: Motors will be enabled when sending commands <<<" << std::endl;
         }
         else if (arg == "--arb-baud" && i + 1 < argc) {
             params.arb_baud = std::atoi(argv[++i]);
@@ -2253,16 +2372,30 @@ int main(int argc, char* argv[]) {
         // ==================== 标准直接命令模式 ====================
         std::cout << "\n=== Direct Command Mode ===" << std::endl;
 
-        // 初始化 ZCAN 连接 (使用默认端口 8000, channel 0)
-        if (!InitializeDirectZCAN(params.zlg_ip, 8000, 0, params.arb_baud, params.data_baud)) {
+        // 获取第一个要操作的电机 ID，用于确定端口配置
+        int first_motor_id = params.direct_motor_id;
+
+        // 如果是范围模式，需要解析范围字符串
+        std::string motor_str = argv[argc - 1];  // 最后一个参数是 motor_id
+        size_t dash_pos = motor_str.find('-');
+        if (dash_pos != std::string::npos) {
+            first_motor_id = std::atoi(motor_str.substr(0, dash_pos).c_str());
+        }
+
+        // 根据电机 ID 获取端口和通道配置
+        int target_port, target_channel;
+        GetPortConfigForMotor(first_motor_id, target_port, target_channel);
+
+        std::cout << "Motor " << first_motor_id << " mapped to Port " << target_port
+                  << " (CAN" << target_channel << ")" << std::endl;
+
+        // 初始化 ZCAN 连接 (使用正确的端口和通道)
+        if (!InitializeDirectZCAN(params.zlg_ip, target_port, target_channel, params.arb_baud, params.data_baud)) {
             std::cerr << "Failed to initialize ZCAN connection" << std::endl;
             return 1;
         }
 
         // 处理单个或多个电机
-        std::string motor_str = argv[argc - 1];  // 最后一个参数是 motor_id
-        size_t dash_pos = motor_str.find('-');
-
         if (dash_pos != std::string::npos) {
             // 范围模式: 1-10
             int start_id = std::atoi(motor_str.substr(0, dash_pos).c_str());
@@ -2272,6 +2405,14 @@ int main(int argc, char* argv[]) {
                       << " to motors " << start_id << " - " << end_id << std::endl;
 
             for (int motor_id = start_id; motor_id <= end_id; motor_id++) {
+                // 检查电机是否在当前端口，如果在其他端口则警告
+                int motor_port, motor_channel;
+                GetPortConfigForMotor(motor_id, motor_port, motor_channel);
+                if (motor_port != target_port) {
+                    std::cout << "  [WARNING] Motor " << motor_id << " is on port " << motor_port
+                              << " but current connection is to port " << target_port << std::endl;
+                }
+
                 if (params.direct_enable) {
                     SendDirectEnableCommand(motor_id);
                 } else {
@@ -2310,6 +2451,11 @@ int main(int argc, char* argv[]) {
         }
 
         bridge->InitializeROS2();
+
+        // Auto-start mode: bypass /motor_enable requirement
+        if (params.auto_start) {
+            bridge->SetAutoStart();
+        }
 
         std::cout << "\nInitialization complete!" << std::endl;
         std::cout << "Waiting for ROS2 commands..." << std::endl << std::endl;

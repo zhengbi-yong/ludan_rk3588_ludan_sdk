@@ -1,7 +1,7 @@
 // cantoudp.cpp
 // Receives CAN frames from ZLG device (4 ports) and forwards motor data via UDP
-// 30 motors total: 8+8+8+6 across ports 8000-8003
-// Modified: Wait for first CAN frame, then wait 2ms before starting UDP transmission
+// 30 motors total: global CAN ID 1-30, maps to array index 0-29 (array_index = can_id - 1)
+// Wait for first CAN frame, then wait 2ms before starting UDP transmission
 
 #include <iostream>
 #include <thread>
@@ -27,22 +27,20 @@ constexpr int NUM_MOTORS = 30;  // Array size: 30 motors (indices 0-29), motor I
 constexpr int DATA_BYTES_PER_MOTOR = 6;
 constexpr int NUM_PORTS = 4;
 
-// Port configuration: motor counts per port
+// Port configuration: TCP port and CAN channel mapping
 struct PortConfig {
     int port;         // ZLG device TCP port
-    int motor_count;
-    int motor_offset; // Starting motor number for this port
-    int channel;      // CAN channel number (may differ from port index)
+    int channel;      // CAN channel number
 };
 
-// 4 ports with motor distribution
-// Each port uses independent CAN channel (0-3)
-// CAN ID 1-8 (or 1-6) is LOCAL to each port
+// 4 ports with independent CAN channels
+// Each port can receive global CAN ID 1-30 
+// Array mapping: CAN ID (1-30) -> array index (0-29), i.e., array_index = can_id - 1
 constexpr PortConfig PORT_CONFIGS[NUM_PORTS] = {
-    {8000, 8, 0, 0},   // Motor 1-8   -> array index 0-7,   channel 0, local CAN ID 1-8
-    {8001, 8, 8, 1},   // Motor 9-16  -> array index 8-15,  channel 1, local CAN ID 1-8
-    {8002, 8, 16, 2},  // Motor 17-24 -> array index 16-23, channel 2, local CAN ID 1-8
-    {8003, 6, 24, 3}   // Motor 25-30 -> array index 24-29, channel 3, local CAN ID 1-6
+    {8000, 0},   // TCP port 8000, channel 0
+    {8001, 1},   // TCP port 8001, channel 1
+    {8002, 2},   // TCP port 8002, channel 2
+    {8003, 3}    // TCP port 8003, channel 3
 };
 
 struct CanToUdpConfig {
@@ -68,7 +66,7 @@ struct MotorDataBuffer {
         data.fill(0);  // Initialize all data to 0
     }
 
-    // Update data for a specific motor (0-29)
+    // Update data for a specific motor by array index (0-29, where index = can_id - 1)
     void SetMotorData(int motor_id, const uint8_t* raw_data) {
         if (motor_id >= 0 && motor_id < NUM_MOTORS) {
             std::lock_guard<std::mutex> lock(mutex);
@@ -282,9 +280,7 @@ bool PortReceiver::Initialize() {
         return false;
     }
 
-    std::cout << "  [Port " << port_config_.port << "] Ready (motors " << (port_config_.motor_offset + 1)
-              << "-" << (port_config_.motor_offset + port_config_.motor_count) 
-              << ", local CAN ID: 1-" << port_config_.motor_count << ")" << std::endl;
+    std::cout << "  [Port " << port_config_.port << "] Ready  " << std::endl;
     return true;
 }
 
@@ -341,20 +337,15 @@ void PortReceiver::ReceiveLoop() {
                     manager_->NotifyFirstFrame();
                 }
 
-                // New rule: Each port has independent CAN ID range (1-8 for ports 8000-8002, 1-6 for port 8003)
-                // CAN ID is local to each port (1-based), need to map to global array index
-                int local_motor_id = can_id & 0x00F;  // Local motor ID for this port (1-8 or 1-6)
+                // Global CAN ID (1-30) maps directly to array index (0-29)
+                int motor_id = can_id & 0x01F;  // Extract global CAN ID (1-30)
 
-                // Check if CAN ID is valid for this port and frame has enough data
-                if (local_motor_id >= 1 && local_motor_id <= port_config_.motor_count) {
-                    // Map local motor ID to global array index
-                    int array_index = port_config_.motor_offset + (local_motor_id - 1);
-
-                    // Check array index bounds
-                    if (array_index >= 0 && array_index < NUM_MOTORS) {
-                        data_buffer_.SetMotorData(array_index, d);
-                        receive_count_++;
-                    }
+                // Check if CAN ID is valid (1-30)
+                if (motor_id >= 1 && motor_id <= NUM_MOTORS) {
+                    // Map CAN ID to array index: array_index = can_id - 1
+                    int array_index = motor_id - 1;
+                    data_buffer_.SetMotorData(array_index, d);
+                    receive_count_++;
                 }
             }
         }
@@ -372,7 +363,7 @@ bool CanToUdpManager::Initialize() {
     std::cout << "ZLG IP: " << config_.zlg_ip << std::endl;
     std::cout << "Ports: ";
     for (const auto& pc : PORT_CONFIGS) {
-        std::cout << pc.port << "(" << pc.motor_count << " motors, ch" << pc.channel << ") ";
+        std::cout << pc.port << "(" << ", ch" << pc.channel << ") ";
     }
     std::cout << "\nTotal motors: " << NUM_MOTORS << std::endl;
 
@@ -552,12 +543,9 @@ int main(int argc, char** argv) {
             std::cout << "  --udp-ip <address>     UDP target IP (default: 192.168.1.20)" << std::endl;
             std::cout << "  --udp-port <port>      UDP target port (default: 8990)" << std::endl;
             std::cout << "  -h, --help             Show this help message" << std::endl;
-            std::cout << "\nCAN ID Mapping (each port has independent CAN ID range):" << std::endl;
-            std::cout << "  Port 8000: motors 1-8   (local CAN ID: 1-8)" << std::endl;
-            std::cout << "  Port 8001: motors 9-16  (local CAN ID: 1-8)" << std::endl;
-            std::cout << "  Port 8002: motors 17-24 (local CAN ID: 1-8)" << std::endl;
-            std::cout << "  Port 8003: motors 25-30 (local CAN ID: 1-6)" << std::endl;
-            std::cout << "  Note: Each port uses CAN ID 1-8 (or 1-6 for port 8003) independently" << std::endl;
+            std::cout << "\nCAN ID Mapping (global CAN ID 1-30):" << std::endl;
+            std::cout << "  Motor CAN ID: 1-30 (global)" << std::endl;
+            std::cout << "  Array index: 0-29 (i.e., array_index = can_id - 1)" << std::endl;
             std::cout << "\nBehavior:" << std::endl;
             std::cout << "  - Waits for first CAN frame before starting UDP transmission" << std::endl;
             std::cout << "  - After first frame, waits 2ms then starts 500Hz UDP transmission" << std::endl;

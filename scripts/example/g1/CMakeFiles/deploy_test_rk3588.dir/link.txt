@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/deploy_test_rk3588.dir/low_level/deploy_test_rk3588.cpp.o -o ../../bin/deploy_test_rk3588   -L/home/linaro/ludan_sdk/thirdparty/lib/aarch64  -Wl,-rpath,/home/linaro/ludan_sdk/thirdparty/lib/aarch64 ../../../lib/aarch64/libunitree_sdk2.a -lddsc -lddscxx 

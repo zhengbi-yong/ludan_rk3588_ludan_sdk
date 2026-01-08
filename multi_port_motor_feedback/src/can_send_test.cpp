@@ -1,6 +1,12 @@
-// Multi-port CAN frame sender for testing ZLG CANFDNET device
-// Sends test CAN frames to 4 ports (8000-8003) simultaneously
-// Matches multi_port_motor_feedback.cpp port configuration
+// can_send_test.cpp
+// Sends simulated DM motor CAN data to shared memory
+// can_motor_feedback_publisher.cpp reads from shared memory (test mode) or ZLG device (normal mode)
+//
+// Usage: ./can_send_test [options]
+//   --config <file>   JSON configuration file
+//   --interval <n>    Send interval in ms (default: 100)
+//   --quiet           Don't print each frame
+//   -h, --help        Show this help message
 
 #include <iostream>
 #include <chrono>
@@ -10,24 +16,72 @@
 #include <vector>
 #include <atomic>
 #include <signal.h>
+#include <fstream>
+#include <cmath>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
 
-#include "CANFDNET.h"
+#include "cJSON.h"
+#include "../include/can_shm.h"
 
-// Port configuration matching multi_port_motor_feedback.cpp
+// Port configuration
 struct PortConfig {
-    int device_index;  // Device index (0-3)
-    int channel;       // CAN channel (0-3)
-    int port;          // TCP port (8000-8003)
-    int motor_count;   // Number of motors (8,8,8,6)
-    int motor_offset;  // Starting motor number (0,8,16,24)
+    int motor_count;         // Number of motors (10,7,7,6)
+    int motor_offset;        // Starting motor number (0,10,17,24)
 };
 
 constexpr int NUM_PORTS = 4;
+constexpr int NUM_MOTORS = 30;
+
 constexpr PortConfig PORT_CONFIGS[NUM_PORTS] = {
-    {0, 0, 8000, 8, 0},   // Motor 1-8   -> array index 0-7
-    {1, 1, 8001, 8, 8},   // Motor 9-16  -> array index 8-15
-    {2, 2, 8002, 8, 16},  // Motor 17-24 -> array index 16-23
-    {3, 3, 8003, 6, 24}   // Motor 25-30 -> array index 24-29
+    {10, 0},   // Motor 1-10  -> array index 0-9
+    {7, 10},   // Motor 11-17 -> array index 10-16
+    {7, 17},   // Motor 18-24 -> array index 17-23
+    {6, 24}    // Motor 25-30 -> array index 24-29
+};
+
+// Error code definitions
+enum ErrorCode : uint8_t {
+    ERR_DISABLED = 0x0,    // 失能
+    ERR_ENABLED = 0x1,     // 使能
+    ERR_OVERVOLTAGE = 0x8, // 超压
+    ERR_UNDERVOLTAGE = 0x9,// 欠压
+    ERR_OVERCURRENT = 0xA, // 过电流
+    ERR_MOS_OVERTEMP = 0xB,// MOS过温
+    ERR_COIL_OVERTEMP = 0xC,// 电机线圈过温
+    ERR_COMM_LOST = 0xD,   // 通讯丢失
+    ERR_OVERLOAD = 0xE     // 过载
+};
+
+// Motor data configuration
+struct MotorDataConfig {
+    int motor_id;
+    bool enabled;
+    float position;         // Position (range depends on P_MAX)
+    float velocity;         // Velocity in rad/s (range depends on V_MAX)
+    float torque;           // Torque in Nm (range depends on T_MAX)
+    float temp_mos;         // MOS temperature in Celsius (0-125)
+    float temp_rotor;       // Rotor temperature in Celsius (0-125)
+    uint8_t error_code;     // Error code (see ErrorCode enum)
+    float pos_increment;    // Position increment per frame (for animation)
+    float vel_amplitude;    // Velocity amplitude (for sine wave)
+    float vel_frequency;    // Velocity frequency in Hz
+    int data_mode;          // 0=fixed, 1=increment, 2=sine, 3=custom
+
+    // Range parameters (can be configured via JSON)
+    float p_max;            // Position maximum range (default: 2*PI for radians)
+    float v_max;            // Velocity maximum range in rad/s (default: 45.0)
+    float t_max;            // Torque maximum range in Nm (default: 18.0)
+};
+
+// Global configuration
+struct GlobalConfig {
+    int send_interval_ms;
+    bool verbose;
+    std::vector<MotorDataConfig> motor_configs;
+
+    GlobalConfig() : send_interval_ms(100), verbose(true) {}
 };
 
 // Global flag for signal handler
@@ -38,237 +92,468 @@ void SignalHandler(int signal) {
     g_running = false;
 }
 
-// Single port sender class
-class PortSender {
-public:
-    PortSender(const PortConfig& config, const char* zlg_ip,
-               int interval_ms, bool verbose)
-        : config_(config), zlg_ip_(zlg_ip),
-          interval_ms_(interval_ms), verbose_(verbose) {}
+// Convert float to 16-bit signed integer (position)
+int16_t FloatToInt16(float value, float max_range) {
+    float result = (value / (2.0f * max_range)) * 65536.0f + 32768.0f;
+    if (result > 32767.0f) result = 32767.0f;
+    if (result < -32768.0f) result = -32768.0f;
+    return static_cast<int16_t>(result);
+}
 
-    ~PortSender() {
-        stop();
+// Convert float to 12-bit signed integer (velocity/torque)
+int16_t FloatToInt12(float value, float max_range) {
+    float result = (value / (2.0f * max_range)) * 4096.0f + 2048.0f;
+    if (result > 2047.0f) result = 2047.0f;
+    if (result < -2048.0f) result = -2048.0f;
+    return static_cast<int16_t>(result);
+}
+
+// Load JSON configuration file
+bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open config file: " << filepath << std::endl;
+        return false;
+    }
+
+    std::string content((std::istreambuf_iterator<char>(file)),
+                        std::istreambuf_iterator<char>());
+    file.close();
+
+    cJSON* root = cJSON_Parse(content.c_str());
+    if (root == nullptr) {
+        std::cerr << "Failed to parse JSON config" << std::endl;
+        return false;
+    }
+
+    // Parse global settings
+    cJSON* interval = cJSON_GetObjectItem(root, "send_interval_ms");
+    if (interval && cJSON_IsNumber(interval)) {
+        config.send_interval_ms = interval->valueint;
+    }
+
+    cJSON* verbose = cJSON_GetObjectItem(root, "verbose");
+    if (verbose && cJSON_IsBool(verbose)) {
+        config.verbose = cJSON_IsTrue(verbose);
+    }
+
+    // Parse default range parameters
+    float default_p_max = 2.0f * M_PI;
+    float default_v_max = 45.0f;
+    float default_t_max = 18.0f;
+
+    cJSON* p_max = cJSON_GetObjectItem(root, "p_max");
+    if (p_max && cJSON_IsNumber(p_max)) {
+        default_p_max = static_cast<float>(p_max->valuedouble);
+    }
+
+    cJSON* v_max = cJSON_GetObjectItem(root, "v_max");
+    if (v_max && cJSON_IsNumber(v_max)) {
+        default_v_max = static_cast<float>(v_max->valuedouble);
+    }
+
+    cJSON* t_max = cJSON_GetObjectItem(root, "t_max");
+    if (t_max && cJSON_IsNumber(t_max)) {
+        default_t_max = static_cast<float>(t_max->valuedouble);
+    }
+
+    // Parse motor configurations
+    cJSON* motors = cJSON_GetObjectItem(root, "motors");
+    if (motors && cJSON_IsArray(motors)) {
+        cJSON* motor = nullptr;
+        cJSON_ArrayForEach(motor, motors) {
+            MotorDataConfig motor_config;
+            memset(&motor_config, 0, sizeof(motor_config));
+
+            motor_config.p_max = default_p_max;
+            motor_config.v_max = default_v_max;
+            motor_config.t_max = default_t_max;
+
+            cJSON* id = cJSON_GetObjectItem(motor, "id");
+            if (id && cJSON_IsNumber(id)) {
+                motor_config.motor_id = id->valueint;
+            }
+
+            cJSON* enabled = cJSON_GetObjectItem(motor, "enabled");
+            if (enabled && cJSON_IsBool(enabled)) {
+                motor_config.enabled = cJSON_IsTrue(enabled);
+            } else {
+                motor_config.enabled = true;
+            }
+
+            cJSON* position = cJSON_GetObjectItem(motor, "position");
+            if (position && cJSON_IsNumber(position)) {
+                motor_config.position = static_cast<float>(position->valuedouble);
+            }
+
+            cJSON* velocity = cJSON_GetObjectItem(motor, "velocity");
+            if (velocity && cJSON_IsNumber(velocity)) {
+                motor_config.velocity = static_cast<float>(velocity->valuedouble);
+            }
+
+            cJSON* torque = cJSON_GetObjectItem(motor, "torque");
+            if (torque && cJSON_IsNumber(torque)) {
+                motor_config.torque = static_cast<float>(torque->valuedouble);
+            }
+
+            cJSON* temp_mos = cJSON_GetObjectItem(motor, "temp_mos");
+            if (temp_mos && cJSON_IsNumber(temp_mos)) {
+                motor_config.temp_mos = static_cast<float>(temp_mos->valuedouble);
+            } else {
+                motor_config.temp_mos = 25.0f;
+            }
+
+            cJSON* temp_rotor = cJSON_GetObjectItem(motor, "temp_rotor");
+            if (temp_rotor && cJSON_IsNumber(temp_rotor)) {
+                motor_config.temp_rotor = static_cast<float>(temp_rotor->valuedouble);
+            } else {
+                motor_config.temp_rotor = 25.0f;
+            }
+
+            cJSON* error = cJSON_GetObjectItem(motor, "error_code");
+            if (error && cJSON_IsNumber(error)) {
+                motor_config.error_code = static_cast<uint8_t>(error->valueint);
+            } else {
+                motor_config.error_code = ERR_ENABLED;
+            }
+
+            cJSON* pos_inc = cJSON_GetObjectItem(motor, "pos_increment");
+            if (pos_inc && cJSON_IsNumber(pos_inc)) {
+                motor_config.pos_increment = static_cast<float>(pos_inc->valuedouble);
+            }
+
+            cJSON* vel_amp = cJSON_GetObjectItem(motor, "vel_amplitude");
+            if (vel_amp && cJSON_IsNumber(vel_amp)) {
+                motor_config.vel_amplitude = static_cast<float>(vel_amp->valuedouble);
+            }
+
+            cJSON* vel_freq = cJSON_GetObjectItem(motor, "vel_frequency");
+            if (vel_freq && cJSON_IsNumber(vel_freq)) {
+                motor_config.vel_frequency = static_cast<float>(vel_freq->valuedouble);
+            }
+
+            cJSON* mode = cJSON_GetObjectItem(motor, "data_mode");
+            if (mode && cJSON_IsNumber(mode)) {
+                motor_config.data_mode = mode->valueint;
+            } else {
+                motor_config.data_mode = 0;
+            }
+
+            cJSON* p_max_motor = cJSON_GetObjectItem(motor, "p_max");
+            if (p_max_motor && cJSON_IsNumber(p_max_motor)) {
+                motor_config.p_max = static_cast<float>(p_max_motor->valuedouble);
+            }
+
+            cJSON* v_max_motor = cJSON_GetObjectItem(motor, "v_max");
+            if (v_max_motor && cJSON_IsNumber(v_max_motor)) {
+                motor_config.v_max = static_cast<float>(v_max_motor->valuedouble);
+            }
+
+            cJSON* t_max_motor = cJSON_GetObjectItem(motor, "t_max");
+            if (t_max_motor && cJSON_IsNumber(t_max_motor)) {
+                motor_config.t_max = static_cast<float>(t_max_motor->valuedouble);
+            }
+
+            config.motor_configs.push_back(motor_config);
+        }
+    }
+
+    cJSON_Delete(root);
+    return true;
+}
+
+// Shared memory manager
+class SharedMemoryManager {
+public:
+    SharedMemoryManager() : shm_fd_(-1), shm_ptr_(nullptr) {}
+
+    ~SharedMemoryManager() {
+        Cleanup();
     }
 
     bool Initialize() {
-        std::cout << "[Port " << config_.port << "] Opening device..." << std::endl;
+        // Remove existing shared memory
+        shm_unlink(SHM_NAME);
 
-        // Open device
-        device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP, config_.device_index, 0);
-        if (device_handle_ == INVALID_DEVICE_HANDLE) {
-            std::cerr << "[Port " << config_.port << "] Failed to open device!" << std::endl;
+        shm_fd_ = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+        if (shm_fd_ == -1) {
+            std::cerr << "Failed to create shared memory: " << strerror(errno) << std::endl;
             return false;
         }
 
-        // Set IP and port
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, config_.device_index,
-                         config_.device_index, CMD_DESIP, (void*)zlg_ip_);
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, config_.device_index,
-                         config_.device_index, CMD_DESPORT, &config_.port);
-
-        // Initialize CAN channel
-        ZCAN_CHANNEL_INIT_CONFIG init_config;
-        memset(&init_config, 0, sizeof(init_config));
-        init_config.can_type = TYPE_CANFD;
-        init_config.canfd.acc_code = 0;
-        init_config.canfd.acc_mask = 0;
-        init_config.canfd.abit_timing = 1000000;  // 1M
-        init_config.canfd.dbit_timing = 5000000;  // 5M
-        init_config.canfd.brp = 0;
-        init_config.canfd.filter = 0;
-        init_config.canfd.mode = 0;
-
-        channel_handle_ = ZCAN_InitCAN(device_handle_, config_.channel, &init_config);
-        if (channel_handle_ == INVALID_CHANNEL_HANDLE) {
-            std::cerr << "[Port " << config_.port << "] Failed to initialize channel!" << std::endl;
-            ZCAN_CloseDevice(device_handle_);
+        if (ftruncate(shm_fd_, SHM_SIZE) == -1) {
+            std::cerr << "Failed to set shared memory size: " << strerror(errno) << std::endl;
+            close(shm_fd_);
+            shm_unlink(SHM_NAME);
             return false;
         }
 
-        // Start CAN
-        if (ZCAN_StartCAN(channel_handle_) != STATUS_OK) {
-            std::cerr << "[Port " << config_.port << "] Failed to start CAN!" << std::endl;
-            ZCAN_CloseDevice(device_handle_);
+        shm_ptr_ = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd_, 0);
+        if (shm_ptr_ == MAP_FAILED) {
+            std::cerr << "Failed to map shared memory: " << strerror(errno) << std::endl;
+            close(shm_fd_);
+            shm_unlink(SHM_NAME);
             return false;
         }
 
-        // Enable TX echo
-        UINT echo_enable = 1;
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, config_.device_index,
-                         config_.channel, SETREF_SET_TX_ECHO_ENABLE, &echo_enable);
+        // Initialize shared memory
+        new (shm_ptr_) ShmLayout();
 
-        std::cout << "[Port " << config_.port << "] Ready (motors "
-                  << (config_.motor_offset + 1) << "-"
-                  << (config_.motor_offset + config_.motor_count)
-                  << ", CAN ID: 1-" << config_.motor_count << ")" << std::endl;
+        std::cout << "[Shared Memory] Created: " << SHM_NAME
+                  << " (size: " << SHM_SIZE << " bytes)" << std::endl;
         return true;
     }
 
-    void StartSendThread() {
-        running_ = true;
-        send_thread_ = std::thread(&PortSender::SendLoop, this);
+    ShmLayout* GetData() {
+        return static_cast<ShmLayout*>(shm_ptr_);
     }
 
-    void StopSendThread() {
-        running_ = false;
-        if (send_thread_.joinable()) {
-            send_thread_.join();
+    void Cleanup() {
+        if (shm_ptr_ != nullptr && shm_ptr_ != MAP_FAILED) {
+            munmap(shm_ptr_, SHM_SIZE);
+            shm_ptr_ = nullptr;
         }
-    }
 
-    void stop() {
-        StopSendThread();
-        if (channel_handle_) {
-            ZCAN_ResetCAN(channel_handle_);
+        if (shm_fd_ != -1) {
+            close(shm_fd_);
+            shm_fd_ = -1;
         }
-        if (device_handle_) {
-            ZCAN_CloseDevice(device_handle_);
-        }
-    }
 
-    uint64_t GetSendCount() const { return send_count_; }
+        shm_unlink(SHM_NAME);
+    }
 
 private:
-    void SendLoop() {
-        // Prepare frames for all motors on this port
-        // Motor ID 1-30 directly as CAN ID (matches motor_feedback_publisher expectations)
-        std::vector<ZCAN_TransmitFD_Data> frames(config_.motor_count);
-        for (int i = 0; i < config_.motor_count; i++) {
-            memset(&frames[i], 0, sizeof(frames[i]));
-            // Calculate motor_id (1-based global motor index)
-            int motor_id = config_.motor_offset + i + 1;  // 1-based motor ID
-            // CAN ID = motor ID (1-30)
-            frames[i].frame.can_id = motor_id;
-            frames[i].frame.len = 8;
-            // Initial data: motor number in each byte
-            for (int j = 0; j < 8; j++) {
-                frames[i].frame.data[j] = (motor_id) & 0xFF;
-            }
-        }
-
-        while (running_ && g_running) {
-            // Send all frames for this port
-            for (int i = 0; i < config_.motor_count; i++) {
-                uint32_t result = ZCAN_TransmitFD(channel_handle_, &frames[i], 1);
-                if (result == 1) {
-                    send_count_++;
-                    if (verbose_ && send_count_ <= 5) {
-                        int motor_id = config_.motor_offset + i;
-                        std::cout << "[Port " << config_.port
-                                  << "] Motor ID 0x" << std::hex << std::setfill('0') << std::setw(3) << motor_id << std::dec
-                                  << " (CAN ID=0x" << std::hex << std::setfill('0') << std::setw(3) << (int)frames[i].frame.can_id << std::dec << ") sent" << std::endl;
-                    }
-                }
-                // Update data to make it more interesting
-                for (int j = 0; j < 8; j++) {
-                    frames[i].frame.data[j] = (frames[i].frame.data[j] + 1) & 0xFF;
-                }
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms_));
-        }
-    }
-
-    PortConfig config_;
-    const char* zlg_ip_;
-    int interval_ms_;
-    bool verbose_;
-
-    DEVICE_HANDLE device_handle_ = nullptr;
-    CHANNEL_HANDLE channel_handle_ = nullptr;
-    std::thread send_thread_;
-    std::atomic<bool> running_{false};
-    std::atomic<uint64_t> send_count_{0};
+    int shm_fd_;
+    void* shm_ptr_;
 };
 
+// Generate motor CAN frame data
+void GenerateMotorFrame(ShmCANFrame& frame, const MotorDataConfig& config, double elapsed, uint64_t frame_counter) {
+    float position = config.position;
+    float velocity = config.velocity;
+    float torque = config.torque;
+    float temp_mos = config.temp_mos;
+    float temp_rotor = config.temp_rotor;
+    uint8_t error = config.error_code;
+
+    // Apply data mode
+    switch (config.data_mode) {
+        case 0:  // Fixed value
+            break;
+
+        case 1:  // Increment position
+            position += config.pos_increment * frame_counter;
+            break;
+
+        case 2:  // Sine wave velocity
+            if (config.vel_amplitude > 0 && config.vel_frequency > 0) {
+                velocity = config.vel_amplitude * std::sin(2.0 * M_PI * config.vel_frequency * elapsed);
+                position = config.position +
+                          (config.vel_amplitude / (2.0 * M_PI * config.vel_frequency)) *
+                          (1.0 - std::cos(2.0 * M_PI * config.vel_frequency * elapsed));
+            }
+            break;
+
+        case 3:  // Custom - combination
+            position += config.pos_increment * frame_counter;
+            if (config.vel_amplitude > 0 && config.vel_frequency > 0) {
+                velocity += config.vel_amplitude * std::sin(2.0 * M_PI * config.vel_frequency * elapsed);
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    // Set CAN ID = motor ID
+    frame.can_id = config.motor_id;
+    frame.len = 8;
+    frame.flags = 0;
+    frame.valid = true;
+    frame.timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
+
+    // Convert to CAN frame format
+    // D[0]: ID | ERR<<4
+    uint8_t id = config.motor_id & 0x0F;
+    frame.data[0] = id | (error << 4);
+
+    // D[1]: POS[15:8], D[2]: POS[7:0]
+    int16_t pos_int = FloatToInt16(position, config.p_max);
+    frame.data[1] = (pos_int >> 8) & 0xFF;
+    frame.data[2] = pos_int & 0xFF;
+
+    // D[3]: VEL[11:4], D[4]: VEL[3:0] | T[11:8]
+    int16_t vel_int = FloatToInt12(velocity, config.v_max);
+    int16_t tor_int = FloatToInt12(torque, config.t_max);
+
+    frame.data[3] = (vel_int >> 4) & 0xFF;
+    frame.data[4] = ((vel_int & 0x0F) << 4) | ((tor_int >> 8) & 0x0F);
+    frame.data[5] = tor_int & 0xFF;
+
+    // D[6]: T_MOS
+    frame.data[6] = static_cast<uint8_t>(std::max(0.0f, std::min(125.0f, temp_mos)));
+
+    // D[7]: T_Rotor
+    frame.data[7] = static_cast<uint8_t>(std::max(0.0f, std::min(125.0f, temp_rotor)));
+}
+
+void PrintUsage(const char* program_name) {
+    std::cout << "Usage: " << program_name << " [options]\n";
+    std::cout << "Sends simulated DM motor CAN data to shared memory\n\n";
+    std::cout << "Options:\n";
+    std::cout << "  --config <file>   JSON configuration file\n";
+    std::cout << "  --interval <n>    Send interval in ms (default: 100)\n";
+    std::cout << "  --quiet           Don't print each frame\n";
+    std::cout << "  -h, --help        Show this help message\n";
+    std::cout << "\nShared Memory:\n";
+    std::cout << "  Name: " << SHM_NAME << "\n";
+    std::cout << "  Size: " << SHM_SIZE << " bytes\n";
+    std::cout << "\nTotal motors: " << NUM_MOTORS << " (10+7+7+6)\n";
+}
+
 int main(int argc, char** argv) {
-    // Setup signal handler
     signal(SIGINT, SignalHandler);
     signal(SIGTERM, SignalHandler);
 
-    // Configuration
-    const char* zlg_ip = "192.168.1.5";
-    int send_interval_ms = 100;  // Send every 100ms
+    const char* config_file = nullptr;
+    int send_interval_ms = -1;
     bool verbose = true;
 
-    // Parse optional arguments
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
-        if (arg == "--interval" && i + 1 < argc) {
+        if (arg == "--config" && i + 1 < argc) {
+            config_file = argv[++i];
+        } else if (arg == "--interval" && i + 1 < argc) {
             send_interval_ms = std::atoi(argv[++i]);
         } else if (arg == "--quiet") {
             verbose = false;
-        } else if (arg == "--ip" && i + 1 < argc) {
-            zlg_ip = argv[++i];
         } else if (arg == "-h" || arg == "--help") {
-            std::cout << "Usage: " << argv[0] << " [options]\n";
-            std::cout << "Sends test CAN frames to 4 ports simultaneously\n\n";
-            std::cout << "Options:\n";
-            std::cout << "  --interval <n>  Send interval in ms (default: 100)\n";
-            std::cout << "  --ip <address>  ZLG device IP (default: 192.168.1.5)\n";
-            std::cout << "  --quiet         Don't print each frame\n";
-            std::cout << "  -h, --help      Show this help message\n";
-            std::cout << "\nPort configuration:\n";
-            std::cout << "  Port 8000: motors 1-8   (device 0, channel 0)\n";
-            std::cout << "  Port 8001: motors 9-16  (device 1, channel 1)\n";
-            std::cout << "  Port 8002: motors 17-24 (device 2, channel 2)\n";
-            std::cout << "  Port 8003: motors 25-30 (device 3, channel 3)\n";
+            PrintUsage(argv[0]);
             return 0;
-        }
-    }
-
-    std::cout << "=== ZLG Multi-Port CAN Send Test ===" << std::endl;
-    std::cout << "ZLG IP: " << zlg_ip << std::endl;
-    std::cout << "Ports: 8000, 8001, 8002, 8003" << std::endl;
-    std::cout << "Total motors: 30 (8+8+8+6)" << std::endl;
-    std::cout << "Send interval: " << send_interval_ms << "ms" << std::endl;
-    std::cout << "=====================================" << std::endl;
-
-    // Create port senders
-    std::vector<std::unique_ptr<PortSender>> senders;
-    for (int i = 0; i < NUM_PORTS; i++) {
-        auto sender = std::make_unique<PortSender>(PORT_CONFIGS[i], zlg_ip, send_interval_ms, verbose);
-        if (!sender->Initialize()) {
-            std::cerr << "[ERROR] Failed to initialize port " << PORT_CONFIGS[i].port << std::endl;
-            // Continue with other ports
         } else {
-            senders.push_back(std::move(sender));
+            std::cerr << "Unknown option: " << arg << std::endl;
+            PrintUsage(argv[0]);
+            return 1;
         }
     }
 
-    if (senders.empty()) {
-        std::cerr << "[ERROR] No ports initialized!" << std::endl;
+    GlobalConfig config;
+    if (config_file != nullptr) {
+        if (!LoadJsonConfig(config_file, config)) {
+            std::cerr << "[ERROR] Failed to load config file: " << config_file << std::endl;
+            return 1;
+        }
+        std::cout << "Loaded config from: " << config_file << std::endl;
+        std::cout << "  Motor configs: " << config.motor_configs.size() << std::endl;
+    }
+
+    if (send_interval_ms > 0) {
+        config.send_interval_ms = send_interval_ms;
+    }
+    if (!verbose) {
+        config.verbose = false;
+    }
+
+    std::cout << "=== CAN Motor Send Test (Shared Memory) ===" << std::endl;
+    std::cout << "Shared Memory: " << SHM_NAME << std::endl;
+    std::cout << "Total motors: " << NUM_MOTORS << std::endl;
+    std::cout << "Send interval: " << config.send_interval_ms << "ms" << std::endl;
+    std::cout << "===========================================" << std::endl;
+
+    // Initialize shared memory
+    SharedMemoryManager shm_manager;
+    if (!shm_manager.Initialize()) {
+        std::cerr << "[ERROR] Failed to initialize shared memory" << std::endl;
         return 1;
     }
 
-    std::cout << "\n=== Initialized " << senders.size() << "/" << NUM_PORTS << " ports ===" << std::endl;
+    auto start_time = std::chrono::steady_clock::now();
+    uint64_t frame_counter = 0;
 
-    // Start all send threads
-    std::cout << "\n[Send] Starting all threads (Ctrl+C to stop)..." << std::endl;
-    for (auto& sender : senders) {
-        sender->StartSendThread();
-    }
+    std::cout << "\n[Send] Starting motor data generation (Ctrl+C to stop)..." << std::endl;
 
-    // Main loop - keep running until interrupted
     while (g_running) {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        frame_counter++;
+
+        auto now = std::chrono::steady_clock::now();
+        double elapsed = std::chrono::duration<double>(now - start_time).count();
+
+        ShmLayout* shm_data = shm_manager.GetData();
+        if (shm_data) {
+            // Clear previous data
+            shm_data->Clear();
+
+            // Generate frames for all motors
+            int frame_idx = 0;
+            for (int motor_id = 1; motor_id <= NUM_MOTORS; motor_id++) {
+                if (frame_idx >= ShmLayout::MAX_FRAMES) break;
+
+                // Find motor config
+                MotorDataConfig* motor_config = nullptr;
+                for (auto& cfg : config.motor_configs) {
+                    if (cfg.motor_id == motor_id) {
+                        motor_config = &cfg;
+                        break;
+                    }
+                }
+
+                // Generate frame data
+                if (motor_config && motor_config->enabled) {
+                    GenerateMotorFrame(shm_data->frames[frame_idx], *motor_config, elapsed, frame_counter);
+                    frame_idx++;
+                } else {
+                    // Default data if motor disabled or not configured
+                    shm_data->frames[frame_idx].can_id = motor_id;
+                    shm_data->frames[frame_idx].len = 8;
+                    shm_data->frames[frame_idx].flags = 0;
+                    shm_data->frames[frame_idx].valid = true;
+                    shm_data->frames[frame_idx].timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
+                        std::chrono::steady_clock::now().time_since_epoch()).count();
+
+                    uint8_t id = motor_id & 0x0F;
+                    shm_data->frames[frame_idx].data[0] = id | (ERR_ENABLED << 4);
+                    memset(&shm_data->frames[frame_idx].data[1], 0, 7);
+                    frame_idx++;
+                }
+            }
+
+            shm_data->frame_count = frame_idx;
+            shm_data->sequence++;
+            shm_data->data_ready = true;
+
+            // Print frame data if verbose
+            if (verbose && frame_counter <= 5) {
+                std::cout << "[TX] Sequence " << shm_data->sequence
+                          << " | Frames: " << frame_idx << std::endl;
+                for (uint32_t i = 0; i < frame_idx && i < 3; i++) {
+                    const ShmCANFrame& frame = shm_data->frames[i];
+                    std::cout << "  Motor " << std::setw(2) << frame.can_id
+                              << " Data: ";
+                    for (int j = 0; j < frame.len; j++) {
+                        std::cout << std::hex << std::setfill('0') << std::setw(2)
+                                  << (int)frame.data[j] << " " << std::dec;
+                    }
+                    std::cout << std::endl;
+                }
+            }
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(config.send_interval_ms));
 
         // Print status every 5 seconds
-        if (verbose) {
+        if (verbose && frame_counter % (5000 / config.send_interval_ms) == 0) {
+            ShmLayout* shm_data = shm_manager.GetData();
             std::cout << "\n=== Status ===" << std::endl;
-            uint64_t total_count = 0;
-            for (size_t i = 0; i < senders.size(); i++) {
-                uint64_t count = senders[i]->GetSendCount();
-                total_count += count;
-                std::cout << "  Port " << PORT_CONFIGS[i].port << ": " << count << " frames" << std::endl;
-            }
-            std::cout << "  Total: " << total_count << " frames" << std::endl;
-            std::cout << "=============" << std::endl;
+            std::cout << "  Frames written: " << (shm_data ? shm_data->sequence : 0) << std::endl;
+            std::cout << "  Motors active: " << NUM_MOTORS << std::endl;
+            std::cout << "===============" << std::endl;
         }
     }
 
-    // Cleanup is handled by destructors
-    std::cout << "\nDone!" << std::endl;
+    std::cout << "\nCleaning up shared memory..." << std::endl;
+    shm_manager.Cleanup();
+    std::cout << "Done!" << std::endl;
 
     return 0;
 }

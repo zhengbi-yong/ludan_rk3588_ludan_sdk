@@ -1,0 +1,185 @@
+[0.000000] (-) TimerEvent: {}
+[0.000139] (multi_port_motor_feedback) JobQueued: {'identifier': 'multi_port_motor_feedback', 'dependencies': OrderedDict()}
+[0.000553] (multi_port_motor_feedback) JobStarted: {'identifier': 'multi_port_motor_feedback'}
+[0.010666] (multi_port_motor_feedback) JobProgress: {'identifier': 'multi_port_motor_feedback', 'progress': 'cmake'}
+[0.012034] (multi_port_motor_feedback) JobProgress: {'identifier': 'multi_port_motor_feedback', 'progress': 'build'}
+[0.012883] (multi_port_motor_feedback) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback', '--', '-j8', '-l8'], 'cwd': '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/linaro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('GST_V4L2_PREFERRED_FOURCC', 'NV12:YU12:NV16:YUY2'), ('USER', 'linaro'), ('SSH_CLIENT', '192.168.0.8 25498 22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn/tcf.json","messagesFile":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn/994fd12f8d3a5aa16f17d42c041e5809167e845a/nls.messages.json","corruptMarkerFile":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"dec5c02ea40631d4c3a33602ff1ba952.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn/tcf.json","_cacheRoot":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn","_resolvedLanguagePackCoreLocation":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn/994fd12f8d3a5aa16f17d42c041e5809167e845a","_corruptedFile":"/home/linaro/.vscode-server/data/clp/dec5c02ea40631d4c3a33602ff1ba952.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('CLAUDE_AGENT_SDK_VERSION', '0.2.1'), ('SHLVL', '1'), ('USB_FUNCS', 'adb'), ('LD_LIBRARY_PATH', '/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/lib/linux_x64:/home/linaro/controller_ws/install/xixilowstate/lib:/home/linaro/controller_ws/install/xixilowcmd/lib:/home/linaro/controller_ws/install/multi_port_motor_feedback/lib:/home/linaro/controller_ws/install/motorsrv/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('BROWSER', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/linaro'), ('OLDPWD', '/home/linaro'), ('VSCODE_RECONNECTION_GRACE_TIME', '10800000'), ('NVM_BIN', '/home/linaro/.nvm/versions/node/v24.12.0/bin'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-4f76b644-1e08-4656-9d3c-072dd1d182ee.sock'), ('NVM_INC', '/home/linaro/.nvm/versions/node/v24.12.0/include/node'), ('GST_INSPECT_NO_COLORS', '1'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'glm-4.7'), ('USB_VENDOR_ID', '0x2207'), ('GST_MPP_NO_RGA', '1'), ('ROS_PYTHON_VERSION', '3'), ('COGL_DRIVER', 'gles2'), ('PLAYBIN2_PREFERRED_VIDEOSINK', 'xvimagesink'), ('SSL_CERT_FILE', '/usr/lib/ssl/certs/ca-certificates.crt'), ('USB_PRODUCT', 'rk3xxx'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('QTWEBENGINE_CHROMIUM_FLAGS', '--no-sandbox --disable-es3-gl-context --ignore-gpu-blacklist --ignore-gpu-blocklist --enable-accelerated-video-decode'), ('NVM_DIR', '/home/linaro/.nvm'), ('VSCODE_L10N_BUNDLE_LOCATION', 'vscode-local:/c%3A/Users/12981/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.107.2025121009/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/linaro/controller_ws/install'), ('API_TIMEOUT_MS', '3000000'), ('APPLICATION_INSIGHTS_NO_STATSBEAT', 'true'), ('GST_V4L2SRC_MAX_RESOLUTION', '3840x2160'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'linaro'), ('VSCODE_HANDLES_SIGPIPE', 'true'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('ANTHROPIC_BASE_URL', 'https://open.bigmodel.cn/api/anthropic'), ('TERM', 'dumb'), ('GST_GL_API', 'gles2'), ('XDG_SESSION_ID', 'c16'), ('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', 'delta'), ('VSCODE_CLI_REQUIRE_TOKEN', 'a0b49597-c877-48af-953f-30c478d74421'), ('GST_VIDEO_CONVERT_PREFERRED_FORMAT', 'NV12:NV16:I420:YUY2'), ('GST_V4L2SRC_RK_DEVICES', 'scale'), ('ROS_LOCALHOST_ONLY', '0'), ('XSERVER_FREEZE_DISPLAY', '/tmp/.freeze_xserver'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'glm-4.7'), ('PATH', '/home/linaro/.vscode-server/cli/servers/Stable-994fd12f8d3a5aa16f17d42c041e5809167e845a/server/bin/remote-cli:/home/linaro/.local/bin:/home/linaro/bin:/home/linaro/.nvm/versions/node/v24.12.0/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('VSCODE_AGENT_FOLDER', '/home/linaro/.vscode-server'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GST_GL_PLATFORM', 'egl'), ('GST_DEBUG_NO_COLOR', '1'), ('SSL_CERT_DIR', '/usr/lib/ssl/certs'), ('GST_V4L2SRC_DEFAULT_DEVICE', '/dev/video-camera0'), ('ADBD_SHELL', '/bin/bash'), ('DISPLAY', ':0'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'en_US.UTF-8'), ('USB_MANUFACTURER', 'Rockchip'), ('ANTHROPIC_DEFAULT_HAIKU_MODEL', 'glm-4.5-air'), ('LS_COLORS', ''), ('GST_V4L2_USE_LIBV4L2', '1'), ('AMENT_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowstate:/home/linaro/controller_ws/install/motor_zero:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/multi_port_motor_feedback:/home/linaro/controller_ws/install/motorsrv:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'ef9efeb8dccc474298c976660f083f98.Nmjw9VWQdJ074aH8'), ('ELECTRON_RUN_AS_NODE', '1'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('PWD', '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.0.8 25498 192.168.0.198 22'), ('AUTOVIDEOSINK_PREFERRED', 'xvimagesink'), ('USB_FW_VERSION', '0x0310'), ('NVM_CD_FLAGS', ''), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('ADB_TCP_PORT', '5555'), ('PYTHONPATH', '/home/linaro/controller_ws/install/xixilowstate/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/motor_zero/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/xixilowcmd/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/multi_port_motor_feedback/local/lib/python3.10/dist-packages:/home/linaro/controller_ws/install/motorsrv/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/linaro/controller_ws/install/xixilowstate:/home/linaro/controller_ws/install/motor_zero:/home/linaro/controller_ws/install/xixilowcmd:/home/linaro/controller_ws/install/multi_port_motor_feedback:/home/linaro/controller_ws/install/motorsrv:/opt/ros/humble')]), 'shell': False}
+[0.064142] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.099681] (-) TimerEvent: {}
+[0.199895] (-) TimerEvent: {}
+[0.272017] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found std_msgs: 4.9.0 (/opt/ros/humble/share/std_msgs/cmake)\n'}
+[0.300103] (-) TimerEvent: {}
+[0.315932] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.318851] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.325789] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.337784] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.352918] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.382017] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found rclcpp: 16.0.16 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.400152] (-) TimerEvent: {}
+[0.414686] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.416359] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.500268] (-) TimerEvent: {}
+[0.524353] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.600360] (-) TimerEvent: {}
+[0.700637] (-) TimerEvent: {}
+[0.801130] (-) TimerEvent: {}
+[0.901647] (-) TimerEvent: {}
+[1.002107] (-) TimerEvent: {}
+[1.021949] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[1.102297] (-) TimerEvent: {}
+[1.202707] (-) TimerEvent: {}
+[1.303150] (-) TimerEvent: {}
+[1.403504] (-) TimerEvent: {}
+[1.503740] (-) TimerEvent: {}
+[1.604080] (-) TimerEvent: {}
+[1.689754] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.704167] (-) TimerEvent: {}
+[1.804425] (-) TimerEvent: {}
+[1.904666] (-) TimerEvent: {}
+[1.935439] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.943900] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[1.964226] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[1.991798] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[1.993149] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Configured cppcheck include dirs: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src;/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/include>\n'}
+[1.993693] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[2.004828] (-) TimerEvent: {}
+[2.019527] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'cpplint' to check C / C++ code against the Google style\n"}
+[2.020062] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Configured cpplint exclude dirs and/or files: \n'}
+[2.022909] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'flake8' to check Python code syntax and style conventions\n"}
+[2.029747] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[2.033527] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257\n"}
+[2.059907] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[2.060537] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[2.063550] (multi_port_motor_feedback) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[2.067308] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Configuring done\n'}
+[2.105082] (-) TimerEvent: {}
+[2.112955] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Generating done\n'}
+[2.127751] (multi_port_motor_feedback) StdoutLine: {'line': b'-- Build files have been written to: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback\n'}
+[2.191667] (multi_port_motor_feedback) StdoutLine: {'line': b'[  1%] Generating C code for ROS interfaces\n'}
+[2.205150] (-) TimerEvent: {}
+[2.220133] (multi_port_motor_feedback) StdoutLine: {'line': b'[  3%] Generating C++ code for ROS interfaces\n'}
+[2.305256] (-) TimerEvent: {}
+[2.405560] (-) TimerEvent: {}
+[2.506005] (-) TimerEvent: {}
+[2.606403] (-) TimerEvent: {}
+[2.706826] (-) TimerEvent: {}
+[2.774895] (multi_port_motor_feedback) StdoutLine: {'line': b'[  5%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/multi_port_motor_feedback/msg/detail/motor_state__functions.c.o\n'}
+[2.786755] (multi_port_motor_feedback) StdoutLine: {'line': b'[  5%] Built target multi_port_motor_feedback__cpp\n'}
+[2.790181] (multi_port_motor_feedback) StdoutLine: {'line': b'[  7%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/multi_port_motor_feedback/msg/detail/low_state__functions.c.o\n'}
+[2.800642] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 10%] Generating C++ type support for eProsima Fast-RTPS\n'}
+[2.801370] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 10%] Generating C++ introspection for ROS interfaces\n'}
+[2.806925] (-) TimerEvent: {}
+[2.818306] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 12%] Generating C++ type support dispatch for ROS interfaces\n'}
+[2.906579] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 14%] Linking C shared library libmulti_port_motor_feedback__rosidl_generator_c.so\n'}
+[2.906995] (-) TimerEvent: {}
+[3.002235] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 14%] Built target multi_port_motor_feedback__rosidl_generator_c\n'}
+[3.007112] (-) TimerEvent: {}
+[3.020669] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 15%] Generating C type support for eProsima Fast-RTPS\n'}
+[3.039360] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 17%] Generating C type support dispatch for ROS interfaces\n'}
+[3.041836] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 19%] Generating C introspection for ROS interfaces\n'}
+[3.107220] (-) TimerEvent: {}
+[3.207518] (-) TimerEvent: {}
+[3.307958] (-) TimerEvent: {}
+[3.363880] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 22%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/multi_port_motor_feedback/msg/low_state__type_support.cpp.o\n'}
+[3.364517] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 22%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/multi_port_motor_feedback/msg/motor_state__type_support.cpp.o\n'}
+[3.381439] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 24%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/multi_port_motor_feedback/msg/detail/motor_state__type_support.cpp.o\n'}
+[3.394909] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 26%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/multi_port_motor_feedback/msg/detail/low_state__type_support.cpp.o\n'}
+[3.403475] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 28%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/multi_port_motor_feedback/msg/detail/dds_fastrtps/motor_state__type_support.cpp.o\n'}
+[3.408119] (-) TimerEvent: {}
+[3.508530] (-) TimerEvent: {}
+[3.608973] (-) TimerEvent: {}
+[3.709455] (-) TimerEvent: {}
+[3.809964] (-) TimerEvent: {}
+[3.818404] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 29%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/multi_port_motor_feedback/msg/detail/motor_state__type_support_c.cpp.o\n'}
+[3.861313] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 31%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/multi_port_motor_feedback/msg/detail/motor_state__type_support.c.o\n'}
+[3.894417] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 33%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/multi_port_motor_feedback/msg/motor_state__type_support.cpp.o\n'}
+[3.910202] (-) TimerEvent: {}
+[4.010671] (-) TimerEvent: {}
+[4.052479] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 35%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/multi_port_motor_feedback/msg/low_state__type_support.cpp.o\n'}
+[4.074065] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 36%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/multi_port_motor_feedback/msg/detail/low_state__type_support.c.o\n'}
+[4.078338] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 38%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/multi_port_motor_feedback/msg/detail/dds_fastrtps/low_state__type_support.cpp.o\n'}
+[4.108802] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 40%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/multi_port_motor_feedback/msg/detail/low_state__type_support_c.cpp.o\n'}
+[4.110846] (-) TimerEvent: {}
+[4.115246] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 42%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_c.so\n'}
+[4.204473] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 43%] Linking C shared library libmulti_port_motor_feedback__rosidl_typesupport_introspection_c.so\n'}
+[4.211067] (-) TimerEvent: {}
+[4.232690] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 43%] Built target multi_port_motor_feedback__rosidl_typesupport_c\n'}
+[4.307324] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 43%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_c\n'}
+[4.311879] (-) TimerEvent: {}
+[4.412331] (-) TimerEvent: {}
+[4.424792] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 45%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_cpp.so\n'}
+[4.512529] (-) TimerEvent: {}
+[4.565299] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 45%] Built target multi_port_motor_feedback__rosidl_typesupport_cpp\n'}
+[4.612717] (-) TimerEvent: {}
+[4.650591] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 47%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_c.so\n'}
+[4.674491] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 49%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.so\n'}
+[4.685973] (multi_port_motor_feedback) StdoutLine: {'line': b'Consolidate compiler generated dependencies of target can_motor_feedback_publisher\n'}
+[4.697478] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 50%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_introspection_cpp.so\n'}
+[4.712830] (-) TimerEvent: {}
+[4.742049] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 52%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o\n'}
+[4.812944] (-) TimerEvent: {}
+[4.825820] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 52%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp\n'}
+[4.833701] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 52%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_c\n'}
+[4.849549] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 52%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_cpp\n'}
+[4.907022] (multi_port_motor_feedback) StdoutLine: {'line': b'[ 52%] Built target multi_port_motor_feedback\n'}
+[4.913025] (-) TimerEvent: {}
+[5.013239] (-) TimerEvent: {}
+[5.113473] (-) TimerEvent: {}
+[5.213711] (-) TimerEvent: {}
+[5.313946] (-) TimerEvent: {}
+[5.414187] (-) TimerEvent: {}
+[5.514428] (-) TimerEvent: {}
+[5.614668] (-) TimerEvent: {}
+[5.714903] (-) TimerEvent: {}
+[5.815145] (-) TimerEvent: {}
+[5.915384] (-) TimerEvent: {}
+[6.015622] (-) TimerEvent: {}
+[6.115861] (-) TimerEvent: {}
+[6.216104] (-) TimerEvent: {}
+[6.316348] (-) TimerEvent: {}
+[6.416585] (-) TimerEvent: {}
+[6.516973] (-) TimerEvent: {}
+[6.617507] (-) TimerEvent: {}
+[6.718010] (-) TimerEvent: {}
+[6.818479] (-) TimerEvent: {}
+[6.918935] (-) TimerEvent: {}
+[7.019451] (-) TimerEvent: {}
+[7.119880] (-) TimerEvent: {}
+[7.220317] (-) TimerEvent: {}
+[7.320820] (-) TimerEvent: {}
+[7.421285] (-) TimerEvent: {}
+[7.521727] (-) TimerEvent: {}
+[7.622144] (-) TimerEvent: {}
+[7.722617] (-) TimerEvent: {}
+[7.823074] (-) TimerEvent: {}
+[7.923497] (-) TimerEvent: {}
+[7.988787] (multi_port_motor_feedback) StderrLine: {'line': b'In file included from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,\n'}
+[7.989574] (multi_port_motor_feedback) StderrLine: {'line': b'                 from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:29:\n'}
+[7.989998] (multi_port_motor_feedback) StderrLine: {'line': b'/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]\n'}
+[7.990378] (multi_port_motor_feedback) StderrLine: {'line': b'  584 |         struct {\n'}
+[7.990744] (multi_port_motor_feedback) StderrLine: {'line': b'      |                ^\n'}
+[8.023679] (-) TimerEvent: {}
+[8.069901] (multi_port_motor_feedback) StderrLine: {'line': b'/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp: In lambda function:\n'}
+[8.070605] (multi_port_motor_feedback) StderrLine: {'line': b'/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:738:29: error: \xe2\x80\x98using _motor_state_type = struct std::array<multi_port_motor_feedback::msg::MotorState_<std::allocator<void> >, 30>\xe2\x80\x99 {aka \xe2\x80\x98struct std::array<multi_port_motor_feedback::msg::MotorState_<std::allocator<void> >, 30>\xe2\x80\x99} has no member named \xe2\x80\x98resize\xe2\x80\x99; did you mean \xe2\x80\x98size\xe2\x80\x99?\n'}
+[8.071089] (multi_port_motor_feedback) StderrLine: {'line': b'  738 |             msg.motor_state.resize(NUM_MOTORS);\n'}
+[8.071484] (multi_port_motor_feedback) StderrLine: {'line': b'      |                             ^~~~~~\n'}
+[8.071893] (multi_port_motor_feedback) StderrLine: {'line': b'      |                             size\n'}
+[8.123917] (-) TimerEvent: {}
+[8.224435] (-) TimerEvent: {}
+[8.324958] (-) TimerEvent: {}
+[8.425409] (-) TimerEvent: {}
+[8.525819] (-) TimerEvent: {}
+[8.626252] (-) TimerEvent: {}
+[8.726777] (-) TimerEvent: {}
+[8.827210] (-) TimerEvent: {}
+[8.927658] (-) TimerEvent: {}
+[9.028103] (-) TimerEvent: {}
+[9.128537] (-) TimerEvent: {}
+[9.229014] (-) TimerEvent: {}
+[9.329376] (-) TimerEvent: {}
+[9.393699] (multi_port_motor_feedback) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/can_motor_feedback_publisher.dir/build.make:76: CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o] Error 1\n'}
+[9.394532] (multi_port_motor_feedback) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:396: CMakeFiles/can_motor_feedback_publisher.dir/all] Error 2\n'}
+[9.394716] (multi_port_motor_feedback) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[9.396793] (multi_port_motor_feedback) CommandEnded: {'returncode': 2}
+[9.413698] (multi_port_motor_feedback) JobEnded: {'identifier': 'multi_port_motor_feedback', 'rc': 2}
+[9.424211] (-) EventReactorShutdown: {}

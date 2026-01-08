@@ -1,0 +1,34 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from multi_port_motor_feedback/msg/MotorState.msg
+// generated code does not contain a copyright notice
+
+
+module multi_port_motor_feedback {
+  module msg {
+    @verbatim (language="comment", text=
+      "MotorState.msg" "\n"
+      "Single motor state message")
+    struct MotorState {
+      @verbatim (language="comment", text=
+        "Error code (DM motor format)")
+      uint8 state;
+
+      @verbatim (language="comment", text=
+        "Scaled measurements" "\n"
+        "Motor ID, 1-30")
+      int8 id;
+
+      float position;
+
+      float velocity;
+
+      @verbatim (language="comment", text=
+        "Torque in Nm")
+      float effort;
+
+      int8 temp_mos;
+
+      int8 temp_rotor;
+    };
+  };
+};

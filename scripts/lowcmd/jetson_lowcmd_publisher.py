@@ -27,7 +27,7 @@ class JetsonLowCmdPublisher:
         rospy.init_node('jetson_lowcmd_publisher', anonymous=True)
 
         # 配置参数
-        self.rk3588_ip = rospy.get_param('~rk3588_ip', '192.168.1.20')
+        self.rk3588_ip = rospy.get_param('~rk3588_ip', '192.168.1.10')  # 修改为正确的IP
         self.rk3588_port = rospy.get_param('~rk3588_port', 8888)
         self.publish_rate = rospy.get_param('~publish_rate', 50)  # Hz
         self.use_network = rospy.get_param('~use_network', True)
@@ -37,6 +37,10 @@ class JetsonLowCmdPublisher:
         self.sine_amplitude = rospy.get_param('~sine_amplitude', 0.3)  # 弧度
         self.sine_frequency = rospy.get_param('~sine_frequency', 0.5)   # Hz
         self.target_joints = rospy.get_param('~target_joints', [4, 5, 10, 11])  # 脚踝关节
+
+        # 电机配置：支持30个电机 (ID: 1-30)
+        self.num_motors = 30
+        self.motor_id_offset = rospy.get_param('~motor_id_offset', 1)  # motor_id从1开始
 
         # 初始化组件
         self.setup_publishers()
@@ -51,6 +55,7 @@ class JetsonLowCmdPublisher:
         rospy.loginfo("="*60)
         rospy.loginfo(f"Target RK3588: {self.rk3588_ip}:{self.rk3588_port}")
         rospy.loginfo(f"Publish rate: {self.publish_rate} Hz")
+        rospy.loginfo(f"Motor count: {self.num_motors} (ID: 1-{self.num_motors})")
         rospy.loginfo(f"Sine wave: {self.sine_amplitude} rad @ {self.sine_frequency} Hz")
         rospy.loginfo(f"Target joints: {self.target_joints}")
         rospy.loginfo(f"Network mode: {self.use_network}")
@@ -169,19 +174,44 @@ class JetsonLowCmdPublisher:
             return
 
         try:
-            # 创建网络数据包
+            # 创建motor_cmd字典，包含所有30个电机 (ID: 1-30)
+            motor_cmd = {}
+            for motor_id in range(1, self.num_motors + 1):
+                if motor_id in positions:
+                    # 有数据的电机
+                    motor_cmd[str(motor_id)] = {
+                        'mode': 1 if motor_id in self.target_joints else 0,
+                        'q': positions[motor_id]['q'],
+                        'dq': positions[motor_id]['dq'],
+                        'tau': positions[motor_id]['tau'],
+                        'kp': positions[motor_id]['kp'],
+                        'kd': positions[motor_id]['kd']
+                    }
+                else:
+                    # 没有数据的电机，设为默认值
+                    motor_cmd[str(motor_id)] = {
+                        'mode': 0,
+                        'q': 0.0,
+                        'dq': 0.0,
+                        'tau': 0.0,
+                        'kp': 0.0,
+                        'kd': 0.0
+                    }
+
+            # 创建网络数据包，使用xixilowcmd格式
             data = {
                 'timestamp': time.time(),
                 'sequence': self.msg_count,
-                'type': 'lowcmd',
-                'positions': positions
+                'mode_pr': 0,  # PR模式
+                'mode_machine': 1,  # G1机器人
+                'motor_cmd': motor_cmd  # 使用motor_cmd格式
             }
 
             # 转换为JSON并编码
             json_str = json.dumps(data)
             json_bytes = json_str.encode('utf-8')
 
-            # 发送到RK3588
+            # 发送到RK3588 (192.168.1.10:8888)
             self.socket.sendto(json_bytes, (self.rk3588_ip, self.rk3588_port))
 
         except Exception as e:

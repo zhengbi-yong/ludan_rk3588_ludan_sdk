@@ -1,0 +1,112 @@
+{
+  "_comment": "Motor test configuration with proper CAN frame format",
+  "send_interval_ms": 100,
+  "verbose": true,
+  "_comment_range": "Default range parameters for position/velocity/torque mapping",
+  "p_max": 6.283,
+  "v_max": 45.0,
+  "t_max": 18.0,
+  "motors": [
+    {
+      "id": 1,
+      "enabled": true,
+      "position": 0.0,
+      "velocity": 0.0,
+      "torque": 0.0,
+      "temp_mos": 25.0,
+      "temp_rotor": 30.0,
+      "error_code": 1,
+      "data_mode": 2,
+      "vel_amplitude": 25.0,
+      "vel_frequency": 0.5,
+      "_comment": "Sine wave velocity, V=25*sin(2*pi*0.5*t), enabled state"
+    },
+    {
+      "id": 2,
+      "enabled": true,
+      "position": 1.57,
+      "velocity": 10.0,
+      "torque": 2.0,
+      "temp_mos": 35.0,
+      "temp_rotor": 40.0,
+      "error_code": 1,
+      "data_mode": 1,
+      "pos_increment": 0.01,
+      "_comment": "Position increment mode, 90 deg position"
+    },
+    {
+      "id": 3,
+      "enabled": true,
+      "position": -1.57,
+      "velocity": -10.0,
+      "torque": -2.0,
+      "temp_mos": 28.0,
+      "temp_rotor": 32.0,
+      "error_code": 1,
+      "data_mode": 0,
+      "_comment": "Fixed value mode, -90 deg position"
+    },
+    {
+      "id": 4,
+      "enabled": true,
+      "position": 3.14,
+      "velocity": 0.0,
+      "torque": 0.0,
+      "temp_mos": 25.0,
+      "temp_rotor": 25.0,
+      "error_code": 1,
+      "data_mode": 0,
+      "_comment": "Fixed at 180 degrees"
+    },
+    {
+      "id": 5,
+      "enabled": false,
+      "position": 0.0,
+      "velocity": 0.0,
+      "torque": 0.0,
+      "temp_mos": 0.0,
+      "temp_rotor": 0.0,
+      "error_code": 0,
+      "data_mode": 0,
+      "_comment": "Disabled motor (error_code=0)"
+    },
+    {
+      "id": 6,
+      "enabled": true,
+      "position": 0.0,
+      "velocity": 0.0,
+      "torque": 0.0,
+      "temp_mos": 85.0,
+      "temp_rotor": 90.0,
+      "error_code": 11,
+      "data_mode": 0,
+      "_comment": "MOS over temperature simulation (error_code=0xB)"
+    },
+    {
+      "id": 7,
+      "enabled": true,
+      "position": 0.0,
+      "velocity": 35.0,
+      "torque": 15.0,
+      "temp_mos": 50.0,
+      "temp_rotor": 55.0,
+      "error_code": 1,
+      "data_mode": 2,
+      "vel_amplitude": 10.0,
+      "vel_frequency": 1.0,
+      "_comment": "High speed sine wave test"
+    },
+    {
+      "id": 8,
+      "enabled": true,
+      "position": 0.0,
+      "velocity": 0.0,
+      "torque": 17.0,
+      "temp_mos": 60.0,
+      "temp_rotor": 65.0,
+      "error_code": 1,
+      "data_mode": 0,
+      "_comment": "High torque (near max 18 Nm)"
+    }
+  ]
+}

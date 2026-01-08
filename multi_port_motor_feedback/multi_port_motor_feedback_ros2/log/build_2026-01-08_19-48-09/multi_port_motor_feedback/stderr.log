@@ -1,0 +1,13 @@
+In file included from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+                 from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:29:
+/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+  584 |         struct {
+      |                ^
+/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp: In lambda function:
+/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:738:29: error: ‘using _motor_state_type = struct std::array<multi_port_motor_feedback::msg::MotorState_<std::allocator<void> >, 30>’ {aka ‘struct std::array<multi_port_motor_feedback::msg::MotorState_<std::allocator<void> >, 30>’} has no member named ‘resize’; did you mean ‘size’?
+  738 |             msg.motor_state.resize(NUM_MOTORS);
+      |                             ^~~~~~
+      |                             size
+gmake[2]: *** [CMakeFiles/can_motor_feedback_publisher.dir/build.make:76: CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:396: CMakeFiles/can_motor_feedback_publisher.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

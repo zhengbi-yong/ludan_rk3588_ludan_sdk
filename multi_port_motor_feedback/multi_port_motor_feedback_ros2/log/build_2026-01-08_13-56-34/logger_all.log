@@ -1,0 +1,113 @@
+[0.138s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--packages-select', 'multi_port_motor_feedback']
+[0.138s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['multi_port_motor_feedback'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7fbce00d60>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7fbcfaa1d0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7fbcfaa1d0>>)
+[0.354s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.354s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.354s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.354s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.355s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.355s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.355s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2'
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.355s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.374s] DEBUG:colcon.colcon_core.package_identification:Package '.' with type 'ros.ament_cmake' and name 'multi_port_motor_feedback'
+[0.375s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.375s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.375s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.375s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.375s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.405s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.405s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.408s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 6 installed packages in /home/linaro/controller_ws/install
+[0.410s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 278 installed packages in /opt/ros/humble
+[0.433s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'cmake_target' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'cmake_clean_cache' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'cmake_clean_first' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'cmake_force_configure' from command line to 'False'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'ament_cmake_args' from command line to 'None'
+[0.483s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'catkin_cmake_args' from command line to 'None'
+[0.484s] Level 5:colcon.colcon_core.verb:set package 'multi_port_motor_feedback' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.484s] DEBUG:colcon.colcon_core.verb:Building package 'multi_port_motor_feedback' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback', 'merge_install': False, 'path': '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2', 'symlink_install': False, 'test_result_base': None}
+[0.484s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.485s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.486s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2' with build type 'ament_cmake'
+[0.486s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2'
+[0.490s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.490s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.490s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.503s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[7.769s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[7.797s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[7.853s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(multi_port_motor_feedback)
+[7.860s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback' for CMake module files
+[7.861s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[7.861s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback' for CMake config files
+[7.862s] Level 1:colcon.colcon_core.shell:create_environment_hook('multi_port_motor_feedback', 'cmake_prefix_path')
+[7.862s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/cmake_prefix_path.ps1'
+[7.863s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/cmake_prefix_path.dsv'
+[7.864s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/cmake_prefix_path.sh'
+[7.865s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib'
+[7.865s] Level 1:colcon.colcon_core.shell:create_environment_hook('multi_port_motor_feedback', 'ld_library_path_lib')
+[7.866s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/ld_library_path_lib.ps1'
+[7.866s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/ld_library_path_lib.dsv'
+[7.866s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/ld_library_path_lib.sh'
+[7.867s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/bin'
+[7.867s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/pkgconfig/multi_port_motor_feedback.pc'
+[7.867s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/python3.10/site-packages'
+[7.868s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/bin'
+[7.868s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.ps1'
+[7.869s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.dsv'
+[7.870s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.sh'
+[7.871s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.bash'
+[7.872s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.zsh'
+[7.873s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/colcon-core/packages/multi_port_motor_feedback)
+[7.874s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(multi_port_motor_feedback)
+[7.874s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback' for CMake module files
+[7.875s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback' for CMake config files
+[7.875s] Level 1:colcon.colcon_core.shell:create_environment_hook('multi_port_motor_feedback', 'cmake_prefix_path')
+[7.876s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/cmake_prefix_path.ps1'
+[7.876s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/cmake_prefix_path.dsv'
+[7.876s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/cmake_prefix_path.sh'
+[7.877s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib'
+[7.877s] Level 1:colcon.colcon_core.shell:create_environment_hook('multi_port_motor_feedback', 'ld_library_path_lib')
+[7.878s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/ld_library_path_lib.ps1'
+[7.878s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/ld_library_path_lib.dsv'
+[7.878s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/hook/ld_library_path_lib.sh'
+[7.879s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/bin'
+[7.879s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/pkgconfig/multi_port_motor_feedback.pc'
+[7.879s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/python3.10/site-packages'
+[7.880s] Level 1:colcon.colcon_core.environment:checking '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/bin'
+[7.880s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.ps1'
+[7.881s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.dsv'
+[7.881s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.sh'
+[7.882s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.bash'
+[7.882s] INFO:colcon.colcon_core.shell:Creating package script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.zsh'
+[7.883s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/colcon-core/packages/multi_port_motor_feedback)
+[7.883s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[7.884s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[7.884s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[7.884s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[7.891s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[7.891s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[7.891s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[32.918s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.NoReply: Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken.
+[32.918s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[32.919s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/local_setup.ps1'
+[32.920s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/_local_setup_util_ps1.py'
+[32.922s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/setup.ps1'
+[32.924s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/local_setup.sh'
+[32.925s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/_local_setup_util_sh.py'
+[32.926s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/setup.sh'
+[32.927s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/local_setup.bash'
+[32.928s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/setup.bash'
+[32.929s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/local_setup.zsh'
+[32.930s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/setup.zsh'

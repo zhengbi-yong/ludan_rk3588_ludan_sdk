@@ -11,10 +11,16 @@ set(CANFDNET_SRC_DIR ${CANFDNET_ROOT}/src)
 # Include directories
 include_directories(${CANFDNET_SRC_DIR})
 include_directories(${CANFDNET_SRC_DIR}/zlgcan)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Find yaml-cpp
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
 # Source files
 set(SOURCES
     src/cantoudp.cpp
+    src/motor_config.cpp
 )
 
 # CANFDNET source files (compile directly to avoid ABI issues)
@@ -39,7 +45,8 @@ file(GLOB ZLIB_SOURCES ${CANFDNET_SRC_DIR}/3rd/zlib/*.c)
 add_executable(cantoudp ${SOURCES} ${CANFDNET_SOURCES} ${ZLIB_SOURCES})
 
 # Link libraries
-target_link_libraries(cantoudp pthread)
+target_link_libraries(cantoudp pthread ${YAML_CPP_LIBRARIES})
+target_include_directories(cantoudp PRIVATE ${YAML_CPP_INCLUDE_DIRS})
 
 # Install target
 install(TARGETS cantoudp DESTINATION bin)

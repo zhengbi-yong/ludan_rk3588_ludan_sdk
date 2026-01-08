@@ -1,0 +1,11 @@
+source;share/multi_port_motor_feedback/hook/cmake_prefix_path.ps1
+source;share/multi_port_motor_feedback/hook/cmake_prefix_path.dsv
+source;share/multi_port_motor_feedback/hook/cmake_prefix_path.sh
+source;share/multi_port_motor_feedback/hook/ld_library_path_lib.ps1
+source;share/multi_port_motor_feedback/hook/ld_library_path_lib.dsv
+source;share/multi_port_motor_feedback/hook/ld_library_path_lib.sh
+source;share/multi_port_motor_feedback/local_setup.bash
+source;share/multi_port_motor_feedback/local_setup.dsv
+source;share/multi_port_motor_feedback/local_setup.ps1
+source;share/multi_port_motor_feedback/local_setup.sh
+source;share/multi_port_motor_feedback/local_setup.zsh

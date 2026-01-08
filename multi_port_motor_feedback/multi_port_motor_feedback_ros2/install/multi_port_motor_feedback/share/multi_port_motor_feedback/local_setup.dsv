@@ -1,0 +1,3 @@
+source;share/multi_port_motor_feedback/environment/ament_prefix_path.sh
+source;share/multi_port_motor_feedback/environment/library_path.sh
+source;share/multi_port_motor_feedback/environment/path.sh

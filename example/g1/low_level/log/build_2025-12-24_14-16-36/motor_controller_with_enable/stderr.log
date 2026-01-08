@@ -1,7 +1,0 @@
-/home/linaro/ludan_sdk/example/g1/low_level/motor_controller_with_enable.cpp:24:10: fatal error: xixilowcmd/xixilowcmd/msg/low_cmd.hpp: No such file or directory
-   24 | #include "xixilowcmd/xixilowcmd/msg/low_cmd.hpp"
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-gmake[2]: *** [CMakeFiles/motor_controller_with_enable.dir/build.make:76: CMakeFiles/motor_controller_with_enable.dir/motor_controller_with_enable.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/motor_controller_with_enable.dir/all] Error 2
-gmake: *** [Makefile:146: all] Error 2

@@ -1,0 +1,85 @@
+[0.014s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[0.064s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.272s] -- Found std_msgs: 4.9.0 (/opt/ros/humble/share/std_msgs/cmake)
+[0.316s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.319s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.325s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.337s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.353s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.381s] -- Found rclcpp: 16.0.16 (/opt/ros/humble/share/rclcpp/cmake)
+[0.414s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.416s] -- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.524s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.022s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[1.690s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.935s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.944s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.964s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.992s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.993s] -- Configured cppcheck include dirs: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src;/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/include>
+[1.993s] -- Configured cppcheck exclude dirs and/or files: 
+[2.019s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[2.020s] -- Configured cpplint exclude dirs and/or files: 
+[2.023s] -- Added test 'flake8' to check Python code syntax and style conventions
+[2.029s] -- Added test 'lint_cmake' to check CMake code style
+[2.033s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.060s] -- Added test 'uncrustify' to check C / C++ code style
+[2.060s] -- Configured uncrustify additional arguments: 
+[2.063s] -- Added test 'xmllint' to check XML markup files
+[2.067s] -- Configuring done
+[2.113s] -- Generating done
+[2.127s] -- Build files have been written to: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[2.191s] [  1%] Generating C code for ROS interfaces
+[2.220s] [  3%] Generating C++ code for ROS interfaces
+[2.775s] [  5%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/multi_port_motor_feedback/msg/detail/motor_state__functions.c.o
+[2.787s] [  5%] Built target multi_port_motor_feedback__cpp
+[2.790s] [  7%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/multi_port_motor_feedback/msg/detail/low_state__functions.c.o
+[2.800s] [ 10%] Generating C++ type support for eProsima Fast-RTPS
+[2.801s] [ 10%] Generating C++ introspection for ROS interfaces
+[2.818s] [ 12%] Generating C++ type support dispatch for ROS interfaces
+[2.906s] [ 14%] Linking C shared library libmulti_port_motor_feedback__rosidl_generator_c.so
+[3.002s] [ 14%] Built target multi_port_motor_feedback__rosidl_generator_c
+[3.020s] [ 15%] Generating C type support for eProsima Fast-RTPS
+[3.039s] [ 17%] Generating C type support dispatch for ROS interfaces
+[3.041s] [ 19%] Generating C introspection for ROS interfaces
+[3.364s] [ 22%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/multi_port_motor_feedback/msg/low_state__type_support.cpp.o
+[3.364s] [ 22%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/multi_port_motor_feedback/msg/motor_state__type_support.cpp.o
+[3.381s] [ 24%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/multi_port_motor_feedback/msg/detail/motor_state__type_support.cpp.o
+[3.395s] [ 26%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/multi_port_motor_feedback/msg/detail/low_state__type_support.cpp.o
+[3.403s] [ 28%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/multi_port_motor_feedback/msg/detail/dds_fastrtps/motor_state__type_support.cpp.o
+[3.818s] [ 29%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/multi_port_motor_feedback/msg/detail/motor_state__type_support_c.cpp.o
+[3.861s] [ 31%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/multi_port_motor_feedback/msg/detail/motor_state__type_support.c.o
+[3.894s] [ 33%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/multi_port_motor_feedback/msg/motor_state__type_support.cpp.o
+[4.052s] [ 35%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/multi_port_motor_feedback/msg/low_state__type_support.cpp.o
+[4.074s] [ 36%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/multi_port_motor_feedback/msg/detail/low_state__type_support.c.o
+[4.078s] [ 38%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/multi_port_motor_feedback/msg/detail/dds_fastrtps/low_state__type_support.cpp.o
+[4.109s] [ 40%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/multi_port_motor_feedback/msg/detail/low_state__type_support_c.cpp.o
+[4.115s] [ 42%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_c.so
+[4.205s] [ 43%] Linking C shared library libmulti_port_motor_feedback__rosidl_typesupport_introspection_c.so
+[4.233s] [ 43%] Built target multi_port_motor_feedback__rosidl_typesupport_c
+[4.307s] [ 43%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_c
+[4.425s] [ 45%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_cpp.so
+[4.565s] [ 45%] Built target multi_port_motor_feedback__rosidl_typesupport_cpp
+[4.650s] [ 47%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_c.so
+[4.674s] [ 49%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.so
+[4.686s] Consolidate compiler generated dependencies of target can_motor_feedback_publisher
+[4.697s] [ 50%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_introspection_cpp.so
+[4.742s] [ 52%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o
+[4.825s] [ 52%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp
+[4.833s] [ 52%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_c
+[4.849s] [ 52%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_cpp
+[4.907s] [ 52%] Built target multi_port_motor_feedback
+[7.989s] In file included from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[7.989s]                  from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:29:
+[7.990s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[7.990s]   584 |         struct {
+[7.990s]       |                ^
+[8.070s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp: In lambda function:
+[8.070s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:738:29: error: ‘using _motor_state_type = struct std::array<multi_port_motor_feedback::msg::MotorState_<std::allocator<void> >, 30>’ {aka ‘struct std::array<multi_port_motor_feedback::msg::MotorState_<std::allocator<void> >, 30>’} has no member named ‘resize’; did you mean ‘size’?
+[8.071s]   738 |             msg.motor_state.resize(NUM_MOTORS);
+[8.071s]       |                             ^~~~~~
+[8.071s]       |                             size
+[9.393s] gmake[2]: *** [CMakeFiles/can_motor_feedback_publisher.dir/build.make:76: CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o] Error 1
+[9.394s] gmake[1]: *** [CMakeFiles/Makefile2:396: CMakeFiles/can_motor_feedback_publisher.dir/all] Error 2
+[9.394s] gmake: *** [Makefile:146: all] Error 2
+[9.396s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8

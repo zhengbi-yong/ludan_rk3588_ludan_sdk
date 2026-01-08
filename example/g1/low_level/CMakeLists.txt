@@ -1,5 +1,13 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.22)
 project(motor_controller_with_enable)
+
+# Set CMake policies for ROS2 Humble compatibility
+if(POLICY CMP0012)
+    cmake_policy(SET CMP0012 NEW)
+endif()
+if(POLICY CMP0057)
+    cmake_policy(SET CMP0057 NEW)
+endif()
 
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)

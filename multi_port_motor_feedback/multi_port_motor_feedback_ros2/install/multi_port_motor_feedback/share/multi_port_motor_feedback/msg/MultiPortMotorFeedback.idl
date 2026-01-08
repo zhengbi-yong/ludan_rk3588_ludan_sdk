@@ -1,0 +1,83 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from multi_port_motor_feedback/msg/MultiPortMotorFeedback.msg
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Header.idl"
+
+module multi_port_motor_feedback {
+  module msg {
+    typedef uint8 uint8__8[8];
+    @verbatim (language="comment", text=
+      "MotorFeedback.msg" "\n"
+      "DM Motor feedback message from CAN bus" "\n"
+      "Compatible with motor_controller_with_enable")
+    struct MultiPortMotorFeedback {
+      @verbatim (language="comment", text=
+        "Header for timestamp and frame ID")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "Motor identification" "\n"
+        "Motor ID (1-30)")
+      int32 motor_id;
+
+      @verbatim (language="comment", text=
+        "Raw CAN ID")
+      int32 can_id;
+
+      @verbatim (language="comment", text=
+        "Motor mode/error (DM format)" "\n"
+        "Error code (4 bits from D upper)")
+      @unit (value="0")
+      int32 error;
+
+      @verbatim (language="comment", text=
+        "0x0: OK/Disabled" "\n"
+        "0x1: Enabled" "\n"
+        "0x8: Over-voltage" "\n"
+        "0x9: Under-voltage" "\n"
+        "0xA: Over-current" "\n"
+        "0xB: MOS Over-temp" "\n"
+        "0xC: Coil Over-temp" "\n"
+        "0xD: Comms Lost" "\n"
+        "0xE: Overload" "\n"
+        "Raw measurements (DM format, unscaled)" "\n"
+        "Position raw value (16-bit signed)")
+      int16 position;
+
+      @verbatim (language="comment", text=
+        "Velocity raw value (12-bit signed)")
+      int16 velocity;
+
+      @verbatim (language="comment", text=
+        "Torque raw value (12-bit signed)")
+      int16 torque;
+
+      @verbatim (language="comment", text=
+        "MOS temperature")
+      int8 temp_mos;
+
+      @verbatim (language="comment", text=
+        "Rotor temperature")
+      int8 temp_rotor;
+
+      @verbatim (language="comment", text=
+        "Scaled measurements (for convenience)" "\n"
+        "Position in radians")
+      float position_rad;
+
+      @verbatim (language="comment", text=
+        "Velocity in rad/s")
+      float velocity_rad_s;
+
+      @verbatim (language="comment", text=
+        "Torque in Nm")
+      float torque_nm;
+
+      @verbatim (language="comment", text=
+        "Raw CAN data for debugging" "\n"
+        "Raw CAN frame data (8 bytes)")
+      uint8__8 can_data;
+    };
+  };
+};

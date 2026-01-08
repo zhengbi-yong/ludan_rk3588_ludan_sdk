@@ -202,21 +202,14 @@ class LowCmdUDPToROS2(Node):
             'sequence': self.message_count,
             'mode_pr': 0,  # PR模式
             'mode_machine': 1,  # G1机器人
-            'positions': {},
-            'velocities': {},
-            'efforts': {},
-            'gains': {},
-            'motor_modes': []
+            'motor_cmd': {}  # 使用motor_cmd格式 (motor_id: 1-30)
         }
 
-        # 为所有30个电机生成数据 (ID 0-29，对应 motor_controller 的 1-30)
-        for motor_id in range(30):
+        # 为所有30个电机生成数据 (motor_id: 1-30)
+        for motor_id in range(1, 31):
             # 设置基本的电机参数
             kp = 20.0 if motor_id in target_joints else 10.0  # 位置增益
             kd = 2.0 if motor_id in target_joints else 1.0   # 速度增益
-
-            message['gains'][str(motor_id)] = {'kp': kp, 'kd': kd}
-            message['motor_modes'].append(0 if motor_id not in target_joints else 1)
 
             if motor_id in target_joints:
                 # 为目标脚踝关节生成正弦波
@@ -228,25 +221,23 @@ class LowCmdUDPToROS2(Node):
                 vel = sine_amplitude * 2 * math.pi * sine_frequency * math.cos(phase)
                 effort = 0.0  # 无额外力矩
 
-                message['positions'][str(motor_id)] = {
-                    'q': pos, 'dq': vel, 'tau': effort, 'mode': 1
-                }
-                message['velocities'][str(motor_id)] = {
-                    'dq': vel
-                }
-                message['efforts'][str(motor_id)] = {
-                    'tau': effort
+                message['motor_cmd'][str(motor_id)] = {
+                    'mode': 1,
+                    'q': pos,
+                    'dq': vel,
+                    'tau': effort,
+                    'kp': kp,
+                    'kd': kd
                 }
             else:
                 # 其他电机保持零位
-                message['positions'][str(motor_id)] = {
-                    'q': 0.0, 'dq': 0.0, 'tau': 0.0, 'mode': 0
-                }
-                message['velocities'][str(motor_id)] = {
-                    'dq': 0.0
-                }
-                message['efforts'][str(motor_id)] = {
-                    'tau': 0.0
+                message['motor_cmd'][str(motor_id)] = {
+                    'mode': 0,
+                    'q': 0.0,
+                    'dq': 0.0,
+                    'tau': 0.0,
+                    'kp': 0.0,
+                    'kd': 0.0
                 }
 
         return message
@@ -265,16 +256,17 @@ class LowCmdUDPToROS2(Node):
 
                 # 直接创建 LowCmd 消息
                 try:
+                    # 创建 30 个电机命令（ROS2 要求固定长度）
+                    # motor_id 从 1-30，直接赋值给lowcmd_msg.motor_cmd数组
                     lowcmd_msg = LowCmd()
 
-                    # 创建 30 个电机命令（ROS2 要求固定长度）
-                    ros_motor_cmds = []
-                    for i in range(30):
+                    for i in range(30):  # 数组索引 0-29
+                        motor_id = i + 1  # motor_id: 1-30
                         motor_cmd = MotorCmd()
-                        motor_cmd.id = i
+                        motor_cmd.id = motor_id  # 使用实际的motor_id (1-30)
 
                         # 从字典中查找对应ID的电机
-                        motor_key = str(i)
+                        motor_key = str(motor_id)
                         if motor_key in motor_cmd_dict:
                             # 从UDP数据获取电机信息
                             jetson_motor = motor_cmd_dict[motor_key]
@@ -286,11 +278,11 @@ class LowCmdUDPToROS2(Node):
                                 motor_cmd.kp = jetson_motor.get('kp', 0.0)
                                 motor_cmd.kd = jetson_motor.get('kd', 0.0)
 
-                                if self.message_count <= 10 and i in [4, 5, 6, 10, 11]:
-                                    self.get_logger().info(f"✅ Motor {i}: q={motor_cmd.q:.4f}, dq={motor_cmd.dq:.3f}, tau={motor_cmd.tau:.3f}, mode={motor_cmd.mode}, kp={motor_cmd.kp:.1f}, kd={motor_cmd.kd:.1f}")
+                                if self.message_count <= 10 and motor_id in [4, 5, 6, 10, 11]:
+                                    self.get_logger().info(f"✅ Motor {motor_id}: q={motor_cmd.q:.4f}, dq={motor_cmd.dq:.3f}, tau={motor_cmd.tau:.3f}, mode={motor_cmd.mode}, kp={motor_cmd.kp:.1f}, kd={motor_cmd.kd:.1f}")
                             else:
                                 # 数据格式错误，使用默认值
-                                self.get_logger().warning(f"电机{i}数据格式错误: {type(jetson_motor)}")
+                                self.get_logger().warning(f"电机{motor_id}数据格式错误: {type(jetson_motor)}")
                                 motor_cmd.mode = 0
                                 motor_cmd.q = 0.0
                                 motor_cmd.dq = 0.0
@@ -306,13 +298,13 @@ class LowCmdUDPToROS2(Node):
                             motor_cmd.kp = 0.0
                             motor_cmd.kd = 0.0
 
-                        ros_motor_cmds.append(motor_cmd)
+                        # 直接赋值给数组元素
+                        lowcmd_msg.motor_cmd[i] = motor_cmd
 
-                    lowcmd_msg.motor_cmd = ros_motor_cmds
                     self.lowcmd_pub.publish(lowcmd_msg)
 
                     if self.message_count <= 10:
-                        self.get_logger().info(f"✅ 成功发布 xixilowcmd/LowCmd 消息 (包含{len(ros_motor_cmds)}个电机命令)")
+                        self.get_logger().info(f"✅ 成功发布 xixilowcmd/LowCmd 消息 (包含30个电机命令, motor_id: 1-30)")
 
                     # 同时创建其他格式的消息以保持兼容性
                     self.create_compatibility_messages(motor_cmd_dict, message)
@@ -352,23 +344,24 @@ class LowCmdUDPToROS2(Node):
             efforts_msg.data = [0.0] * 30
             motor_modes_msg.data = [0] * 30
 
-            # 从motor_cmd字典填充数据
-            for i in range(30):
-                motor_key = str(i)
+            # 从motor_cmd字典填充数据 (motor_id: 1-30)
+            for motor_id in range(1, 31):
+                motor_key = str(motor_id)
                 if motor_key in motor_cmd_dict and isinstance(motor_cmd_dict[motor_key], dict):
                     motor_data = motor_cmd_dict[motor_key]
 
                     # JointState
-                    joint_state.name.append(f"joint_{i}")
+                    joint_state.name.append(f"joint_{motor_id}")
                     joint_state.position.append(motor_data.get('q', 0.0))
                     joint_state.velocity.append(motor_data.get('dq', 0.0))
                     joint_state.effort.append(motor_data.get('tau', 0.0))
 
-                    # Float32MultiArray
-                    positions_msg.data[i] = motor_data.get('q', 0.0)
-                    velocities_msg.data[i] = motor_data.get('dq', 0.0)
-                    efforts_msg.data[i] = motor_data.get('tau', 0.0)
-                    motor_modes_msg.data[i] = motor_data.get('mode', 0)
+                    # Float32MultiArray (数组索引从0开始，对应motor_id 1-30)
+                    array_idx = motor_id - 1
+                    positions_msg.data[array_idx] = motor_data.get('q', 0.0)
+                    velocities_msg.data[array_idx] = motor_data.get('dq', 0.0)
+                    efforts_msg.data[array_idx] = motor_data.get('tau', 0.0)
+                    motor_modes_msg.data[array_idx] = motor_data.get('mode', 0)
 
             # 发布兼容性消息
             self.joint_states_pub.publish(joint_state)
@@ -437,19 +430,21 @@ class LowCmdUDPToROS2(Node):
             else:
                 motor_modes_msg.data = [0] * 30
 
-            for i, joint_id in enumerate(range(30)):
-                joint_key = str(i)
+            for motor_id in range(1, 31):  # motor_id: 1-30
+                joint_key = str(motor_id)
+                array_idx = motor_id - 1  # 转换为数组索引 0-29
+
                 if joint_key in positions:
                     pos_data = positions[joint_key]
-                    positions_msg.data[i] = pos_data.get('q', 0.0)
+                    positions_msg.data[array_idx] = pos_data.get('q', 0.0)
 
                     vel_data = velocities.get(joint_key, {})
                     if isinstance(vel_data, dict):
-                        velocities_msg.data[i] = vel_data.get('dq', 0.0)
+                        velocities_msg.data[array_idx] = vel_data.get('dq', 0.0)
 
                     eff_data = efforts.get(joint_key, {})
                     if isinstance(eff_data, dict):
-                        efforts_msg.data[i] = eff_data.get('tau', 0.0)
+                        efforts_msg.data[array_idx] = eff_data.get('tau', 0.0)
 
             # 发布消息
             self.positions_pub.publish(positions_msg)
@@ -469,27 +464,28 @@ class LowCmdUDPToROS2(Node):
             # 创建LowCmd消息（从旧格式转换）
             try:
                 lowcmd_msg = LowCmd()
-                motor_cmd_array = []
 
-                for i in range(30):
-                    joint_key = str(i)
+                for motor_id in range(1, 31):  # motor_id: 1-30
+                    joint_key = str(motor_id)
                     pos_data = positions.get(joint_key, {})
                     vel_data = velocities.get(joint_key, {})
                     eff_data = efforts.get(joint_key, {})
                     gain_data = gains.get(joint_key, {})
 
                     motor_cmd = MotorCmd()
-                    motor_cmd.id = i
-                    motor_cmd.mode = motor_modes_msg.data[i] if i < len(motor_modes_msg.data) else pos_data.get('mode', 0)
+                    motor_cmd.id = motor_id  # 使用motor_id 1-30
+                    # 数组索引需要减1
+                    array_idx = motor_id - 1
+                    motor_cmd.mode = motor_modes_msg.data[array_idx] if array_idx < len(motor_modes_msg.data) else pos_data.get('mode', 0)
                     motor_cmd.q = pos_data.get('q', 0.0)
                     motor_cmd.dq = vel_data.get('dq', 0.0) if isinstance(vel_data, dict) else 0.0
                     motor_cmd.tau = eff_data.get('tau', 0.0) if isinstance(eff_data, dict) else 0.0
                     motor_cmd.kp = gain_data.get('kp', 0.0) if isinstance(gain_data, dict) else 0.0
                     motor_cmd.kd = gain_data.get('kd', 0.0) if isinstance(gain_data, dict) else 0.0
 
-                    motor_cmd_array.append(motor_cmd)
+                    # 直接赋值给数组元素
+                    lowcmd_msg.motor_cmd[array_idx] = motor_cmd
 
-                lowcmd_msg.motor_cmd = motor_cmd_array
                 self.lowcmd_pub.publish(lowcmd_msg)
 
             except Exception as e:

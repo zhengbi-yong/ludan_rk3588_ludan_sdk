@@ -10,6 +10,7 @@
 #include <sys/select.h>
 #include <sys/time.h>
 #include <map>
+#include <set>
 #include <array>
 #include <ctime>
 #include <iomanip>
@@ -125,49 +126,131 @@ struct PortConfig {
 };
 
 constexpr PortConfig PORT_CONFIGS[4] = {
-    {8000, 8, 0, 0},   // Motors 1-8   -> Local CAN ID 1-8
-    {8001, 8, 8, 1},   // Motors 9-16  -> Local CAN ID 1-8
-    {8002, 8, 16, 2},  // Motors 17-24 -> Local CAN ID 1-8
-    {8003, 6, 24, 3}   // Motors 25-30 -> Local CAN ID 1-6
+    {8000, 10, 0, 0},   // Motors 1-10  -> Local CAN ID 1-10
+    {8001, 7, 10, 1},   // Motors 11-17 -> Local CAN ID 1-7
+    {8002, 7, 17, 2},   // Motors 18-24 -> Local CAN ID 1-7
+    {8003, 6, 24, 3}    // Motors 25-30 -> Local CAN ID 1-6
 };
 
-// ==================== MIT Motor Protocol Helper (使用ZCAN官方封装) ====================
-// Convert motor command to CAN data bytes (MIT motor protocol format)
-// Bytes 0-1: Position (float to int16, ±12.5 rad -> ±32767)
-// Bytes 2-3: Velocity (float to int16, ±30 rad/s -> ±32767)
-// Bytes 4-5: Kp (float to int16, 0-500 -> 0-32767)
-// Bytes 6-7: Kd (float to int16, 0-50 -> 0-32767)
+// ==================== Motor Protocol Helper ====================
+// 支持两种电机协议：
+// 1. DM 协议（达妙电机）：使用 float_to_uint 线性缩放格式（无偏移）
+// 2. MIT 协议：使用线性缩放格式
+
+// 设置使用的协议类型（默认使用 DM 协议）
+static bool g_use_dm_protocol = true;
+
+// ==================== float_to_uint 和 uint_to_float 转换函数 ====================
+// 这些函数与 DM 电机 C 代码中的转换逻辑完全一致
+
+/**
+ * @brief Convert float to unsigned integer with quantization (DM 电机协议)
+ * @param x_float Input float value
+ * @param x_min   Minimum value of the range
+ * @param x_max   Maximum value of the range
+ * @param bits    Number of bits for quantization
+ * @return Quantized integer value (0 to (2^bits - 1))
+ * @note Formula: int = (x_float - x_min) * (2^bits - 1) / (x_max - x_min)
+ */
+static inline int float_to_uint(float x_float, float x_min, float x_max, int bits) {
+    // Clamp input value to valid range
+    if (x_float < x_min) {
+        x_float = x_min;
+    } else if (x_float > x_max) {
+        x_float = x_max;
+    }
+
+    // Convert float to unsigned int, given range and number of bits
+    float span = x_max - x_min;
+    float offset = x_min;
+    return (int)((x_float - offset) * ((float)((1 << bits) - 1)) / span);
+}
+
+/**
+ * @brief Convert unsigned integer to float value (DM 电机协议)
+ * @param x_int  Input integer value
+ * @param x_min  Minimum value of the output range
+ * @param x_max  Maximum value of the output range
+ * @param bits   Number of bits used for quantization
+ * @return Dequantized float value
+ * @note Formula: float = x_int * (x_max - x_min) / (2^bits - 1) + x_min
+ */
+static inline float uint_to_float(int x_int, float x_min, float x_max, int bits) {
+    float span = x_max - x_min;
+    float offset = x_min;
+    return ((float)x_int) * span / ((float)((1 << bits) - 1)) + offset;
+}
+
+// ==================== DM Motor Protocol (达妙电机 MIT 模式) ====================
+// DM 电机 MIT 模式命令格式（与 C 代码中的 mit_ctrl 函数一致）:
+// data[0] = (pos_tmp >> 8);     /* Position high byte */
+// data[1] = pos_tmp;            /* Position low byte */
+// data[2] = (vel_tmp >> 4);     /* Velocity high 8 bits */
+// data[3] = ((vel_tmp & 0xF) << 4) | (kp_tmp >> 8);  /* Velocity low 4 bits | Kp high 4 bits */
+// data[4] = kp_tmp;             /* Kp low 8 bits */
+// data[5] = (kd_tmp >> 4);      /* Kd high 4 bits */
+// data[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8); /* Kd low 4 bits | Torque high 4 bits */
+// data[7] = tor_tmp;            /* Torque low 8 bits */
+
+// DM4310 电机参数范围（与 motor_config.h 中的定义一致）
+constexpr float P_MIN_DM = -12.5f;   // Position min: -12.5 rad
+constexpr float P_MAX_DM = 12.5f;    // Position max: 12.5 rad
+constexpr float V_MIN_DM = -30.0f;   // Velocity min: -30.0 rad/s
+constexpr float V_MAX_DM = 30.0f;    // Velocity max: 30.0 rad/s
+constexpr float T_MIN_DM = -10.0f;   // Torque min: -10.0 Nm
+constexpr float T_MAX_DM = 10.0f;    // Torque max: 10.0 Nm
+constexpr float KP_MIN_DM = 0.0f;    // Kp min: 0.0
+constexpr float KP_MAX_DM = 500.0f;  // Kp max: 500.0
+constexpr float KD_MIN_DM = 0.0f;    // Kd min: 0.0
+constexpr float KD_MAX_DM = 5.0f;    // Kd max: 5.0
+
+static inline void MotorCommandToCanData_DM(const MotorCommandCan& cmd, uint8_t* can_data) {
+    // Step 1: Quantize float parameters to integers using float_to_uint
+    uint16_t pos_tmp = float_to_uint(cmd.pos, P_MIN_DM, P_MAX_DM, 16);
+    uint16_t vel_tmp = float_to_uint(cmd.vel, V_MIN_DM, V_MAX_DM, 12);
+    uint16_t kp_tmp = float_to_uint(cmd.kp, KP_MIN_DM, KP_MAX_DM, 12);
+    uint16_t kd_tmp = float_to_uint(cmd.kd, KD_MIN_DM, KD_MAX_DM, 12);
+    uint16_t tor_tmp = float_to_uint(cmd.torq, T_MIN_DM, T_MAX_DM, 12);
+
+    // Step 2: Pack data into 8-byte frame (与 C 代码中的打包方式完全一致)
+    can_data[0] = (pos_tmp >> 8);     /* Position high byte */
+    can_data[1] = pos_tmp;            /* Position low byte */
+    can_data[2] = (vel_tmp >> 4);     /* Velocity high 8 bits */
+    can_data[3] = ((vel_tmp & 0xF) << 4) | (kp_tmp >> 8);  /* Velocity low 4 bits | Kp high 4 bits */
+    can_data[4] = kp_tmp;             /* Kp low 8 bits */
+    can_data[5] = (kd_tmp >> 4);      /* Kd high 4 bits */
+    can_data[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8); /* Kd low 4 bits | Torque high 4 bits */
+    can_data[7] = tor_tmp;            /* Torque low 8 bits */
+}
+
+// ==================== MIT Motor Protocol ====================
+// MIT 电机命令格式（线性缩放，与 DM 协议格式相同）
+static inline void MotorCommandToCanData_MIT(const MotorCommandCan& cmd, uint8_t* can_data) {
+    // MIT 协议使用与 DM 协议相同的编码方式
+    uint16_t pos_tmp = float_to_uint(cmd.pos, P_MIN_DM, P_MAX_DM, 16);
+    uint16_t vel_tmp = float_to_uint(cmd.vel, V_MIN_DM, V_MAX_DM, 12);
+    uint16_t kp_tmp = float_to_uint(cmd.kp, KP_MIN_DM, KP_MAX_DM, 12);
+    uint16_t kd_tmp = float_to_uint(cmd.kd, KD_MIN_DM, KD_MAX_DM, 12);
+    uint16_t tor_tmp = float_to_uint(cmd.torq, T_MIN_DM, T_MAX_DM, 12);
+
+    // 打包方式与 DM 协议相同
+    can_data[0] = (pos_tmp >> 8);
+    can_data[1] = pos_tmp;
+    can_data[2] = (vel_tmp >> 4);
+    can_data[3] = ((vel_tmp & 0xF) << 4) | (kp_tmp >> 8);
+    can_data[4] = kp_tmp;
+    can_data[5] = (kd_tmp >> 4);
+    can_data[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8);
+    can_data[7] = tor_tmp;
+}
+
+// ==================== 统一的转换函数 ====================
+// 根据全局设置选择协议类型（DM 和 MIT 协议现在使用相同的编码方式）
 static inline void MotorCommandToCanData(const MotorCommandCan& cmd, uint8_t* can_data) {
-    // Convert position to int16 (scale: ±12.5 rad -> ±32767)
-    int16_t pos_int = static_cast<int16_t>(cmd.pos * 32767.0f / 12.5f);
-    can_data[0] = pos_int & 0xFF;
-    can_data[1] = (pos_int >> 8) & 0xFF;
-
-    // Convert velocity to int16 (scale: ±30 rad/s -> ±32767)
-    int16_t vel_int = static_cast<int16_t>(cmd.vel * 32767.0f / 30.0f);
-    can_data[2] = vel_int & 0xFF;
-    can_data[3] = (vel_int >> 8) & 0xFF;
-
-    // Convert Kp to int16 (scale: 0-500 -> 0-32767)
-    int16_t kp_int = static_cast<int16_t>(cmd.kp * 32767.0f / 500.0f);
-    can_data[4] = kp_int & 0xFF;
-    can_data[5] = (kp_int >> 8) & 0xFF;
-
-    // Convert Kd to int16 (scale: 0-50 -> 0-32767)
-    // MIT 协议: can_data[7] 的最低位控制电机使能状态
-    //   bit 0 = 1: 使能电机
-    //   bit 0 = 0: 失能电机
-    int16_t kd_int = static_cast<int16_t>(cmd.kd * 32767.0f / 50.0f);
-    can_data[6] = kd_int & 0xFF;
-
-    // 根据 g_auto_enable_on_send 设置使能位
-    uint8_t kd_high_byte = (kd_int >> 8) & 0xFF;
-    if (g_auto_enable_on_send) {
-        // 自动使能：设置最低位为 1
-        can_data[7] = kd_high_byte | 0x01;
+    if (g_use_dm_protocol) {
+        MotorCommandToCanData_DM(cmd, can_data);
     } else {
-        // 不自动使能：强制最低位为 0
-        can_data[7] = kd_high_byte & 0xFE;
+        MotorCommandToCanData_MIT(cmd, can_data);
     }
 }
 
@@ -648,22 +731,35 @@ static inline void PrintMotorResponse(const MotorResponse& resp) {
 
 static ZhilgongConfig direct_zlg_config;
 
-// 获取电机对应的端口和通道配置（根据实际硬件连接）
+// 获取电机对应的端口和通道配置（统一的电机到端口映射）
 static inline void GetPortConfigForMotor(int motor_id, int& port, int& channel) {
-    // 特殊电机映射（根据实际硬件连接）
-    if (motor_id == 4) { port = 8001; channel = 1; return; }  // 电机4 → 端口8001 (CAN1)
-    if (motor_id == 5) { port = 8002; channel = 2; return; }  // 电机5 → 端口8002 (CAN2)
-    if (motor_id == 6) { port = 8003; channel = 3; return; }  // 电机6 → 端口8003 (CAN3)
-
-    // 默认映射
-    if (motor_id >= 1 && motor_id <= 8)   { port = 8000; channel = 0; return; }
-    if (motor_id >= 9 && motor_id <= 16)  { port = 8001; channel = 1; return; }
-    if (motor_id >= 17 && motor_id <= 24) { port = 8002; channel = 2; return; }
+    // 统一的电机到端口映射 (motor_id: 1-30)
+    // 端口8000: 电机1-10  (channel 0)
+    // 端口8001: 电机11-17 (channel 1)
+    // 端口8002: 电机18-24 (channel 2)
+    // 端口8003: 电机25-30 (channel 3)
+    if (motor_id >= 1 && motor_id <= 10)  { port = 8000; channel = 0; return; }
+    if (motor_id >= 11 && motor_id <= 17) { port = 8001; channel = 1; return; }
+    if (motor_id >= 18 && motor_id <= 24) { port = 8002; channel = 2; return; }
     if (motor_id >= 25 && motor_id <= 30) { port = 8003; channel = 3; return; }
 
     // 默认值
     port = 8000;
     channel = 0;
+}
+
+// 获取电机对应的端口索引（用于访问PORT_CONFIGS数组）
+static inline int GetPortIndexForMotor(int motor_id) {
+    // 统一的电机到端口映射 (motor_id: 1-30)
+    // 端口索引0: 电机1-10  (port 8000)
+    // 端口索引1: 电机11-17 (port 8001)
+    // 端口索引2: 电机18-24 (port 8002)
+    // 端口索引3: 电机25-30 (port 8003)
+    if (motor_id >= 1 && motor_id <= 10)  return 0;
+    if (motor_id >= 11 && motor_id <= 17) return 1;
+    if (motor_id >= 18 && motor_id <= 24) return 2;
+    if (motor_id >= 25 && motor_id <= 30) return 3;
+    return -1;  // 无效的电机ID
 }
 
 // 读取并显示 CAN 通道状态
@@ -1302,16 +1398,26 @@ static void CloseDirectZCAN() {
 // Encapsulates sending logic for a single CAN port
 class PortSender {
 public:
+    // 构造函数：自己打开设备（用于单端口模式）
     PortSender(const PortConfig& port_config, const std::string& zlg_ip,
                int arb_baud, int data_baud)
         : port_config_(port_config), zlg_ip_(zlg_ip),
-          arb_baud_(arb_baud), data_baud_(data_baud) {}
+          arb_baud_(arb_baud), data_baud_(data_baud),
+          owns_device_(true) {}
+
+    // 构造函数：使用外部传入的设备句柄（用于多端口模式）
+    PortSender(const PortConfig& port_config, DEVICE_HANDLE device_handle,
+               const std::string& zlg_ip, int arb_baud, int data_baud)
+        : port_config_(port_config), device_handle_(device_handle), zlg_ip_(zlg_ip),
+          arb_baud_(arb_baud), data_baud_(data_baud),
+          owns_device_(false) {}
 
     ~PortSender() {
         if (channel_handle_ && channel_handle_ != INVALID_CHANNEL_HANDLE) {
             ZCAN_ResetCAN(channel_handle_);
         }
-        if (device_handle_ && device_handle_ != INVALID_DEVICE_HANDLE) {
+        // 只有拥有设备时才关闭设备
+        if (owns_device_ && device_handle_ && device_handle_ != INVALID_DEVICE_HANDLE) {
             ZCAN_CloseDevice(device_handle_);
         }
     }
@@ -1319,12 +1425,17 @@ public:
     bool Initialize() {
         std::cout << "  [Port " << port_config_.port << "] Initializing..." << std::endl;
 
-        // 1. Open device
-        device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP,
-                                         port_config_.channel, 0);
-        if (device_handle_ == INVALID_DEVICE_HANDLE) {
-            std::cerr << "  [Port " << port_config_.port << "] Failed to open device" << std::endl;
-            return false;
+        // 1. Open device (只在拥有设备时才打开)
+        if (owns_device_) {
+            // 注意：ZCAN_OpenDevice 的第二个参数是设备索引(device index)，不是通道号
+            // 对于单个多通道设备，设备索引应该固定为 0
+            device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP, 0, 0);
+            if (device_handle_ == INVALID_DEVICE_HANDLE) {
+                std::cerr << "  [Port " << port_config_.port << "] Failed to open device" << std::endl;
+                return false;
+            }
+        } else {
+            std::cout << "  [Port " << port_config_.port << "] Using shared device handle" << std::endl;
         }
 
         // 2. Initialize CAN channel
@@ -1347,10 +1458,11 @@ public:
         }
 
         // 3. Set IP and port
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, port_config_.channel, port_config_.channel,
+        // 注意：ZCAN_SetReference 的第二个参数是设备索引(应为0)，第三个参数是通道号
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, port_config_.channel,
                          CMD_DESIP, (void*)zlg_ip_.c_str());
         uint32_t port_val = port_config_.port;
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, port_config_.channel, port_config_.channel,
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, port_config_.channel,
                          CMD_DESPORT, &port_val);
 
         // 4. Start CAN
@@ -1434,12 +1546,14 @@ public:
     bool IsInitialized() const { return initialized_; }
     uint64_t GetSendCount() const { return send_count_; }
     uint64_t GetErrorCount() const { return error_count_; }
+    CHANNEL_HANDLE GetChannelHandleForZero() const { return channel_handle_; }
 
 private:
     PortConfig port_config_;
     std::string zlg_ip_;
     int arb_baud_;
     int data_baud_;
+    bool owns_device_;  // 是否拥有设备（true=自己打开并负责关闭，false=使用外部句柄）
 
     DEVICE_HANDLE device_handle_ = INVALID_DEVICE_HANDLE;
     CHANNEL_HANDLE channel_handle_ = INVALID_CHANNEL_HANDLE;
@@ -1458,7 +1572,11 @@ public:
         : zlg_ip_(zlg_ip), arb_baud_(arb_baud), data_baud_(data_baud) {}
 
     ~MultiPortMotorManager() {
-        // Auto cleanup handled by PortSender destructors
+        // 关闭共享设备句柄
+        if (device_handle_ && device_handle_ != INVALID_DEVICE_HANDLE) {
+            ZCAN_CloseDevice(device_handle_);
+            device_handle_ = INVALID_DEVICE_HANDLE;
+        }
     }
 
     bool Initialize() {
@@ -1467,16 +1585,27 @@ public:
         std::cout << "Arbitration Baud: " << arb_baud_ << " bps" << std::endl;
         std::cout << "Data Baud: " << data_baud_ << " bps" << std::endl;
 
+        // 1. 只打开一次设备（多通道共享同一设备）
+        std::cout << "[1/5] Opening shared ZCAN device..." << std::endl;
+        device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP, 0, 0);
+        if (device_handle_ == INVALID_DEVICE_HANDLE) {
+            std::cerr << "Failed to open ZCAN device" << std::endl;
+            return false;
+        }
+        std::cout << "[2/5] Shared device opened successfully" << std::endl;
+
+        // 2. 为每个端口创建 PortSender，使用共享的设备句柄
         for (int i = 0; i < 4; i++) {
             port_senders_[i] = std::make_unique<PortSender>(
-                PORT_CONFIGS[i], zlg_ip_, arb_baud_, data_baud_);
+                PORT_CONFIGS[i], device_handle_, zlg_ip_, arb_baud_, data_baud_);
             if (!port_senders_[i]->Initialize()) {
                 std::cerr << "Failed to initialize port " << PORT_CONFIGS[i].port << std::endl;
                 return false;
             }
         }
 
-        std::cout << "=== All 4 Ports Initialized ===" << std::endl;
+        std::cout << "[3/5] All 4 ports initialized" << std::endl;
+        std::cout << "=== Multi-Port Motor Manager Ready ===" << std::endl;
         return true;
     }
 
@@ -1534,6 +1663,39 @@ public:
         return port_senders_[port_idx]->SendDisableCommand(local_can_id);
     }
 
+    // 发送标零命令: FF FF FF FF FF FF FF FE
+    bool SendZeroCommand(int global_motor_id) {
+        int port_idx = GetPortIndexForMotor(global_motor_id);
+        if (port_idx < 0 || !port_senders_[port_idx]->IsInitialized()) {
+            return false;
+        }
+        int local_can_id = GetLocalCanId(global_motor_id);
+
+        // 构造标零命令数据帧: FF FF FF FF FF FF FF FE
+        ZCAN_Transmit_Data transmit_data;
+        memset(&transmit_data, 0, sizeof(transmit_data));
+        transmit_data.frame.can_id = MAKE_CAN_ID(local_can_id, 0, 0, 0);
+        transmit_data.frame.can_dlc = 8;
+        transmit_data.frame.data[0] = 0xFF;
+        transmit_data.frame.data[1] = 0xFF;
+        transmit_data.frame.data[2] = 0xFF;
+        transmit_data.frame.data[3] = 0xFF;
+        transmit_data.frame.data[4] = 0xFF;
+        transmit_data.frame.data[5] = 0xFF;
+        transmit_data.frame.data[6] = 0xFF;
+        transmit_data.frame.data[7] = 0xFE;  // 标零命令标识
+        transmit_data.transmit_type = 0;
+
+        // 获取 channel handle 并发送
+        CHANNEL_HANDLE channel_handle = port_senders_[port_idx]->GetChannelHandleForZero();
+        if (channel_handle == INVALID_CHANNEL_HANDLE) {
+            return false;
+        }
+
+        uint32_t ret = ZCAN_Transmit(channel_handle, &transmit_data, 1);
+        return ret == 1;
+    }
+
     void PrintStatus() {
         std::cout << "\n=== Multi-Port Status ===" << std::endl;
         for (int i = 0; i < 4; i++) {
@@ -1551,12 +1713,11 @@ public:
 
 private:
     int GetPortIndexForMotor(int global_motor_id) const {
-        // 特殊电机映射（根据实际硬件连接）
-        if (global_motor_id == 4) return 1;  // 电机4 → 端口8001 (CAN1)
-        if (global_motor_id == 5) return 2;  // 电机5 → 端口8002 (CAN2)
-        if (global_motor_id == 6) return 3;  // 电机6 → 端口8003 (CAN3)
-
-        // 默认映射
+        // 统一的电机到端口映射 (motor_id: 1-30)
+        // 端口8000: 电机1-8   (motor_offset=0)
+        // 端口8001: 电机9-16  (motor_offset=8)
+        // 端口8002: 电机17-24 (motor_offset=16)
+        // 端口8003: 电机25-30 (motor_offset=24)
         if (global_motor_id >= 1 && global_motor_id <= 8)   return 0;
         if (global_motor_id >= 9 && global_motor_id <= 16)  return 1;
         if (global_motor_id >= 17 && global_motor_id <= 24) return 2;
@@ -1568,12 +1729,8 @@ private:
         int port_idx = GetPortIndexForMotor(global_motor_id);
         if (port_idx < 0) return -1;
 
-        // 特殊电机映射：直接使用电机 ID 作为本地 CAN ID
-        if (global_motor_id == 4 || global_motor_id == 5 || global_motor_id == 6) {
-            return global_motor_id;  // 电机 4,5,6 → 本地 CAN ID 也是 4,5,6
-        }
-
-        // 默认映射：使用 motor_offset 计算
+        // 统一映射：使用 motor_offset 计算本地 CAN ID
+        // 本地CAN ID范围: 1-8 (每个端口最多8个电机)
         return global_motor_id - PORT_CONFIGS[port_idx].motor_offset;
     }
 
@@ -1581,6 +1738,7 @@ private:
     std::string zlg_ip_;
     int arb_baud_;
     int data_baud_;
+    DEVICE_HANDLE device_handle_ = INVALID_DEVICE_HANDLE;  // 共享设备句柄
     std::array<std::unique_ptr<PortSender>, 4> port_senders_;
 };
 
@@ -1751,35 +1909,39 @@ public:
         for (const auto& motor_cmd : msg->motor_cmd) {
             int motor_id = motor_cmd.id;
 
-            if (motor_id >= 0 && motor_id < G1_NUM_MOTOR) {
-                motor_commands_[motor_id].motor_id = motor_id;
-                motor_commands_[motor_id].pos = motor_cmd.q;
-                motor_commands_[motor_id].vel = motor_cmd.dq;
-                motor_commands_[motor_id].kp = motor_cmd.kp;
-                motor_commands_[motor_id].kd = motor_cmd.kd;
-                motor_commands_[motor_id].torq = motor_cmd.tau;
+            // motor_id 范围: 1-30
+            if (motor_id >= 1 && motor_id <= G1_NUM_MOTOR) {
+                // 转换为数组索引 (0-29)
+                int array_idx = motor_id - 1;
+
+                motor_commands_[array_idx].motor_id = motor_id;
+                motor_commands_[array_idx].pos = motor_cmd.q;
+                motor_commands_[array_idx].vel = motor_cmd.dq;
+                motor_commands_[array_idx].kp = motor_cmd.kp;
+                motor_commands_[array_idx].kd = motor_cmd.kd;
+                motor_commands_[array_idx].torq = motor_cmd.tau;
 
                 int can_id = get_can_id_for_motor(motor_id);
                 if (can_id > 0) {
-                    motor_commands_[motor_id].motor_id = can_id;
+                    motor_commands_[array_idx].motor_id = can_id;
 
                     // 只有当 mode != 0 时才标记为活跃（mode=0 表示没有有效控制数据）
                     if (motor_cmd.mode != 0) {
-                        active_motors_[motor_id] = true;
+                        active_motors_[array_idx] = true;
                     }
 
-                    auto& history = command_history_[motor_id];
+                    auto& history = command_history_[array_idx];
 
                     if (history.has_previous) {
                         history.previous = history.current;
                         history.previous_timestamp = history.current_timestamp;
                     } else {
-                        history.previous = motor_commands_[motor_id];
+                        history.previous = motor_commands_[array_idx];
                         history.previous_timestamp = current_time;
                         history.has_previous = true;
                     }
 
-                    history.current = motor_commands_[motor_id];
+                    history.current = motor_commands_[array_idx];
                     history.current_timestamp = current_time;
                 }
             }
@@ -1801,8 +1963,9 @@ public:
         int motor_id = msg->id;
         int command_value = static_cast<int>(msg->q);
 
-        if (motor_id < 0 || motor_id > 29) {
-            std::cerr << "Invalid motor ID: " << motor_id << " (range: 0-29)" << std::endl;
+        // motor_id 范围: 1-30
+        if (motor_id < 1 || motor_id > 30) {
+            std::cerr << "Invalid motor ID: " << motor_id << " (range: 1-30)" << std::endl;
             return;
         }
 
@@ -1935,15 +2098,18 @@ public:
         const double COMMAND_TIMEOUT_SECONDS = 0.5;  // 500ms 超时
         auto current_timestamp_double = std::chrono::duration<double>(current_time.time_since_epoch()).count();
 
-        for (int motor_id = 1; motor_id < G1_NUM_MOTOR; motor_id++) {
+        for (int motor_id = 1; motor_id <= G1_NUM_MOTOR; motor_id++) {  // 修复：包含motor_id=30
+            // 转换为数组索引 (motor_id 1-30 -> array_idx 0-29)
+            int array_idx = motor_id - 1;
+
             // 只收集活跃的电机（收到过 ROS2 命令的电机）
-            if (!active_motors_[motor_id]) {
+            if (!active_motors_[array_idx]) {
                 continue;
             }
 
             int can_id = get_can_id_for_motor(motor_id);
             if (can_id > 0) {
-                auto& history = command_history_[motor_id];
+                auto& history = command_history_[array_idx];
 
                 // ⭐ 新增：检查是否超时
                 double last_command_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
@@ -1956,7 +2122,7 @@ public:
                                   << " 超时 (" << time_since_last_command << "s > "
                                   << COMMAND_TIMEOUT_SECONDS << "s), 停止发送" << std::endl;
                     }
-                    active_motors_[motor_id] = false;  // 取消活跃状态
+                    active_motors_[array_idx] = false;  // 取消活跃状态
                     continue;  // 跳过该电机
                 }
 
@@ -2135,6 +2301,7 @@ int main(int argc, char* argv[]) {
         int direct_motor_id = -1;
         std::string motor_id_str;  // 电机 ID 字符串（用于范围模式，如 "1-5"）
         bool direct_enable = false;  // true=enable, false=disable
+        bool direct_zero = false;   // true=发送标零命令
 
         // 接收模式
         bool receive_only = false;  // 只接收不发送
@@ -2150,12 +2317,14 @@ int main(int argc, char* argv[]) {
         std::cout << "  --enable-motor-cmd      Enable motor command sending (default: DISABLED)" << std::endl;
         std::cout << "  --auto-start            Auto-start sending without /motor_enable (for testing)" << std::endl;
         std::cout << "  --auto-enable           Auto-enable motors when sending commands (default: DISABLED)" << std::endl;
+        std::cout << "  --protocol <type>       Motor protocol: dm (default) or mit" << std::endl;
         std::cout << "\nCAN-FD Baud Rate Configuration:" << std::endl;
         std::cout << "  --arb-baud <rate>       Arbitration baud rate in bps (default: 1000000 = 1M)" << std::endl;
         std::cout << "  --data-baud <rate>      Data baud rate in bps (default: 5000000 = 5M)" << std::endl;
         std::cout << "\nDirect Command Mode (no ROS2 required):" << std::endl;
         std::cout << "  --enable <motor_id>     Send enable command to motor (1-30)" << std::endl;
         std::cout << "  --disable <motor_id>    Send disable command to motor (1-30)" << std::endl;
+        std::cout << "  --zero <motor_id>       Send zero command to motor (1-30)" << std::endl;
         std::cout << "\nCAN Receive Mode (monitor CAN bus):" << std::endl;
         std::cout << "  --receive-only          Receive CAN frames only (no transmission)" << std::endl;
         std::cout << "  --receive-and-enable    Send enable command and then monitor responses" << std::endl;
@@ -2164,11 +2333,16 @@ int main(int argc, char* argv[]) {
         std::cout << "\nExamples:" << std::endl;
         std::cout << "  # ROS2 mode with motor commands (4-port mode: 8000, 8001, 8002, 8003)" << std::endl;
         std::cout << "  ./motor_controller_with_enable --enable-motor-cmd" << std::endl;
-        std::cout << "\n  # ROS2 mode with verbose logging" << std::endl;
-        std::cout << "  ./motor_controller_with_enable -v --enable-motor-cmd" << std::endl;
-        std::cout << "\n  # Direct enable mode" << std::endl;
+        std::cout << "\n  # ROS2 mode with DM motor protocol (default)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --enable-motor-cmd --protocol dm" << std::endl;
+        std::cout << "\n  # ROS2 mode with MIT motor protocol" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --enable-motor-cmd --protocol mit" << std::endl;
+        std::cout << "\n  # Direct enable/disable mode" << std::endl;
         std::cout << "  ./motor_controller_with_enable --enable 1" << std::endl;
         std::cout << "  ./motor_controller_with_enable --disable 5" << std::endl;
+        std::cout << "\n  # Zero motors (set current position as zero)" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --zero 1" << std::endl;
+        std::cout << "  ./motor_controller_with_enable --zero 1-30" << std::endl;
         std::cout << "\n  # Enable range of motors (1-10)" << std::endl;
         std::cout << "  ./motor_controller_with_enable --enable 1-10" << std::endl;
         std::cout << "\n  # Receive mode - monitor CAN bus (verbose)" << std::endl;
@@ -2196,6 +2370,18 @@ int main(int argc, char* argv[]) {
             g_auto_enable_on_send = true;
             std::cout << ">>> AUTO-ENABLE mode: Motors will be enabled when sending commands <<<" << std::endl;
         }
+        else if (arg == "--protocol" && i + 1 < argc) {
+            std::string protocol = argv[++i];
+            if (protocol == "dm" || protocol == "DM") {
+                g_use_dm_protocol = true;
+                std::cout << ">>> Using DM Motor Protocol (达妙电机) <<<" << std::endl;
+            } else if (protocol == "mit" || protocol == "MIT") {
+                g_use_dm_protocol = false;
+                std::cout << ">>> Using MIT Motor Protocol <<<" << std::endl;
+            } else {
+                std::cerr << "Unknown protocol: " << protocol << ". Using default (DM)." << std::endl;
+            }
+        }
         else if (arg == "--arb-baud" && i + 1 < argc) {
             params.arb_baud = std::atoi(argv[++i]);
         }
@@ -2220,6 +2406,13 @@ int main(int argc, char* argv[]) {
             params.direct_mode = true;
             params.direct_enable = false;
             params.direct_motor_id = std::atoi(argv[++i]);
+        }
+        else if (arg == "--zero" && i + 1 < argc) {
+            params.direct_mode = true;
+            params.direct_enable = false;
+            params.direct_zero = true;
+            params.motor_id_str = argv[++i];
+            params.direct_motor_id = std::atoi(params.motor_id_str.c_str());
         }
         else if (arg == "--receive-only") {
             params.receive_only = true;
@@ -2306,19 +2499,7 @@ int main(int argc, char* argv[]) {
             std::cout << "\n=== " << mode_name << " Mode ===" << std::endl;
             std::cout << "Sending " << action << " command and monitoring motor responses..." << std::endl;
 
-            // 初始化 ZCAN 连接 (使用默认端口 8000, channel 0)
-            if (!InitializeDirectZCAN(params.zlg_ip, 8000, 0, params.arb_baud, params.data_baud)) {
-                std::cerr << "Failed to initialize ZCAN connection" << std::endl;
-                return 1;
-            }
-
-            // 先启动接收线程
-            StartCANReceiveThread(direct_zlg_config.channel_handle, 0, params.verbose);
-
-            // 短暂延迟等待接收线程就绪
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-            // ==================== 处理范围模式 ====================
+            // ==================== 解析电机ID范围 ====================
             std::vector<int> motor_ids;
             size_t dash_pos = params.motor_id_str.find('-');
             if (dash_pos != std::string::npos) {
@@ -2330,6 +2511,52 @@ int main(int argc, char* argv[]) {
 
                 for (int motor_id = start_id; motor_id <= end_id; motor_id++) {
                     motor_ids.push_back(motor_id);
+                }
+            } else {
+                // 单个电机模式
+                motor_ids.push_back(params.direct_motor_id);
+            }
+
+            // ==================== 确定需要初始化哪些端口 ====================
+            // 根据电机ID确定需要连接的端口
+            std::set<int> ports_needed;
+            std::map<int, std::vector<int>> port_motors;  // port -> motor_ids
+
+            for (int motor_id : motor_ids) {
+                int port_idx = GetPortIndexForMotor(motor_id);
+                if (port_idx >= 0) {
+                    int port = PORT_CONFIGS[port_idx].port;
+                    int channel = PORT_CONFIGS[port_idx].channel;
+                    ports_needed.insert(port);
+                    port_motors[port].push_back(motor_id);
+                }
+            }
+
+            std::cout << "Ports to be used: ";
+            for (int port : ports_needed) {
+                std::cout << port << " ";
+            }
+            std::cout << std::endl;
+
+            // ==================== 多端口初始化 ====================
+            // 如果只需要一个端口，使用单端口模式
+            if (ports_needed.size() == 1) {
+                int single_port = *ports_needed.begin();
+                int single_channel = PORT_CONFIGS[GetPortIndexForMotor(motor_ids[0])].channel;
+
+                std::cout << "Using single-port mode: Port " << single_port << ", CAN" << single_channel << std::endl;
+
+                if (!InitializeDirectZCAN(params.zlg_ip, single_port, single_channel, params.arb_baud, params.data_baud)) {
+                    std::cerr << "Failed to initialize ZCAN connection" << std::endl;
+                    return 1;
+                }
+
+                // 先启动接收线程
+                StartCANReceiveThread(direct_zlg_config.channel_handle, 0, params.verbose);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+                // 发送使能/失能命令
+                for (int motor_id : motor_ids) {
                     if (is_enable) {
                         SendDirectEnableCommand(motor_id);
                     } else {
@@ -2337,16 +2564,51 @@ int main(int argc, char* argv[]) {
                     }
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 }
-                std::cout << ">>> Total " << motor_ids.size() << " motors " << (is_enable ? "enabled" : "disabled") << " <<<\n" << std::endl;
             } else {
-                // 单个电机模式
-                motor_ids.push_back(params.direct_motor_id);
-                if (is_enable) {
-                    SendDirectEnableCommand(params.direct_motor_id);
-                } else {
-                    SendDirectDisableCommand(params.direct_motor_id);
+                // 多端口模式：使用MultiPortMotorManager
+                std::cout << "Using multi-port mode for " << ports_needed.size() << " ports" << std::endl;
+
+                // 创建临时多端口管理器
+                auto temp_multi_manager = std::make_unique<MultiPortMotorManager>(
+                    params.zlg_ip, params.arb_baud, params.data_baud);
+
+                if (!temp_multi_manager->Initialize()) {
+                    std::cerr << "Failed to initialize multi-port manager" << std::endl;
+                    return 1;
                 }
+
+                // 为每个端口启动接收线程
+                std::vector<std::thread> receive_threads;
+                std::map<int, CHANNEL_HANDLE> channel_handles;
+
+                for (size_t i = 0; i < 4; i++) {
+                    if (ports_needed.count(PORT_CONFIGS[i].port)) {
+                        // 获取该端口的channel handle（需要通过MultiPortMotorManager访问）
+                        // 注意：这里需要修改MultiPortMotorManager以暴露channel handles
+                        // 为简化，我们使用SendEnableCommand来发送命令
+
+                        for (int motor_id : port_motors[PORT_CONFIGS[i].port]) {
+                            if (is_enable) {
+                                temp_multi_manager->SendEnableCommand(motor_id);
+                            } else {
+                                temp_multi_manager->SendDisableCommand(motor_id);
+                            }
+                            std::cout << "  Sent " << action << " to motor " << motor_id
+                                      << " (Port " << PORT_CONFIGS[i].port << ")" << std::endl;
+                            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                        }
+                    }
+                }
+
+                std::cout << ">>> Total " << motor_ids.size() << " motors " << (is_enable ? "enabled" : "disabled") << " <<<\n" << std::endl;
+
+                // 由于多端口模式的接收需要更复杂的处理，这里简化处理
+                std::cout << "Note: Multi-port receive monitoring not fully implemented in direct mode." << std::endl;
+                std::cout << "Motors " << (is_enable ? "enabled" : "disabled") << " successfully." << std::endl;
+                return 0;
             }
+
+            std::cout << ">>> Total " << motor_ids.size() << " motors " << (is_enable ? "enabled" : "disabled") << " <<<\n" << std::endl;
 
             // 等待指定时间或无限等待
             if (params.receive_duration > 0) {
@@ -2372,47 +2634,129 @@ int main(int argc, char* argv[]) {
         // ==================== 标准直接命令模式 ====================
         std::cout << "\n=== Direct Command Mode ===" << std::endl;
 
-        // 获取第一个要操作的电机 ID，用于确定端口配置
-        int first_motor_id = params.direct_motor_id;
+        // 标零命令模式
+        if (params.direct_zero) {
+            std::cout << "=== Motor Zeroing Mode ===" << std::endl;
+            std::cout << "Sending ZERO command (FF FF FF FF FF FF FF FE)..." << std::endl;
 
-        // 如果是范围模式，需要解析范围字符串
-        std::string motor_str = argv[argc - 1];  // 最后一个参数是 motor_id
+            // 解析电机ID范围
+            std::vector<int> motor_ids;
+            size_t dash_pos = params.motor_id_str.find('-');
+
+            if (dash_pos != std::string::npos) {
+                // 范围模式: 1-30
+                int start_id = std::atoi(params.motor_id_str.substr(0, dash_pos).c_str());
+                int end_id = std::atoi(params.motor_id_str.substr(dash_pos + 1).c_str());
+                std::cout << "\n>>> ZERO motors " << start_id << " - " << end_id << " <<<" << std::endl;
+                for (int motor_id = start_id; motor_id <= end_id; motor_id++) {
+                    motor_ids.push_back(motor_id);
+                }
+            } else {
+                // 单个电机模式
+                motor_ids.push_back(params.direct_motor_id);
+            }
+
+            // 确定需要初始化哪些端口
+            std::set<int> ports_needed;
+            std::map<int, std::vector<int>> port_motors;
+
+            for (int motor_id : motor_ids) {
+                int port_idx = GetPortIndexForMotor(motor_id);
+                if (port_idx >= 0) {
+                    int port = PORT_CONFIGS[port_idx].port;
+                    ports_needed.insert(port);
+                    port_motors[port].push_back(motor_id);
+                }
+            }
+
+            // 使用多端口模式发送标零命令
+            auto temp_multi_manager = std::make_unique<MultiPortMotorManager>(
+                params.zlg_ip, params.arb_baud, params.data_baud);
+
+            if (!temp_multi_manager->Initialize()) {
+                std::cerr << "Failed to initialize multi-port manager" << std::endl;
+                return 1;
+            }
+
+            // 为每个端口发送标零命令
+            for (size_t i = 0; i < 4; i++) {
+                if (ports_needed.count(PORT_CONFIGS[i].port)) {
+                    for (int motor_id : port_motors[PORT_CONFIGS[i].port]) {
+                        bool success = temp_multi_manager->SendZeroCommand(motor_id);
+                        if (success) {
+                            std::cout << "  ✓ Sent ZERO to motor " << motor_id
+                                      << " (Port " << PORT_CONFIGS[i].port << ")" << std::endl;
+                        } else {
+                            std::cout << "  ✗ Failed to send ZERO to motor " << motor_id << std::endl;
+                        }
+                        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                    }
+                }
+            }
+
+            std::cout << "\n>>> Total " << motor_ids.size() << " motors ZEROED <<<" << std::endl;
+            return 0;
+        }
+
+        // 解析电机ID范围
+        std::vector<int> motor_ids;
+        std::string motor_str = params.motor_id_str.empty() ? std::to_string(params.direct_motor_id) : params.motor_id_str;
         size_t dash_pos = motor_str.find('-');
+
         if (dash_pos != std::string::npos) {
-            first_motor_id = std::atoi(motor_str.substr(0, dash_pos).c_str());
-        }
-
-        // 根据电机 ID 获取端口和通道配置
-        int target_port, target_channel;
-        GetPortConfigForMotor(first_motor_id, target_port, target_channel);
-
-        std::cout << "Motor " << first_motor_id << " mapped to Port " << target_port
-                  << " (CAN" << target_channel << ")" << std::endl;
-
-        // 初始化 ZCAN 连接 (使用正确的端口和通道)
-        if (!InitializeDirectZCAN(params.zlg_ip, target_port, target_channel, params.arb_baud, params.data_baud)) {
-            std::cerr << "Failed to initialize ZCAN connection" << std::endl;
-            return 1;
-        }
-
-        // 处理单个或多个电机
-        if (dash_pos != std::string::npos) {
-            // 范围模式: 1-10
+            // 范围模式: 1-30
             int start_id = std::atoi(motor_str.substr(0, dash_pos).c_str());
             int end_id = std::atoi(motor_str.substr(dash_pos + 1).c_str());
-
-            std::cout << "Sending " << (params.direct_enable ? "ENABLE" : "DISABLE")
-                      << " to motors " << start_id << " - " << end_id << std::endl;
-
             for (int motor_id = start_id; motor_id <= end_id; motor_id++) {
-                // 检查电机是否在当前端口，如果在其他端口则警告
-                int motor_port, motor_channel;
-                GetPortConfigForMotor(motor_id, motor_port, motor_channel);
-                if (motor_port != target_port) {
-                    std::cout << "  [WARNING] Motor " << motor_id << " is on port " << motor_port
-                              << " but current connection is to port " << target_port << std::endl;
-                }
+                motor_ids.push_back(motor_id);
+            }
+        } else {
+            // 单个电机模式
+            motor_ids.push_back(params.direct_motor_id);
+        }
 
+        // ==================== 确定需要初始化哪些端口 ====================
+        std::set<int> ports_needed;
+        std::map<int, std::vector<int>> port_motors;  // port -> motor_ids
+
+        for (int motor_id : motor_ids) {
+            int port_idx = GetPortIndexForMotor(motor_id);
+            if (port_idx >= 0) {
+                int port = PORT_CONFIGS[port_idx].port;
+                int channel = PORT_CONFIGS[port_idx].channel;
+                ports_needed.insert(port);
+                port_motors[port].push_back(motor_id);
+            }
+        }
+
+        std::cout << "Motors to operate: ";
+        for (int motor_id : motor_ids) {
+            std::cout << motor_id << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Ports to be used: ";
+        for (int port : ports_needed) {
+            std::cout << port << " ";
+        }
+        std::cout << std::endl;
+
+        // ==================== 多端口初始化 ====================
+        // 如果只需要一个端口，使用单端口模式
+        if (ports_needed.size() == 1) {
+            int single_port = *ports_needed.begin();
+            int single_channel = PORT_CONFIGS[GetPortIndexForMotor(motor_ids[0])].channel;
+
+            std::cout << "Using single-port mode: Port " << single_port << ", CAN" << single_channel << std::endl;
+
+            if (!InitializeDirectZCAN(params.zlg_ip, single_port, single_channel, params.arb_baud, params.data_baud)) {
+                std::cerr << "Failed to initialize ZCAN connection" << std::endl;
+                return 1;
+            }
+
+            std::cout << "Sending " << (params.direct_enable ? "ENABLE" : "DISABLE") << " command..." << std::endl;
+
+            // 发送使能/失能命令
+            for (int motor_id : motor_ids) {
                 if (params.direct_enable) {
                     SendDirectEnableCommand(motor_id);
                 } else {
@@ -2420,20 +2764,43 @@ int main(int argc, char* argv[]) {
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(20));
             }
-        } else {
-            // 单个电机模式
-            std::cout << "Sending " << (params.direct_enable ? "ENABLE" : "DISABLE")
-                      << " to motor " << params.direct_motor_id << std::endl;
 
-            if (params.direct_enable) {
-                SendDirectEnableCommand(params.direct_motor_id);
-            } else {
-                SendDirectDisableCommand(params.direct_motor_id);
+            CloseDirectZCAN();
+        } else {
+            // 多端口模式：使用MultiPortMotorManager
+            std::cout << "Using multi-port mode for " << ports_needed.size() << " ports" << std::endl;
+
+            // 创建临时多端口管理器
+            auto temp_multi_manager = std::make_unique<MultiPortMotorManager>(
+                params.zlg_ip, params.arb_baud, params.data_baud);
+
+            if (!temp_multi_manager->Initialize()) {
+                std::cerr << "Failed to initialize multi-port manager" << std::endl;
+                return 1;
+            }
+
+            std::cout << "Sending " << (params.direct_enable ? "ENABLE" : "DISABLE") << " command..." << std::endl;
+
+            // 为每个端口发送使能/失能命令
+            for (size_t i = 0; i < 4; i++) {
+                if (ports_needed.count(PORT_CONFIGS[i].port)) {
+                    for (int motor_id : port_motors[PORT_CONFIGS[i].port]) {
+                        if (params.direct_enable) {
+                            temp_multi_manager->SendEnableCommand(motor_id);
+                        } else {
+                            temp_multi_manager->SendDisableCommand(motor_id);
+                        }
+                        std::cout << "  Sent " << (params.direct_enable ? "ENABLE" : "DISABLE")
+                                  << " to motor " << motor_id
+                                  << " (Port " << PORT_CONFIGS[i].port << ", CAN" << PORT_CONFIGS[i].channel << ")" << std::endl;
+                        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                    }
+                }
             }
         }
 
-        CloseDirectZCAN();
         std::cout << "\n=== Command Complete ===" << std::endl;
+        std::cout << ">>> Total " << motor_ids.size() << " motors " << (params.direct_enable ? "enabled" : "disabled") << " <<<" << std::endl;
         return 0;
     }
 

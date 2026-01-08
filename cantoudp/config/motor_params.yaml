@@ -1,0 +1,153 @@
+# Motor Calibration Parameters
+# 30 motors total, CAN ID 1-30 maps to array index 0-29
+
+motors:
+  motor_1:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_2:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_3:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_4:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_5:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_6:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_7:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_8:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_9:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_10:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_11:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_12:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_13:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_14:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_15:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_16:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_17:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_18:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_19:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_20:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_21:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_22:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_23:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_24:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_25:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_26:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_27:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_28:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_29:    
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }
+
+  motor_30:
+    position: { min: -3.14, max: 3.14 }
+    velocity: { min: -20.0, max: 20.0 }
+    torque: { min: -30.0, max: 30.0 }

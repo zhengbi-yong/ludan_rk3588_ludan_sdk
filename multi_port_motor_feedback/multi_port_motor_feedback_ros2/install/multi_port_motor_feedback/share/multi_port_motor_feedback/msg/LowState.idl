@@ -1,0 +1,26 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from multi_port_motor_feedback/msg/LowState.msg
+// generated code does not contain a copyright notice
+
+#include "multi_port_motor_feedback/msg/MotorState.idl"
+#include "std_msgs/msg/Header.idl"
+
+module multi_port_motor_feedback {
+  module msg {
+    typedef multi_port_motor_feedback::msg::MotorState multi_port_motor_feedback__msg__MotorState;
+    typedef multi_port_motor_feedback__msg__MotorState multi_port_motor_feedback__msg__MotorState__30[30];
+    @verbatim (language="comment", text=
+      "LowState.msg" "\n"
+      "Robot low-level state message" "\n"
+      "Motor distribution: 10 + 7 + 7 + 6 = 30 motors total")
+    struct LowState {
+      @verbatim (language="comment", text=
+        "Header for timestamp")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "Motor states (30 motors)")
+      multi_port_motor_feedback__msg__MotorState__30 motor_state;
+    };
+  };
+};

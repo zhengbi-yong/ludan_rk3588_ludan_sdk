@@ -192,7 +192,43 @@ static inline float uint_to_float(int x_int, float x_min, float x_max, int bits)
 // data[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8); /* Kd low 4 bits | Torque high 4 bits */
 // data[7] = tor_tmp;            /* Torque low 8 bits */
 
+// ==================== 电机参数配置结构体 ====================
+// 电机参数范围结构体，支持按电机ID区分不同的PMAX/VMAX/TMAX
+struct MotorLimits {
+    float p_min;   // Position min
+    float p_max;   // Position max
+    float v_min;   // Velocity min
+    float v_max;   // Velocity max
+    float t_min;   // Torque min
+    float t_max;   // Torque max
+    float kp_min;  // Kp min
+    float kp_max;  // Kp max
+    float kd_min;  // Kd min
+    float kd_max;  // Kd max
+};
+
+// 电机参数分组：
+// Group A: motorID 18,19,20,21,22,25,26,27,28 -> PMAX 12.5, VMAX 25, TMAX 200
+// Group B: motorID 4,5,6,11,12,13,23,24,29,30 -> PMAX 12.566, VMAX 20, TMAX 120
+// Group C: motorID 1,2,3,7,8,9,10,14,15,16,17 -> PMAX 12.5, VMAX 10, TMAX 28
+static inline MotorLimits GetMotorLimits(uint16_t motor_id) {
+    // Group A: motorID 18,19,20,21,22,25,26,27,28
+    if ((motor_id >= 18 && motor_id <= 22) || (motor_id >= 25 && motor_id <= 28)) {
+        return {-12.5f, 12.5f, -25.0f, 25.0f, -200.0f, 200.0f, 0.0f, 500.0f, 0.0f, 5.0f};
+    }
+    // Group B: motorID 4,5,6,11,12,13,23,24,29,30
+    else if ((motor_id >= 4 && motor_id <= 6) || (motor_id >= 11 && motor_id <= 13) ||
+             (motor_id >= 23 && motor_id <= 24) || (motor_id >= 29 && motor_id <= 30)) {
+        return {-12.566f, 12.566f, -20.0f, 20.0f, -120.0f, 120.0f, 0.0f, 500.0f, 0.0f, 5.0f};
+    }
+    // Group C: motorID 1,2,3,7,8,9,10,14,15,16,17
+    else {
+        return {-12.5f, 12.5f, -10.0f, 10.0f, -28.0f, 28.0f, 0.0f, 500.0f, 0.0f, 5.0f};
+    }
+}
+
 // DM4310 电机参数范围（与 motor_config.h 中的定义一致）
+// 注意：现在使用 GetMotorLimits(motor_id) 来获取电机特定的参数
 constexpr float P_MIN_DM = -12.5f;   // Position min: -12.5 rad
 constexpr float P_MAX_DM = 12.5f;    // Position max: 12.5 rad
 constexpr float V_MIN_DM = -30.0f;   // Velocity min: -30.0 rad/s
@@ -205,12 +241,15 @@ constexpr float KD_MIN_DM = 0.0f;    // Kd min: 0.0
 constexpr float KD_MAX_DM = 5.0f;    // Kd max: 5.0
 
 static inline void MotorCommandToCanData_DM(const MotorCommandCan& cmd, uint8_t* can_data) {
+    // 获取电机特定的参数限制
+    MotorLimits limits = GetMotorLimits(cmd.motor_id);
+
     // Step 1: Quantize float parameters to integers using float_to_uint
-    uint16_t pos_tmp = float_to_uint(cmd.pos, P_MIN_DM, P_MAX_DM, 16);
-    uint16_t vel_tmp = float_to_uint(cmd.vel, V_MIN_DM, V_MAX_DM, 12);
-    uint16_t kp_tmp = float_to_uint(cmd.kp, KP_MIN_DM, KP_MAX_DM, 12);
-    uint16_t kd_tmp = float_to_uint(cmd.kd, KD_MIN_DM, KD_MAX_DM, 12);
-    uint16_t tor_tmp = float_to_uint(cmd.torq, T_MIN_DM, T_MAX_DM, 12);
+    uint16_t pos_tmp = float_to_uint(cmd.pos, limits.p_min, limits.p_max, 16);
+    uint16_t vel_tmp = float_to_uint(cmd.vel, limits.v_min, limits.v_max, 12);
+    uint16_t kp_tmp = float_to_uint(cmd.kp, limits.kp_min, limits.kp_max, 12);
+    uint16_t kd_tmp = float_to_uint(cmd.kd, limits.kd_min, limits.kd_max, 12);
+    uint16_t tor_tmp = float_to_uint(cmd.torq, limits.t_min, limits.t_max, 12);
 
     // Step 2: Pack data into 8-byte frame (与 C 代码中的打包方式完全一致)
     can_data[0] = (pos_tmp >> 8);     /* Position high byte */
@@ -226,12 +265,15 @@ static inline void MotorCommandToCanData_DM(const MotorCommandCan& cmd, uint8_t*
 // ==================== MIT Motor Protocol ====================
 // MIT 电机命令格式（线性缩放，与 DM 协议格式相同）
 static inline void MotorCommandToCanData_MIT(const MotorCommandCan& cmd, uint8_t* can_data) {
+    // 获取电机特定的参数限制
+    MotorLimits limits = GetMotorLimits(cmd.motor_id);
+
     // MIT 协议使用与 DM 协议相同的编码方式
-    uint16_t pos_tmp = float_to_uint(cmd.pos, P_MIN_DM, P_MAX_DM, 16);
-    uint16_t vel_tmp = float_to_uint(cmd.vel, V_MIN_DM, V_MAX_DM, 12);
-    uint16_t kp_tmp = float_to_uint(cmd.kp, KP_MIN_DM, KP_MAX_DM, 12);
-    uint16_t kd_tmp = float_to_uint(cmd.kd, KD_MIN_DM, KD_MAX_DM, 12);
-    uint16_t tor_tmp = float_to_uint(cmd.torq, T_MIN_DM, T_MAX_DM, 12);
+    uint16_t pos_tmp = float_to_uint(cmd.pos, limits.p_min, limits.p_max, 16);
+    uint16_t vel_tmp = float_to_uint(cmd.vel, limits.v_min, limits.v_max, 12);
+    uint16_t kp_tmp = float_to_uint(cmd.kp, limits.kp_min, limits.kp_max, 12);
+    uint16_t kd_tmp = float_to_uint(cmd.kd, limits.kd_min, limits.kd_max, 12);
+    uint16_t tor_tmp = float_to_uint(cmd.torq, limits.t_min, limits.t_max, 12);
 
     // 打包方式与 DM 协议相同
     can_data[0] = (pos_tmp >> 8);
@@ -1714,24 +1756,27 @@ public:
 private:
     int GetPortIndexForMotor(int global_motor_id) const {
         // 统一的电机到端口映射 (motor_id: 1-30)
-        // 端口8000: 电机1-8   (motor_offset=0)
-        // 端口8001: 电机9-16  (motor_offset=8)
-        // 端口8002: 电机17-24 (motor_offset=16)
-        // 端口8003: 电机25-30 (motor_offset=24)
-        if (global_motor_id >= 1 && global_motor_id <= 8)   return 0;
-        if (global_motor_id >= 9 && global_motor_id <= 16)  return 1;
-        if (global_motor_id >= 17 && global_motor_id <= 24) return 2;
+        // 与PORT_CONFIGS保持一致
+        // 端口8000: 电机1-10   (motor_offset=0)
+        // 端口8001: 电机11-17  (motor_offset=10)
+        // 端口8002: 电机18-24  (motor_offset=17)
+        // 端口8003: 电机25-30  (motor_offset=24)
+        if (global_motor_id >= 1 && global_motor_id <= 10)  return 0;
+        if (global_motor_id >= 11 && global_motor_id <= 17) return 1;
+        if (global_motor_id >= 18 && global_motor_id <= 24) return 2;
         if (global_motor_id >= 25 && global_motor_id <= 30) return 3;
         return -1;
     }
 
     int GetLocalCanId(int global_motor_id) const {
-        int port_idx = GetPortIndexForMotor(global_motor_id);
-        if (port_idx < 0) return -1;
-
-        // 统一映射：使用 motor_offset 计算本地 CAN ID
-        // 本地CAN ID范围: 1-8 (每个端口最多8个电机)
-        return global_motor_id - PORT_CONFIGS[port_idx].motor_offset;
+        // 直接映射：motor_id (1-30) 直接对应 CAN ID (1-30)
+        // motor_id 1 → CAN ID 1 (0x01)
+        // motor_id 10 → CAN ID 10 (0x0a)
+        // motor_id 30 → CAN ID 30 (0x1e)
+        if (global_motor_id >= 1 && global_motor_id <= 30) {
+            return global_motor_id;
+        }
+        return -1;
     }
 
 private:
@@ -1875,7 +1920,7 @@ public:
 
         lowcmd_subscriber_ = this->create_subscription<xixilowcmd::msg::LowCmd>(
             ROS2_CMD_TOPIC,
-            rclcpp::QoS(rclcpp::KeepLast(1)).best_effort(),
+            rclcpp::QoS(rclcpp::KeepLast(10)).reliable(),
             std::bind(&ROS2_to_TCP_Bridge::LowCmdHandler, this, std::placeholders::_1)
         );
 
@@ -1915,7 +1960,19 @@ public:
                 int array_idx = motor_id - 1;
 
                 motor_commands_[array_idx].motor_id = motor_id;
-                motor_commands_[array_idx].pos = motor_cmd.q;
+
+                // 位置限幅：限制在 -0.15 到 +0.15 之间
+                float limited_pos = motor_cmd.q;
+                const float POSITION_MAX = 0.15f;
+                const float POSITION_MIN = -0.15f;
+
+                if (limited_pos > POSITION_MAX) {
+                    limited_pos = POSITION_MAX;
+                } else if (limited_pos < POSITION_MIN) {
+                    limited_pos = POSITION_MIN;
+                }
+
+                motor_commands_[array_idx].pos = limited_pos;
                 motor_commands_[array_idx].vel = motor_cmd.dq;
                 motor_commands_[array_idx].kp = motor_cmd.kp;
                 motor_commands_[array_idx].kd = motor_cmd.kd;

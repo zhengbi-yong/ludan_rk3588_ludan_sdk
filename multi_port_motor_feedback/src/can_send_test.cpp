@@ -71,8 +71,11 @@ struct MotorDataConfig {
 
     // Range parameters (can be configured via JSON)
     float p_max;            // Position maximum range (default: 2*PI for radians)
+    float p_min;            // Position minimum range (default: -2*PI for radians)
     float v_max;            // Velocity maximum range in rad/s (default: 45.0)
+    float v_min;            // Velocity minimum range in rad/s (default: -45.0)
     float t_max;            // Torque maximum range in Nm (default: 18.0)
+    float t_min;            // Torque minimum range in Nm (default: -18.0)
 };
 
 // Global configuration
@@ -92,19 +95,19 @@ void SignalHandler(int signal) {
     g_running = false;
 }
 
-// Convert float to 16-bit signed integer (position)
+// Convert float to 16-bit unsigned integer (position)
 int16_t FloatToInt16(float value, float max_range) {
     float result = (value / (2.0f * max_range)) * 65536.0f + 32768.0f;
-    if (result > 32767.0f) result = 32767.0f;
-    if (result < -32768.0f) result = -32768.0f;
+    if (result > 65535.0f) result = 65535.0f;
+    if (result < 0.0f) result = 0.0f;
     return static_cast<int16_t>(result);
 }
 
-// Convert float to 12-bit signed integer (velocity/torque)
+// Convert float to 12-bit unsigned integer (velocity/torque)
 int16_t FloatToInt12(float value, float max_range) {
     float result = (value / (2.0f * max_range)) * 4096.0f + 2048.0f;
-    if (result > 2047.0f) result = 2047.0f;
-    if (result < -2048.0f) result = -2048.0f;
+    if (result > 4095.0f) result = 4095.0f;
+    if (result < 0.0f) result = 0.0f;
     return static_cast<int16_t>(result);
 }
 
@@ -139,12 +142,20 @@ bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
 
     // Parse default range parameters
     float default_p_max = 2.0f * M_PI;
+    float default_p_min = -2.0f * M_PI;
     float default_v_max = 45.0f;
+    float default_v_min = -45.0f;
     float default_t_max = 18.0f;
+    float default_t_min = -18.0f;
 
     cJSON* p_max = cJSON_GetObjectItem(root, "p_max");
     if (p_max && cJSON_IsNumber(p_max)) {
         default_p_max = static_cast<float>(p_max->valuedouble);
+    }
+
+    cJSON* p_min = cJSON_GetObjectItem(root, "p_min");
+    if (p_min && cJSON_IsNumber(p_min)) {
+        default_p_min = static_cast<float>(p_min->valuedouble);
     }
 
     cJSON* v_max = cJSON_GetObjectItem(root, "v_max");
@@ -152,9 +163,19 @@ bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
         default_v_max = static_cast<float>(v_max->valuedouble);
     }
 
+    cJSON* v_min = cJSON_GetObjectItem(root, "v_min");
+    if (v_min && cJSON_IsNumber(v_min)) {
+        default_v_min = static_cast<float>(v_min->valuedouble);
+    }
+
     cJSON* t_max = cJSON_GetObjectItem(root, "t_max");
     if (t_max && cJSON_IsNumber(t_max)) {
         default_t_max = static_cast<float>(t_max->valuedouble);
+    }
+
+    cJSON* t_min = cJSON_GetObjectItem(root, "t_min");
+    if (t_min && cJSON_IsNumber(t_min)) {
+        default_t_min = static_cast<float>(t_min->valuedouble);
     }
 
     // Parse motor configurations
@@ -166,8 +187,11 @@ bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
             memset(&motor_config, 0, sizeof(motor_config));
 
             motor_config.p_max = default_p_max;
+            motor_config.p_min = default_p_min;
             motor_config.v_max = default_v_max;
+            motor_config.v_min = default_v_min;
             motor_config.t_max = default_t_max;
+            motor_config.t_min = default_t_min;
 
             cJSON* id = cJSON_GetObjectItem(motor, "id");
             if (id && cJSON_IsNumber(id)) {
@@ -244,14 +268,29 @@ bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
                 motor_config.p_max = static_cast<float>(p_max_motor->valuedouble);
             }
 
+            cJSON* p_min_motor = cJSON_GetObjectItem(motor, "p_min");
+            if (p_min_motor && cJSON_IsNumber(p_min_motor)) {
+                motor_config.p_min = static_cast<float>(p_min_motor->valuedouble);
+            }
+
             cJSON* v_max_motor = cJSON_GetObjectItem(motor, "v_max");
             if (v_max_motor && cJSON_IsNumber(v_max_motor)) {
                 motor_config.v_max = static_cast<float>(v_max_motor->valuedouble);
             }
 
+            cJSON* v_min_motor = cJSON_GetObjectItem(motor, "v_min");
+            if (v_min_motor && cJSON_IsNumber(v_min_motor)) {
+                motor_config.v_min = static_cast<float>(v_min_motor->valuedouble);
+            }
+
             cJSON* t_max_motor = cJSON_GetObjectItem(motor, "t_max");
             if (t_max_motor && cJSON_IsNumber(t_max_motor)) {
                 motor_config.t_max = static_cast<float>(t_max_motor->valuedouble);
+            }
+
+            cJSON* t_min_motor = cJSON_GetObjectItem(motor, "t_min");
+            if (t_min_motor && cJSON_IsNumber(t_min_motor)) {
+                motor_config.t_min = static_cast<float>(t_min_motor->valuedouble);
             }
 
             config.motor_configs.push_back(motor_config);
@@ -390,6 +429,19 @@ void GenerateMotorFrame(ShmCANFrame& frame, const MotorDataConfig& config, doubl
     frame.data[3] = (vel_int >> 4) & 0xFF;
     frame.data[4] = ((vel_int & 0x0F) << 4) | ((tor_int >> 8) & 0x0F);
     frame.data[5] = tor_int & 0xFF;
+
+    // Debug: print encoding for motor 7
+    if (config.motor_id == 7 && frame_counter <= 3) {
+        std::cout << "[DEBUG Motor 7] velocity=" << velocity << " -> vel_int=" << vel_int
+                  << " (0x" << std::hex << vel_int << std::dec << ")" << std::endl;
+        std::cout << "[DEBUG Motor 7] torque=" << torque << " -> tor_int=" << tor_int
+                  << " (0x" << std::hex << tor_int << std::dec << ")" << std::endl;
+        std::cout << "[DEBUG Motor 7] CAN data: ";
+        for (int i = 0; i < 8; i++) {
+            std::cout << std::hex << std::setfill('0') << std::setw(2) << (int)frame.data[i] << " " << std::dec;
+        }
+        std::cout << std::endl;
+    }
 
     // D[6]: T_MOS
     frame.data[6] = static_cast<uint8_t>(std::max(0.0f, std::min(125.0f, temp_mos)));

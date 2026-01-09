@@ -1,7 +1,7 @@
 // can_motor_feedback_publisher.cpp
 // ROS2 node that receives CAN frames from ZLG device (4 ports) and publishes motor feedback
 // 30 motors total: 10+7+7+6 distribution
-// Uses multi_port_motor_feedback::msg::MultiPortMotorFeedback (same format as MotorFeedback)
+// Uses LowState message format with MotorState[30] array
 // Architecture based on cantoudp.cpp: Manager opens devices, passes handles to PortReceivers
 //
 // TEST MODE: Use --test-mode to read from shared memory instead of ZLG device
@@ -90,22 +90,22 @@ struct CanToRosConfig {
 // ==================== DM Motor Format Decoder ====================
 // DM motor feedback format (8 bytes):
 // D[0] D[1] D[2] D[3] D[4] D[5] D[6] D[7]
-// ID|ERR<<4, POS[15:8], POS[7:0], VEL[11:4], VEL[3:0]|T[11:8], T[7:0], T_MOS, T_Rotor
+// ID|STATE<<4, POS[15:8], POS[7:0], VEL[11:4], VEL[3:0]|EFFORT[11:8], EFFORT[7:0], T_MOS, T_Rotor
 
 struct DMMotorData {
     uint8_t  raw[8];
-    uint8_t  motor_id;
-    uint8_t  error;
+    uint8_t  id;           // Motor ID (1-30)
+    uint8_t  state;        // Motor state/error code
 
     // Raw fixed-point values from CAN
     int16_t position_raw;
     int16_t velocity_raw;
-    int16_t torque_raw;
+    int16_t effort_raw;    // Effort (torque) raw value
 
     // Physical values (decoded)
-    double position_rad;
-    double velocity_rad_s;
-    double torque_nm;
+    double position;       // Position in radians
+    double velocity;       // Velocity in rad/s
+    double effort;         // Effort (torque) in Nm
 
     int8_t  temp_mos;
     int8_t  temp_rotor;
@@ -116,17 +116,37 @@ struct DMMotorData {
     }
 };
 
+// Motor calibration parameters
+struct MotorCalibration {
+    double p_max;
+    double p_min;
+    double v_max;
+    double v_min;
+    double t_max;
+    double t_min;
+};
+
 class DMMotorFrameDecoder {
 public:
-    // DM motor range limits
+    // Default DM motor range limits (fallback values)
     static double PMAX;    // Position max: π rad (180°)
     static double PMIN;    // Position min: -π rad (-180°)
-    static double VMAX;    // Velocity max: 45 rad/s
-    static double VMIN;    // Velocity min: -45 rad/s
+    static double VMAX;    // Velocity max: 30 rad/s
+    static double VMIN;    // Velocity min: -30 rad/s
     static double TMAX;    // Torque max: 20 Nm
     static double TMIN;    // Torque min: -20 Nm
 
-    static DMMotorData DecodeFrameFD(const ZCAN_ReceiveFD_Data& frame) {
+    // Per-motor calibration (indexed by motor_id-1, so motor 1 is at index 0)
+    static std::array<MotorCalibration, 30> motor_calibration;
+
+    // Initialize motor calibration with default values
+    static void InitMotorCalibration() {
+        for (int i = 0; i < 30; i++) {
+            motor_calibration[i] = {PMAX, PMIN, VMAX, VMIN, TMAX, TMIN};
+        }
+    }
+
+    static DMMotorData DecodeFrameFD(const ZCAN_ReceiveFD_Data& frame, int motor_id_from_can) {
         DMMotorData data;
 
         const uint8_t* d = frame.frame.data;
@@ -134,24 +154,32 @@ public:
         // Store raw data
         memcpy(data.raw, d, 8);
 
-        // D[0]: ID[3:0] | ERR[3:0]<<4
-        data.motor_id = d[0] & 0x0F;
-        data.error = (d[0] >> 4) & 0x0F;
+        // Use motor_id from CAN ID (not from data byte, which only has 4 bits)
+        data.id = motor_id_from_can;
+        data.state = (d[0] >> 4) & 0x0F;
+
+        // Get calibration for this motor
+        int motor_idx = data.id - 1;  // motor 1 -> index 0
+        if (motor_idx < 0 || motor_idx >= 30) motor_idx = 0;
+
+        const MotorCalibration& cal = motor_calibration[motor_idx];
 
         // D[1-2]: Position (16-bit encoded value, range: [0, 2^16-1])
         uint16_t pos_encoded = static_cast<uint16_t>((d[1] << 8) | d[2]);
         data.position_raw = static_cast<int16_t>(pos_encoded);
-        data.position_rad = (pos_encoded - 32768.0) / 65536.0 * (PMAX - PMIN);
+        data.position = (pos_encoded - 32768.0) / 65536.0 * (cal.p_max - cal.p_min);
 
         // D[3-4]: Velocity (12-bit encoded as unsigned, range: [0, 2^12-1])
-        int16_t vel_encoded = ((d[3] & 0xFF) << 4) | (d[4] & 0x0F);
+        // D[3] = VEL[11:4], D[4] high nibble = VEL[3:0]
+        int16_t vel_encoded = ((d[3] & 0xFF) << 4) | ((d[4] >> 4) & 0x0F);
         data.velocity_raw = vel_encoded;
-        data.velocity_rad_s = (vel_encoded - 2048.0) / 4096.0 * (VMAX - VMIN);
+        data.velocity = (vel_encoded - 2048.0) / 4096.0 * (cal.v_max - cal.v_min);
 
-        // D[4-5]: Torque (12-bit encoded as unsigned, range: [0, 2^12-1])
-        int16_t torque_encoded = (((d[4] >> 4) & 0x0F) << 8) | d[5];
-        data.torque_raw = torque_encoded;
-        data.torque_nm = (torque_encoded - 2048.0) / 4096.0 * (TMAX - TMIN);
+        // D[4-5]: Effort/Torque (12-bit encoded as unsigned, range: [0, 2^12-1])
+        // D[4] low nibble = T[11:8], D[5] = T[7:0]
+        int16_t effort_encoded = ((d[4] & 0x0F) << 8) | d[5];
+        data.effort_raw = effort_encoded;
+        data.effort = (effort_encoded - 2048.0) / 4096.0 * (cal.t_max - cal.t_min);
 
         // D[6-7]: Temperatures (8-bit signed, directly in Celsius)
         data.temp_mos = static_cast<int8_t>(d[6]);
@@ -161,8 +189,8 @@ public:
         return data;
     }
 
-    static std::string GetErrorDescription(uint8_t error) {
-        switch (error) {
+    static std::string GetStateDescription(uint8_t state) {
+        switch (state) {
             case 0x0: return "OK/Disabled";
             case 0x1: return "Enabled";
             case 0x8: return "Over-voltage";
@@ -189,10 +217,13 @@ public:
 // Static member definitions
 double DMMotorFrameDecoder::PMAX = 3.14159;
 double DMMotorFrameDecoder::PMIN = -3.14159;
-double DMMotorFrameDecoder::VMAX = 45.0;
-double DMMotorFrameDecoder::VMIN = -45.0;
+double DMMotorFrameDecoder::VMAX = 30.0;
+double DMMotorFrameDecoder::VMIN = -30.0;
 double DMMotorFrameDecoder::TMAX = 20.0;
 double DMMotorFrameDecoder::TMIN = -20.0;
+
+// Per-motor calibration array
+std::array<MotorCalibration, 30> DMMotorFrameDecoder::motor_calibration;
 
 // ==================== Global Variables ====================
 std::atomic<bool> g_running(true);
@@ -430,17 +461,20 @@ void PortReceiver::ReceiveLoop() {
                 }
                 std::cout << std::endl;
 
-                // Motor feedback: CAN ID 1-30
-                if (can_id >= 1 && can_id <= NUM_MOTORS && len >= 8) {
-                    // Decode DM format
-                    DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(receive_buffer[i]);
+                // Motor feedback: extract motor ID from CAN ID
+                // Motor ID mapping: motor_id = CAN_ID - 0x20
+                // For example: motor 30 has CAN ID = 0x3E (0x1E + 0x20)
+                // We need to reverse this: motor_id = 0x3E - 0x20 = 0x1E = 30
+                int motor_id_from_can = can_id - 0x20;
 
-                    // Use CAN ID as global motor ID (1-30)
-                    int global_motor_id = can_id;
+                // Check if CAN ID is valid (1-30) - matches cantoudp.cpp
+                if (motor_id_from_can >= 1 && motor_id_from_can <= NUM_MOTORS) {
+                    // Decode DM format (pass motor_id_from_can to correctly set data.id)
+                    DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(receive_buffer[i], motor_id_from_can);
 
                     std::lock_guard<std::mutex> lock(g_data_mutex);
-                    dm_data.motor_id = global_motor_id;
-                    g_motor_data[global_motor_id - 1] = dm_data;
+                    // Map CAN ID to array index: array_index = motor_id - 1
+                    g_motor_data[motor_id_from_can - 1] = dm_data;
                     receive_count_++;
                 }
             }
@@ -614,14 +648,13 @@ void TestModeReceiver::ReceiveLoop() {
                     std::cout << std::endl;
                 }
 
-                // Decode DM format using existing decoder
-                DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(zcan_frame);
-
                 // Use CAN ID as global motor ID (1-30)
                 int global_motor_id = zcan_frame.frame.can_id;
                 if (global_motor_id >= 1 && global_motor_id <= NUM_MOTORS) {
+                    // Decode DM format using existing decoder (pass global_motor_id)
+                    DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(zcan_frame, global_motor_id);
+
                     std::lock_guard<std::mutex> lock(g_data_mutex);
-                    dm_data.motor_id = global_motor_id;
                     g_motor_data[global_motor_id - 1] = dm_data;
                     receive_count_++;
                 }
@@ -639,6 +672,23 @@ int main(int argc, char** argv) {
     // Setup signal handler
     signal(SIGINT, SignalHandler);
     signal(SIGTERM, SignalHandler);
+
+    // Initialize motor calibration
+    DMMotorFrameDecoder::InitMotorCalibration();
+
+    // Set per-motor calibration parameters
+    // Motors 1-3, 7-10, 14-17: small motors
+    for (int i : {0, 1, 2, 6, 7, 8, 9, 13, 14, 15, 16}) {
+        DMMotorFrameDecoder::motor_calibration[i] = {12.5, -12.5, 10.0, -10.0, 28.0, -28.0};
+    }
+    // Motors 4-6, 11-13, 23-24, 29-30: medium motors
+    for (int i : {3, 4, 5, 10, 11, 12, 22, 23, 28, 29}) {
+        DMMotorFrameDecoder::motor_calibration[i] = {12.566, -12.566, 20.0, -20.0, 120.0, -120.0};
+    }
+    // Motors 18-22, 25-28: large motors
+    for (int i : {17, 18, 19, 20, 21, 24, 25, 26, 27}) {
+        DMMotorFrameDecoder::motor_calibration[i] = {12.5, -12.5, 25.0, -25.0, 200.0, -200.0};
+    }
 
     // Initialize ROS2
     rclcpp::init(argc, argv);
@@ -744,11 +794,16 @@ int main(int argc, char** argv) {
                 auto& motor_msg = msg.motor_state[array_index];
 
                 if (dm_data.valid) {
-                    motor_msg.id = static_cast<int8_t>(dm_data.motor_id);
-                    motor_msg.state = dm_data.error;           // Error code -> state
-                    motor_msg.position = static_cast<float>(dm_data.position_rad);
-                    motor_msg.velocity = static_cast<float>(dm_data.velocity_rad_s);
-                    motor_msg.effort = static_cast<float>(dm_data.torque_nm);  // torque -> effort
+                    // Debug: print motor 30 data
+                    if (motor_id == 30) {
+                        std::cout << "[DEBUG] Motor 30: dm_data.id=" << (int)dm_data.id
+                                  << " position=" << dm_data.position << std::endl;
+                    }
+                    motor_msg.id = static_cast<int8_t>(dm_data.id);
+                    motor_msg.state = dm_data.state;
+                    motor_msg.position = static_cast<float>(dm_data.position);
+                    motor_msg.velocity = static_cast<float>(dm_data.velocity);
+                    motor_msg.effort = static_cast<float>(dm_data.effort);
                     motor_msg.temp_mos = dm_data.temp_mos;
                     motor_msg.temp_rotor = dm_data.temp_rotor;
                 } else {

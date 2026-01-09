@@ -1,0 +1,1227 @@
+[0.013s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2 -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback
+[0.108s] -- The C compiler identification is GNU 11.4.0
+[0.216s] -- The CXX compiler identification is GNU 11.4.0
+[0.224s] -- Detecting C compiler ABI info
+[0.383s] -- Detecting C compiler ABI info - done
+[0.420s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.421s] -- Detecting C compile features
+[0.423s] -- Detecting C compile features - done
+[0.434s] -- Detecting CXX compiler ABI info
+[0.574s] -- Detecting CXX compiler ABI info - done
+[0.584s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.585s] -- Detecting CXX compile features
+[0.585s] -- Detecting CXX compile features - done
+[0.588s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.863s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.047s] -- Found std_msgs: 4.9.0 (/opt/ros/humble/share/std_msgs/cmake)
+[1.089s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.095s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.106s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.122s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.143s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.180s] -- Found rclcpp: 16.0.16 (/opt/ros/humble/share/rclcpp/cmake)
+[1.232s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.236s] -- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.366s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[1.394s] -- Found FastRTPS: /opt/ros/humble/include  
+[1.438s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.448s] -- Looking for pthread.h
+[1.594s] -- Looking for pthread.h - found
+[1.594s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.736s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.737s] -- Found Threads: TRUE  
+[2.286s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[2.877s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[3.122s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[3.128s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[3.153s] -- Added test 'copyright' to check source files copyright and LICENSE
+[3.188s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[3.189s] -- Configured cppcheck include dirs: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src;/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/include>
+[3.189s] -- Configured cppcheck exclude dirs and/or files: 
+[3.224s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[3.224s] -- Configured cpplint exclude dirs and/or files: 
+[3.229s] -- Added test 'flake8' to check Python code syntax and style conventions
+[3.239s] -- Added test 'lint_cmake' to check CMake code style
+[3.244s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[3.279s] -- Added test 'uncrustify' to check C / C++ code style
+[3.279s] -- Configured uncrustify additional arguments: 
+[3.284s] -- Added test 'xmllint' to check XML markup files
+[3.287s] -- Configuring done
+[3.327s] -- Generating done
+[3.342s] -- Build files have been written to: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[3.359s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2 -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback
+[3.363s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[3.464s] [  1%] Generating C code for ROS interfaces
+[3.478s] [  3%] Generating C++ code for ROS interfaces
+[4.071s] [  3%] Built target multi_port_motor_feedback__cpp
+[4.078s] [  7%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/multi_port_motor_feedback/msg/detail/motor_state__functions.c.o
+[4.078s] [  7%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_generator_c.dir/rosidl_generator_c/multi_port_motor_feedback/msg/detail/low_state__functions.c.o
+[4.086s] [  8%] Generating C++ type support for eProsima Fast-RTPS
+[4.101s] [ 12%] Generating C++ type support dispatch for ROS interfaces
+[4.101s] [ 12%] Generating C++ introspection for ROS interfaces
+[4.187s] [ 14%] Linking C shared library libmulti_port_motor_feedback__rosidl_generator_c.so
+[4.311s] [ 14%] Built target multi_port_motor_feedback__rosidl_generator_c
+[4.329s] [ 15%] Generating C type support for eProsima Fast-RTPS
+[4.340s] [ 17%] Generating C introspection for ROS interfaces
+[4.345s] [ 19%] Generating C type support dispatch for ROS interfaces
+[4.640s] [ 21%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/multi_port_motor_feedback/msg/low_state__type_support.cpp.o
+[4.658s] [ 22%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/multi_port_motor_feedback/msg/motor_state__type_support.cpp.o
+[4.664s] [ 24%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/multi_port_motor_feedback/msg/detail/dds_fastrtps/motor_state__type_support.cpp.o
+[4.674s] [ 26%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/multi_port_motor_feedback/msg/detail/dds_fastrtps/low_state__type_support.cpp.o
+[4.677s] [ 28%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/multi_port_motor_feedback/msg/detail/motor_state__type_support.cpp.o
+[5.047s] [ 29%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/multi_port_motor_feedback/msg/detail/low_state__type_support.cpp.o
+[5.105s] [ 31%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/multi_port_motor_feedback/msg/detail/motor_state__type_support_c.cpp.o
+[5.301s] [ 33%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_cpp.so
+[5.425s] [ 35%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/multi_port_motor_feedback/msg/detail/low_state__type_support_c.cpp.o
+[5.433s] [ 36%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/multi_port_motor_feedback/msg/detail/motor_state__type_support.c.o
+[5.570s] [ 38%] Building C object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/multi_port_motor_feedback/msg/detail/low_state__type_support.c.o
+[5.609s] [ 40%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.so
+[5.676s] [ 42%] Linking C shared library libmulti_port_motor_feedback__rosidl_typesupport_introspection_c.so
+[5.681s] [ 42%] Built target multi_port_motor_feedback__rosidl_typesupport_cpp
+[5.757s] [ 43%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp.o
+[5.771s] [ 45%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o
+[5.879s] [ 45%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_c
+[5.902s] [ 47%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp.o
+[5.904s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[5.904s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:1:
+[5.905s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[5.905s]   584 |         struct {
+[5.905s]       |                ^
+[5.914s] [ 47%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp
+[5.951s] [ 49%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.cpp.o
+[5.956s] [ 50%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp.o
+[6.161s] [ 52%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_c.so
+[6.491s] [ 54%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/multi_port_motor_feedback/msg/motor_state__type_support.cpp.o
+[6.595s] [ 54%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_c
+[6.635s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[6.635s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.h:4,
+[6.636s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:2:
+[6.636s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[6.636s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[6.637s]    47 |     void Print(const char* fmt, ...){}
+[6.637s]       |                ~~~~~~~~~~~~^~~
+[6.646s] [ 56%] Building CXX object CMakeFiles/multi_port_motor_feedback__rosidl_typesupport_c.dir/rosidl_typesupport_c/multi_port_motor_feedback/msg/low_state__type_support.cpp.o
+[6.694s] [ 57%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp.o
+[6.714s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:3:
+[6.715s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/canhandle.h: At global scope:
+[6.715s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/canhandle.h:29:17: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[6.715s]    29 |                 {
+[6.716s]       |                 ^
+[6.721s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘void* ZCAN_OpenDevice(UINT, UINT, UINT)’:
+[6.722s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:16:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+[6.723s]    16 |     return (DEVICE_HANDLE)hDeviceHandle.handle;
+[6.723s]       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[6.723s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘void* ZCAN_InitCAN(DEVICE_HANDLE, UINT, ZCAN_CHANNEL_INIT_CONFIG*)’:
+[6.724s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:72:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+[6.725s]    72 |     return (DEVICE_HANDLE)hDeviceHandle.handle;
+[6.725s]       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[6.725s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:56:102: warning: unused parameter ‘pInitConfig’ [-Wunused-parameter]
+[6.726s]    56 | CHANNEL_HANDLE FUNC_CALL ZCAN_InitCAN(DEVICE_HANDLE hDevice, UINT CANInd, ZCAN_CHANNEL_INIT_CONFIG * pInitConfig)
+[6.726s]       |                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+[6.730s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘IProperty* GetIProperty(DEVICE_HANDLE)’:
+[6.730s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:306:50: warning: unused parameter ‘hDevice’ [-Wunused-parameter]
+[6.731s]   306 | IProperty * FUNC_CALL GetIProperty(DEVICE_HANDLE hDevice)
+[6.731s]       |                                    ~~~~~~~~~~~~~~^~~~~~~
+[6.732s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘UINT ReleaseIProperty(IProperty*)’:
+[6.732s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:311:45: warning: unused parameter ‘pIProperty’ [-Wunused-parameter]
+[6.733s]   311 | UINT FUNC_CALL ReleaseIProperty(IProperty * pIProperty)
+[6.733s]       |                                 ~~~~~~~~~~~~^~~~~~~~~~
+[6.734s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘void* ZCAN_InitLIN(DEVICE_HANDLE, UINT, PZCAN_LIN_INIT_CONFIG)’:
+[6.735s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:368:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+[6.735s]   368 |     return (DEVICE_HANDLE)hDeviceHandle.handle;
+[6.736s]       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[6.736s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘UINT ZCAN_SetLINSlaveMsg(CHANNEL_HANDLE, PZCAN_LIN_MSG, UINT)’:
+[6.737s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:466:51: warning: unused parameter ‘channel_handle’ [-Wunused-parameter]
+[6.737s]   466 | UINT FUNC_CALL ZCAN_SetLINSlaveMsg(CHANNEL_HANDLE channel_handle, PZCAN_LIN_MSG pSend, UINT nMsgCount)
+[6.737s]       |                                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+[6.738s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:466:81: warning: unused parameter ‘pSend’ [-Wunused-parameter]
+[6.738s]   466 | UINT FUNC_CALL ZCAN_SetLINSlaveMsg(CHANNEL_HANDLE channel_handle, PZCAN_LIN_MSG pSend, UINT nMsgCount)
+[6.739s]       |                                                                   ~~~~~~~~~~~~~~^~~~~
+[6.739s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:466:93: warning: unused parameter ‘nMsgCount’ [-Wunused-parameter]
+[6.740s]   466 | UINT FUNC_CALL ZCAN_SetLINSlaveMsg(CHANNEL_HANDLE channel_handle, PZCAN_LIN_MSG pSend, UINT nMsgCount)
+[6.740s]       |                                                                                        ~~~~~^~~~~~~~~
+[6.740s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘UINT ZCAN_ClearLINSlaveMsg(CHANNEL_HANDLE, BYTE*, UINT)’:
+[6.741s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:486:53: warning: unused parameter ‘channel_handle’ [-Wunused-parameter]
+[6.741s]   486 | UINT FUNC_CALL ZCAN_ClearLINSlaveMsg(CHANNEL_HANDLE channel_handle, BYTE* pLINID, UINT nIDCount)
+[6.742s]       |                                      ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+[6.742s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:486:75: warning: unused parameter ‘pLINID’ [-Wunused-parameter]
+[6.742s]   486 | UINT FUNC_CALL ZCAN_ClearLINSlaveMsg(CHANNEL_HANDLE channel_handle, BYTE* pLINID, UINT nIDCount)
+[6.749s]       |                                                                     ~~~~~~^~~~~~
+[6.749s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:486:88: warning: unused parameter ‘nIDCount’ [-Wunused-parameter]
+[6.750s]   486 | UINT FUNC_CALL ZCAN_ClearLINSlaveMsg(CHANNEL_HANDLE channel_handle, BYTE* pLINID, UINT nIDCount)
+[6.751s]       |                                                                                   ~~~~~^~~~~~~~
+[6.780s] [ 59%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_introspection_cpp.so
+[6.803s] [ 61%] Linking CXX shared library libmulti_port_motor_feedback__rosidl_typesupport_c.so
+[6.819s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[6.819s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.h:10,
+[6.820s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:16,
+[6.820s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.h:4,
+[6.820s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.cpp:1:
+[6.821s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[6.821s]   584 |         struct {
+[6.822s]       |                ^
+[6.829s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[6.829s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.h:4,
+[6.830s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.cpp:1:
+[6.830s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[6.830s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[6.831s]    47 |     void Print(const char* fmt, ...){}
+[6.831s]       |                ~~~~~~~~~~~~^~~
+[6.852s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[6.852s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.h:10,
+[6.853s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1:
+[6.853s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[6.853s]   584 |         struct {
+[6.854s]       |                ^
+[6.863s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2:
+[6.864s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[6.864s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[6.864s]    47 |     void Print(const char* fmt, ...){}
+[6.865s]       |                ~~~~~~~~~~~~^~~
+[7.006s] [ 61%] Built target multi_port_motor_feedback__rosidl_typesupport_c
+[7.038s] [ 63%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp.o
+[7.084s] [ 64%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp.o
+[7.124s] [ 64%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_cpp
+[7.160s] [ 66%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp.o
+[7.194s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[7.194s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.h:10,
+[7.195s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:16,
+[7.195s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[7.196s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[7.196s]   584 |         struct {
+[7.196s]       |                ^
+[7.203s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[7.204s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[7.204s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[7.205s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[7.205s]    47 |     void Print(const char* fmt, ...){}
+[7.206s]       |                ~~~~~~~~~~~~^~~
+[7.371s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static bool CPacketUtil::IsValidPacketHead(const Packet&)’:
+[7.371s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:83:39: warning: comparison is always true due to limited range of data type [-Wtype-limits]
+[7.372s]    83 |                 bRet = nPacketDataLen >= 0;
+[7.372s]       |                        ~~~~~~~~~~~~~~~^~~~
+[7.373s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:87:39: warning: comparison is always true due to limited range of data type [-Wtype-limits]
+[7.373s]    87 |                 bRet = nPacketDataLen >= 0;
+[7.378s]       |                        ~~~~~~~~~~~~~~~^~~~
+[7.379s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:44:13: warning: variable ‘nPktType’ set but not used [-Wunused-but-set-variable]
+[7.379s]    44 |     uint8_t nPktType = 0;
+[7.385s]       |             ^~~~~~~~
+[7.387s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp:1:
+[7.394s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[7.396s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[7.405s]    47 |     void Print(const char* fmt, ...){}
+[7.417s]       |                ~~~~~~~~~~~~^~~
+[7.432s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static bool CPacketUtil::GetPacket(PacketBuffer&, Packet&)’:
+[7.443s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:167:13: warning: unused variable ‘f’ [-Wunused-variable]
+[7.460s]   167 |     uint8_t f = dequeBuffer.front();
+[7.470s]       |             ^
+[7.479s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static int CPacketUtil::GetPacketDataDevRes(const Packet&, FrameData&, uint8_t&)’:
+[7.485s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:567:71: warning: unused parameter ‘vecBusDevRes’ [-Wunused-parameter]
+[7.490s]   567 | int CPacketUtil::GetPacketDataDevRes(const Packet& packet, FrameData& vecBusDevRes, uint8_t& pktTypeParam)
+[7.497s]       |                                                            ~~~~~~~~~~~^~~~~~~~~~~~
+[7.509s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static int CPacketUtil::GetPacketDataRequest(const Packet&, PacketDataRequest&)’:
+[7.515s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:621:44: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[7.519s]   621 |             nDataLen + PACKET_HEAD_LEN + 1 == packet.size())  //crc 1 uint8_t
+[7.526s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+[7.527s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static int CPacketUtil::GetPacketDataRequestEx(const Packet&, PacketDataRequest&)’:
+[7.527s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:653:44: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[7.528s]   653 |             nDataLen + PACKET_HEAD_LEN + 1 == packet.size())  //crc 1 uint8_t
+[7.528s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+[7.530s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static int CPacketUtil::GetPacketDataResponse(const Packet&, PacketDataResponse&)’:
+[7.532s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:687:44: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[7.536s]   687 |             nDataLen + PACKET_HEAD_LEN + 1 == packet.size())  //crc 1 uint8_t
+[7.539s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+[7.542s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static int CPacketUtil::GetPacketDataResponseEx(const Packet&, PacketDataResponse&)’:
+[7.548s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:719:44: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[7.553s]   719 |             nDataLen + PACKET_HEAD_LEN + 1 == packet.size())  //crc 1 uint8_t
+[7.558s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+[7.562s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static int CPacketUtil::GetPacketDataDevState(const Packet&, FrameData&, uint8_t&)’:
+[7.564s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:750:44: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned char>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+[7.565s]   750 |         if (nDataLen + PACKET_HEAD_LEN + 1 == packet.size())
+[7.568s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+[7.568s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2:
+[7.570s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static void CPacketUtil::DumpData(uint8_t*, int)’:
+[7.572s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1454:20: warning: format ‘%s’ expects argument of type ‘char*’, but argument 2 has type ‘std::string’ {aka ‘std::__cxx11::basic_string<char>’} [-Wformat=]
+[7.574s]  1454 |         LOG_ALWAYS("%s\n", strLine);
+[7.575s]       |                    ^~~~~~
+[7.576s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[7.579s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[7.581s]       |                                                     ^~~
+[7.583s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1454:22: note: format string is defined here
+[7.585s]  1454 |         LOG_ALWAYS("%s\n", strLine);
+[7.586s]       |                     ~^
+[7.587s]       |                      |
+[7.589s]       |                      char*
+[7.591s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static void CPacketUtil::PacketLIN2ZLIN(const PacketDataLIN&, ZCAN_LIN_MSG&, int*)’:
+[7.593s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1791:91: warning: unused parameter ‘pChnl’ [-Wunused-parameter]
+[7.598s]  1791 | void CPacketUtil::PacketLIN2ZLIN(const PacketDataLIN& pktLIN, ZCAN_LIN_MSG& zLINMsg, int* pChnl)
+[7.603s]       |                                                                                      ~~~~~^~~~~
+[7.608s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static void CPacketUtil::ZLIN2PacketLIN(int, const ZCAN_LIN_MSG&, PacketDataLIN&)’:
+[7.612s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1858:38: warning: unused parameter ‘nChnl’ [-Wunused-parameter]
+[7.617s]  1858 | void CPacketUtil::ZLIN2PacketLIN(int nChnl, const ZCAN_LIN_MSG& zLIN, PacketDataLIN& pktLIN)
+[7.622s]       |                                  ~~~~^~~~~
+[7.629s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1858:65: warning: unused parameter ‘zLIN’ [-Wunused-parameter]
+[7.634s]  1858 | void CPacketUtil::ZLIN2PacketLIN(int nChnl, const ZCAN_LIN_MSG& zLIN, PacketDataLIN& pktLIN)
+[7.639s]       |                                             ~~~~~~~~~~~~~~~~~~~~^~~~
+[7.645s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1858:86: warning: unused parameter ‘pktLIN’ [-Wunused-parameter]
+[7.649s]  1858 | void CPacketUtil::ZLIN2PacketLIN(int nChnl, const ZCAN_LIN_MSG& zLIN, PacketDataLIN& pktLIN)
+[7.651s]       |                                                                       ~~~~~~~~~~~~~~~^~~~~~
+[7.654s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static Packet CPacketEncoder::BuildPacketDevReqRes(bool, const uint8_t*, unsigned int, uint8_t)’:
+[7.655s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2161:63: warning: narrowing conversion of ‘len’ from ‘unsigned int’ to ‘USHORT’ {aka ‘short unsigned int’} [-Wnarrowing]
+[7.656s]  2161 |     PacketHead head{ PACKET_HEADER, pktType, pktTypeParam, 0, len };
+[7.656s]       |                                                               ^~~
+[7.656s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static void CPacketEncoder::PacketAddData(Packet&, const PacketDataAutoSend&)’:
+[7.657s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2500:39: warning: missing initializer for member ‘_tagPacketDataAutoSend::bEnable’ [-Wmissing-field-initializers]
+[7.657s]  2500 |     PacketDataAutoSend netFrame = { 0 };
+[7.658s]       |                                       ^
+[7.658s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2500:39: warning: missing initializer for member ‘_tagPacketDataAutoSend::nPeriodMs’ [-Wmissing-field-initializers]
+[7.672s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2500:39: warning: missing initializer for member ‘_tagPacketDataAutoSend::nRepeatCount’ [-Wmissing-field-initializers]
+[7.673s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2500:39: warning: missing initializer for member ‘_tagPacketDataAutoSend::stFlag’ [-Wmissing-field-initializers]
+[7.674s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2500:39: warning: missing initializer for member ‘_tagPacketDataAutoSend::pktData’ [-Wmissing-field-initializers]
+[7.701s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:10:
+[7.701s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[7.702s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[7.702s]    47 |     void Print(const char* fmt, ...){}
+[7.703s]       |                ~~~~~~~~~~~~^~~
+[7.713s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp: In function ‘int cc_socket_select(cc_socket*, const std::vector<cc_socket>*, std::vector<cc_socket>*, int)’:
+[7.714s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:234:33: warning: unused parameter ‘s’ [-Wunused-parameter]
+[7.714s]   234 | int cc_socket_select(cc_socket *s, const std::vector<cc_socket> *readSet,
+[7.715s]       |                      ~~~~~~~~~~~^
+[7.715s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp: In function ‘int cc_socket_send_to(cc_socket*, const char*, unsigned int, cc_socket*)’:
+[7.715s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:311:13: warning: unused variable ‘err’ [-Wunused-variable]
+[7.716s]   311 |         int err = errno;
+[7.716s]       |             ^~~
+[7.719s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp: In function ‘cc_socketerr cc_socket_add_membership(cc_socket*, const char*, int)’:
+[7.720s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:403:50: warning: unused parameter ‘s’ [-Wunused-parameter]
+[7.720s]   403 | cc_socketerr cc_socket_add_membership(cc_socket *s, const char* groupip, int loopback)
+[7.721s]       |                                       ~~~~~~~~~~~^
+[7.721s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:403:65: warning: unused parameter ‘groupip’ [-Wunused-parameter]
+[7.721s]   403 | cc_socketerr cc_socket_add_membership(cc_socket *s, const char* groupip, int loopback)
+[7.722s]       |                                                     ~~~~~~~~~~~~^~~~~~~
+[7.722s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:403:78: warning: unused parameter ‘loopback’ [-Wunused-parameter]
+[7.723s]   403 | cc_socketerr cc_socket_add_membership(cc_socket *s, const char* groupip, int loopback)
+[7.724s]       |                                                                          ~~~~^~~~~~~~
+[7.724s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp: In function ‘cc_socketerr cc_socket_drop_membership(cc_socket*, const char*)’:
+[7.724s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:408:51: warning: unused parameter ‘s’ [-Wunused-parameter]
+[7.725s]   408 | cc_socketerr cc_socket_drop_membership(cc_socket *s, const char* groupip)
+[7.725s]       |                                        ~~~~~~~~~~~^
+[7.726s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:408:66: warning: unused parameter ‘groupip’ [-Wunused-parameter]
+[7.726s]   408 | cc_socketerr cc_socket_drop_membership(cc_socket *s, const char* groupip)
+[7.726s]       |                                                      ~~~~~~~~~~~~^~~~~~~
+[7.731s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp: In function ‘void cc_socket_set_recv_snd_buf(cc_socket*, int, int)’:
+[7.731s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp:421:18: warning: variable ‘err’ set but not used [-Wunused-but-set-variable]
+[7.732s]   421 |     cc_socketerr err;
+[7.732s]       |                  ^~~
+[7.910s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::_StopAndClear()’:
+[7.912s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[7.912s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[7.913s]       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[7.913s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[7.914s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[7.914s]       |                                                     ^~~
+[7.915s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 2 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[7.915s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[7.915s]       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[7.916s]       |                                                                                      |
+[7.916s]       |                                                                                      UINT64 {aka long long unsigned int}
+[7.917s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[7.917s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[7.918s]       |                                                     ^~~
+[7.919s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:36: note: format string is defined here
+[7.919s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[7.920s]       |                                ~~~~^
+[7.935s]       |                                    |
+[7.945s]       |                                    unsigned int
+[7.947s]       |                                %I64llu
+[7.948s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[7.949s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[7.950s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[7.950s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[7.971s]       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[7.972s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[7.973s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[7.975s]       |                                                     ^~~
+[7.975s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 3 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[7.977s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[7.978s]       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+[7.979s]       |                                                                                                                   |
+[7.980s]       |                                                                                                                   UINT64 {aka long long unsigned int}
+[7.981s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[7.983s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[7.984s]       |                                                     ^~~
+[7.985s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:56: note: format string is defined here
+[7.987s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[7.988s]       |                                                    ~~~~^
+[7.989s]       |                                                        |
+[7.990s]       |                                                        unsigned int
+[7.992s]       |                                                    %I64llu
+[7.994s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[7.996s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[7.997s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[7.998s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[8.011s]       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.013s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.015s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.017s]       |                                                     ^~~
+[8.019s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 4 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.021s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[8.023s]       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                           ~~~~~~~~~~~~~~~~~~~~
+[8.025s]       |                                                                                                                                               |
+[8.027s]       |                                                                                                                                               UINT64 {aka long long unsigned int}
+[8.029s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.031s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.032s]       |                                                     ^~~
+[8.032s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:70: note: format string is defined here
+[8.032s]  1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+[8.032s]       |                                                                  ~~~~^
+[8.032s]       |                                                                      |
+[8.032s]       |                                                                      unsigned int
+[8.032s]       |                                                                  %I64llu
+[8.032s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.032s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.032s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
+[8.033s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.033s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.033s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.033s]       |             ~       
+[8.033s]       |             |
+[8.033s]       |             size_t {aka long unsigned int}
+[8.033s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.033s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.033s]       |                                                     ^~~
+[8.033s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:27: note: format string is defined here
+[8.033s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.033s]       |                          ~^
+[8.033s]       |                           |
+[8.034s]       |                           int
+[8.034s]       |                          %ld
+[8.034s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.034s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.034s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.034s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.034s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.034s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.034s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.034s]       |                                                     ^~~
+[8.034s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 3 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.034s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.034s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.035s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.035s]       |                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.035s]       |                                    |
+[8.035s]       |                                    UINT64 {aka long long unsigned int}
+[8.035s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.035s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.035s]       |                                                     ^~~
+[8.035s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:40: note: format string is defined here
+[8.035s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.035s]       |                                    ~~~~^
+[8.035s]       |                                        |
+[8.035s]       |                                        unsigned int
+[8.035s]       |                                    %I64llu
+[8.036s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.036s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.036s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.036s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.036s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.036s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.036s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.036s]       |                                                     ^~~
+[8.036s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 4 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.036s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.036s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.036s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.036s]       |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.036s]       |                                                                |
+[8.060s]       |                                                                UINT64 {aka long long unsigned int}
+[8.060s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.060s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.061s]       |                                                     ^~~
+[8.061s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:48: note: format string is defined here
+[8.061s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.061s]       |                                            ~~~~^
+[8.061s]       |                                                |
+[8.061s]       |                                                unsigned int
+[8.061s]       |                                            %I64llu
+[8.061s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.061s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.061s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.061s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.061s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.061s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.062s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.062s]       |                                                     ^~~
+[8.062s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.062s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.062s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.062s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.062s]       |                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.062s]       |                                                                                               |
+[8.062s]       |                                                                                               UINT64 {aka long long unsigned int}
+[8.062s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.062s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.062s]       |                                                     ^~~
+[8.062s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:63: note: format string is defined here
+[8.063s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.063s]       |                                                           ~~~~^
+[8.063s]       |                                                               |
+[8.063s]       |                                                               unsigned int
+[8.063s]       |                                                           %I64llu
+[8.063s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.063s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.063s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.063s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.063s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.063s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.063s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.063s]       |                                                     ^~~
+[8.064s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 6 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.064s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.064s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.064s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.064s]       |                                                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.064s]       |                                                                                                                             |
+[8.064s]       |                                                                                                                             UINT64 {aka long long unsigned int}
+[8.064s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.064s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.064s]       |                                                     ^~~
+[8.064s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:71: note: format string is defined here
+[8.064s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.064s]       |                                                                   ~~~~^
+[8.064s]       |                                                                       |
+[8.065s]       |                                                                       unsigned int
+[8.065s]       |                                                                   %I64llu
+[8.065s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.065s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.065s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.065s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.065s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.065s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.065s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.065s]       |                                                     ^~~
+[8.065s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 7 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.065s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.065s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.066s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.066s]  1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+[8.066s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.066s]       |                                 |
+[8.066s]       |                                 UINT64 {aka long long unsigned int}
+[8.066s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.066s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.066s]       |                                                     ^~~
+[8.066s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:84: note: format string is defined here
+[8.066s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.066s]       |                                                                                ~~~~^
+[8.066s]       |                                                                                    |
+[8.066s]       |                                                                                    unsigned int
+[8.066s]       |                                                                                %I64llu
+[8.067s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.067s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.067s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.067s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.067s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.067s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.067s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.067s]       |                                                     ^~~
+[8.067s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 8 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.067s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.067s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.067s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.067s]  1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+[8.068s]       |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.068s]       |                                                             |
+[8.068s]       |                                                             UINT64 {aka long long unsigned int}
+[8.068s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.068s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.068s]       |                                                     ^~~
+[8.068s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:92: note: format string is defined here
+[8.068s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.068s]       |                                                                                        ~~~~^
+[8.068s]       |                                                                                            |
+[8.068s]       |                                                                                            unsigned int
+[8.068s]       |                                                                                        %I64llu
+[8.068s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.068s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.069s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.069s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.069s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.069s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.069s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.069s]       |                                                     ^~~
+[8.069s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 9 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.069s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.069s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.069s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.069s]  1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+[8.069s]       |                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.069s]       |                                                                                             |
+[8.069s]       |                                                                                             UINT64 {aka long long unsigned int}
+[8.070s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.070s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.070s]       |                                                     ^~~
+[8.070s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:107: note: format string is defined here
+[8.070s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.082s]       |                                                                                                       ~~~~^
+[8.082s]       |                                                                                                           |
+[8.082s]       |                                                                                                           unsigned int
+[8.082s]       |                                                                                                       %I64llu
+[8.082s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.082s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.082s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.082s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.083s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.083s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.083s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.083s]       |                                                     ^~~
+[8.083s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 10 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.083s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.083s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.083s]  1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+[8.083s]  1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+[8.083s]       |                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.083s]       |                                                                                                                           |
+[8.083s]       |                                                                                                                           UINT64 {aka long long unsigned int}
+[8.083s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.084s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.084s]       |                                                     ^~~
+[8.084s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:115: note: format string is defined here
+[8.084s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.084s]       |                                                                                                               ~~~~^
+[8.084s]       |                                                                                                                   |
+[8.084s]       |                                                                                                                   unsigned int
+[8.084s]       |                                                                                                               %I64llu
+[8.084s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.084s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.084s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.084s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.084s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.084s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.085s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.085s]       |                                                     ^~~
+[8.085s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 11 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.085s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.085s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.085s] ......
+[8.085s]  1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+[8.085s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.085s]       |                                 |
+[8.085s]       |                                 UINT64 {aka long long unsigned int}
+[8.085s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.085s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.085s]       |                                                     ^~~
+[8.085s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:126: note: format string is defined here
+[8.086s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.086s]       |                                                                                                                          ~~~~^
+[8.086s]       |                                                                                                                              |
+[8.086s]       |                                                                                                                              unsigned int
+[8.086s]       |                                                                                                                          %I64llu
+[8.086s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.086s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.086s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.086s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.086s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.086s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.086s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.086s]       |                                                     ^~~
+[8.086s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 12 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.117s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.117s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.117s] ......
+[8.117s]  1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+[8.117s]       |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.117s]       |                                                             |
+[8.117s]       |                                                             UINT64 {aka long long unsigned int}
+[8.117s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.118s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.118s]       |                                                     ^~~
+[8.118s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:139: note: format string is defined here
+[8.118s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.118s]       |                                                                                                                                       ~~~~^
+[8.118s]       |                                                                                                                                           |
+[8.118s]       |                                                                                                                                           unsigned int
+[8.118s]       |                                                                                                                                       %I64llu
+[8.118s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.118s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.118s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.118s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.118s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.119s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.119s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.119s]       |                                                     ^~~
+[8.119s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 13 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.119s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.119s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.119s] ......
+[8.119s]  1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+[8.119s]       |                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.119s]       |                                                                                          |
+[8.119s]       |                                                                                          UINT64 {aka long long unsigned int}
+[8.119s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.119s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.120s]       |                                                     ^~~
+[8.120s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:153: note: format string is defined here
+[8.120s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.120s]       |                                                                                                                                                     ~~~~^
+[8.120s]       |                                                                                                                                                         |
+[8.120s]       |                                                                                                                                                         unsigned int
+[8.120s]       |                                                                                                                                                     %I64llu
+[8.120s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.120s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.120s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.120s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.120s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.120s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.120s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.121s]       |                                                     ^~~
+[8.121s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 14 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.121s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.121s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.121s] ......
+[8.121s]  1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+[8.121s]       |                                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.121s]       |                                                                                                                        |
+[8.121s]       |                                                                                                                        UINT64 {aka long long unsigned int}
+[8.121s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.121s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.121s]       |                                                     ^~~
+[8.121s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:161: note: format string is defined here
+[8.121s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.122s]       |                                                                                                                                                             ~~~~^
+[8.122s]       |                                                                                                                                                                 |
+[8.122s]       |                                                                                                                                                                 unsigned int
+[8.122s]       |                                                                                                                                                             %I64llu
+[8.122s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+[8.122s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.122s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: ISO C++11 does not support the 'I' printf flag [-Wformat=]
+[8.122s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.122s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.122s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.122s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.122s]       |                                                     ^~~
+[8.122s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 15 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+[8.123s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.123s]       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.123s] ......
+[8.123s]  1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+[8.123s]       |                                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.123s]       |                                                                                                                                                          |
+[8.123s]       |                                                                                                                                                          UINT64 {aka long long unsigned int}
+[8.123s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+[8.123s]   116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+[8.123s]       |                                                     ^~~
+[8.150s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:179: note: format string is defined here
+[8.150s]  1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+[8.150s]       |                                                                                                                                                                               ~~~~^
+[8.150s]       |                                                                                                                                                                                   |
+[8.151s]       |                                                                                                                                                                                   unsigned int
+[8.151s]       |                                                                                                                                                                               %I64llu
+[8.151s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::InitLIN(UINT, PZCAN_LIN_INIT_CONFIG)’:
+[8.151s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1460:82: warning: conversion from ‘UINT’ {aka ‘unsigned int’} to ‘unsigned char:1’ changes value from ‘2’ to ‘0’ [-Woverflow]
+[8.151s]  1460 |                         m_linConfig[chnIdx].stFeature.unionVal.bEnhancedChksum = 2;
+[8.151s]       |                                                                                  ^
+[8.151s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘UINT Device::ClearLINSlaveMsg(UINT, BYTE*, UINT)’:
+[8.151s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1628:36: warning: unused parameter ‘chnIdx’ [-Wunused-parameter]
+[8.151s]  1628 | UINT Device::ClearLINSlaveMsg(UINT chnIdx, BYTE* pLINID, UINT nIDCount)
+[8.151s]       |                               ~~~~~^~~~~~
+[8.151s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1628:50: warning: unused parameter ‘pLINID’ [-Wunused-parameter]
+[8.151s]  1628 | UINT Device::ClearLINSlaveMsg(UINT chnIdx, BYTE* pLINID, UINT nIDCount)
+[8.151s]       |                                            ~~~~~~^~~~~~
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1628:63: warning: unused parameter ‘nIDCount’ [-Wunused-parameter]
+[8.152s]  1628 | UINT Device::ClearLINSlaveMsg(UINT chnIdx, BYTE* pLINID, UINT nIDCount)
+[8.152s]       |                                                          ~~~~~^~~~~~~~
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::GetDelaySendAvailableTxCount(UINT, UINT&)’:
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1877:22: warning: unused variable ‘nSize’ [-Wunused-variable]
+[8.152s]  1877 |                 UINT nSize = (UINT)UtilGetcJSONNumber(cJSON_DetachItemFromObjectCaseSensitive(pInfo, "Size"));
+[8.152s]       |                      ^~~~~
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘void Device::DataProcessThdLoop()’:
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:2558:21: warning: unused variable ‘decoder’ [-Wunused-variable]
+[8.152s]  2558 |     CPacketDecoder* decoder = nullptr;
+[8.152s]       |                     ^~~~~~~
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘void Device::HandleCANFrame(const std::vector<_tagPacketDataCAN>&)’:
+[8.152s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:2814:54: warning: missing initializer for member ‘tagZCAN_CHANNEL_ERR_INFO::passive_ErrData’ [-Wmissing-field-initializers]
+[8.152s]  2814 |                     ZCAN_CHANNEL_ERR_INFO errInfo{ 0 };
+[8.153s]       |                                                      ^
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:2814:54: warning: missing initializer for member ‘tagZCAN_CHANNEL_ERR_INFO::arLost_ErrData’ [-Wmissing-field-initializers]
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘void Device::HandleCANFDFrame(const std::vector<_tagPacketDataCANFD>&)’:
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:2885:54: warning: missing initializer for member ‘tagZCAN_CHANNEL_ERR_INFO::passive_ErrData’ [-Wmissing-field-initializers]
+[8.153s]  2885 |                     ZCAN_CHANNEL_ERR_INFO errInfo{ 0 };
+[8.153s]       |                                                      ^
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:2885:54: warning: missing initializer for member ‘tagZCAN_CHANNEL_ERR_INFO::arLost_ErrData’ [-Wmissing-field-initializers]
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘void Device::HandleAuthDataRequest(const FrameData&, BYTE)’:
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3037:53: warning: unused parameter ‘vecAuth’ [-Wunused-parameter]
+[8.153s]  3037 | void Device::HandleAuthDataRequest(const FrameData& vecAuth, BYTE pktTypeParam)
+[8.153s]       |                                    ~~~~~~~~~~~~~~~~~^~~~~~~
+[8.153s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3037:67: warning: unused parameter ‘pktTypeParam’ [-Wunused-parameter]
+[8.153s]  3037 | void Device::HandleAuthDataRequest(const FrameData& vecAuth, BYTE pktTypeParam)
+[8.154s]       |                                                              ~~~~~^~~~~~~~~~~~
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘void Device::HandleDevReqFrame(const FrameData&, BYTE)’:
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3075:28: warning: variable ‘resParam’ set but not used [-Wunused-but-set-variable]
+[8.154s]  3075 |         PacketTypeRESParam resParam;
+[8.154s]       |                            ^~~~~~~~
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3068:49: warning: unused parameter ‘vecDevReq’ [-Wunused-parameter]
+[8.154s]  3068 | void Device::HandleDevReqFrame(const FrameData& vecDevReq, BYTE pktTypeParam)
+[8.154s]       |                                ~~~~~~~~~~~~~~~~~^~~~~~~~~
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘void Device::HandleDevResFrame(const FrameData&, BYTE)’:
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3084:49: warning: unused parameter ‘vecDevRes’ [-Wunused-parameter]
+[8.154s]  3084 | void Device::HandleDevResFrame(const FrameData& vecDevRes, BYTE pktTypeParam)
+[8.154s]       |                                ~~~~~~~~~~~~~~~~~^~~~~~~~~
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘BYTE Device::CreatePktRequestSeq()’:
+[8.154s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3224:21: warning: operation on ‘((Device*)this)->Device::m_pktRequestSeq’ may be undefined [-Wsequence-point]
+[8.155s]  3224 |     m_pktRequestSeq = (++m_pktRequestSeq) % 8;
+[8.155s]       |     ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+[8.155s] [ 66%] Built target multi_port_motor_feedback
+[8.155s] [ 68%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpServer.cpp.o
+[8.155s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::CheckDynamicCfgIsBaud(std::string, std::string, cJSON*)’:
+[8.155s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3863:62: warning: comparison of integer expressions of different signedness: ‘UINT’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+[8.155s]  3863 |                     if (kCANFDDTU300AbitBaudrate[i].nBaudVal == std::atoi(value.c_str()))
+[8.155s]       |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.155s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3877:62: warning: comparison of integer expressions of different signedness: ‘UINT’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+[8.155s]  3877 |                     if (kCANFDDTU300DbitBaudrate[i].nBaudVal == std::atoi(value.c_str()))
+[8.155s]       |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.155s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3892:62: warning: comparison of integer expressions of different signedness: ‘UINT’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+[8.155s]  3892 |                     if (kUSBCANFD800AbitBaudrate[i].nBaudVal == std::atoi(value.c_str()))
+[8.155s]       |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:3906:62: warning: comparison of integer expressions of different signedness: ‘UINT’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+[8.156s]  3906 |                     if (kUSBCANFD800DbitBaudrate[i].nBaudVal == std::atoi(value.c_str()))
+[8.156s]       |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::SyncDevClock()’:
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:4000:10: warning: unused variable ‘time_string’ [-Wunused-variable]
+[8.156s]  4000 |     char time_string[40];
+[8.156s]       |          ^~~~~~~~~~~
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘ZCAN_RET_STATUS Device::UDS_Request(const ZCAN_UDS_REQUEST*, ZCAN_UDS_RESPONSE*, BYTE*, UINT)’:
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:4085:21: warning: argument to ‘sizeof’ in ‘void* memset(void*, int, size_t)’ call is the same expression as the destination; did you mean to dereference it? [-Wsizeof-pointer-memaccess]
+[8.156s]  4085 |     memset(resp, 0, sizeof(resp));
+[8.156s]       |                     ^~~~~~~~~~~~
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘ZCAN_RET_STATUS Device::UDS_Control(const ZCAN_UDS_CTRL_REQ*, ZCAN_UDS_CTRL_RESP*)’:
+[8.156s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:4150:21: warning: argument to ‘sizeof’ in ‘void* memset(void*, int, size_t)’ call is the same expression as the destination; did you mean to dereference it? [-Wsizeof-pointer-memaccess]
+[8.156s]  4150 |     memset(resp, 0, sizeof(resp));
+[8.157s]       |                     ^~~~~~~~~~~~
+[8.157s] [ 70%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/UdpService.cpp.o
+[8.157s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+[8.157s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h: In instantiation of ‘CanDataQueue<T>::CanDataQueue(size_t) [with T = _tagPacketDataCAN; size_t = long unsigned int]’:
+[8.157s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:166:105:   required from here
+[8.157s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:137:12: warning: ‘CanDataQueue<_tagPacketDataCAN>::m_capacity’ will be initialized after [-Wreorder]
+[8.157s]   137 |     size_t m_capacity;              //��ǰ�������ڴﵽ�������֮ǰ�����Ŷ����������࣬���������ӵ��������
+[8.157s]       |            ^~~~~~~~~~
+[8.157s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:136:12: warning:   ‘size_t CanDataQueue<_tagPacketDataCAN>::m_capacity_max’ [-Wreorder]
+[8.157s]   136 |     size_t m_capacity_max;          //�������
+[8.157s]       |            ^~~~~~~~~~~~~~
+[8.157s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:149:5: warning:   when initialized here [-Wreorder]
+[8.157s]   149 |     CanDataQueue(size_t maxCount = CAN_DATA_QUEUE_BUFF_SIZE) :m_capacity(CAN_DATA_QUEUE_BUFF_INIT),
+[8.157s]       |     ^~~~~~~~~~~~
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h: In instantiation of ‘CanDataQueue<T>::CanDataQueue(size_t) [with T = _tagPacketDataCANFD; size_t = long unsigned int]’:
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:166:105:   required from here
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:137:12: warning: ‘CanDataQueue<_tagPacketDataCANFD>::m_capacity’ will be initialized after [-Wreorder]
+[8.158s]   137 |     size_t m_capacity;              //��ǰ�������ڴﵽ�������֮ǰ�����Ŷ����������࣬���������ӵ��������
+[8.158s]       |            ^~~~~~~~~~
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:136:12: warning:   ‘size_t CanDataQueue<_tagPacketDataCANFD>::m_capacity_max’ [-Wreorder]
+[8.158s]   136 |     size_t m_capacity_max;          //�������
+[8.158s]       |            ^~~~~~~~~~~~~~
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:149:5: warning:   when initialized here [-Wreorder]
+[8.158s]   149 |     CanDataQueue(size_t maxCount = CAN_DATA_QUEUE_BUFF_SIZE) :m_capacity(CAN_DATA_QUEUE_BUFF_INIT),
+[8.158s]       |     ^~~~~~~~~~~~
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h: In instantiation of ‘CanDataQueue<T>::CanDataQueue(size_t) [with T = tagZCAN_CHANNEL_ERR_INFO; size_t = long unsigned int]’:
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:166:105:   required from here
+[8.158s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:137:12: warning: ‘CanDataQueue<tagZCAN_CHANNEL_ERR_INFO>::m_capacity’ will be initialized after [-Wreorder]
+[8.159s]   137 |     size_t m_capacity;              //��ǰ�������ڴﵽ�������֮ǰ�����Ŷ����������࣬���������ӵ��������
+[8.159s]       |            ^~~~~~~~~~
+[8.159s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:136:12: warning:   ‘size_t CanDataQueue<tagZCAN_CHANNEL_ERR_INFO>::m_capacity_max’ [-Wreorder]
+[8.159s]   136 |     size_t m_capacity_max;          //�������
+[8.159s]       |            ^~~~~~~~~~~~~~
+[8.159s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:149:5: warning:   when initialized here [-Wreorder]
+[8.159s]   149 |     CanDataQueue(size_t maxCount = CAN_DATA_QUEUE_BUFF_SIZE) :m_capacity(CAN_DATA_QUEUE_BUFF_INIT),
+[8.159s]       |     ^~~~~~~~~~~~
+[8.159s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h: In instantiation of ‘CanDataQueue<T>::CanDataQueue(size_t) [with T = _tagPacketDataGPS; size_t = long unsigned int]’:
+[8.159s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:166:105:   required from here
+[8.159s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:137:12: warning: ‘CanDataQueue<_tagPacketDataGPS>::m_capacity’ will be initialized after [-Wreorder]
+[8.159s]   137 |     size_t m_capacity;              //��ǰ�������ڴﵽ�������֮ǰ�����Ŷ����������࣬���������ӵ��������
+[8.159s]       |            ^~~~~~~~~~
+[8.159s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:136:12: warning:   ‘size_t CanDataQueue<_tagPacketDataGPS>::m_capacity_max’ [-Wreorder]
+[8.159s]   136 |     size_t m_capacity_max;          //�������
+[8.160s]       |            ^~~~~~~~~~~~~~
+[8.160s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:149:5: warning:   when initialized here [-Wreorder]
+[8.160s]   149 |     CanDataQueue(size_t maxCount = CAN_DATA_QUEUE_BUFF_SIZE) :m_capacity(CAN_DATA_QUEUE_BUFF_INIT),
+[8.160s]       |     ^~~~~~~~~~~~
+[8.160s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h: In instantiation of ‘CanDataQueue<T>::CanDataQueue(size_t) [with T = tagZCANDataObj; size_t = long unsigned int]’:
+[8.180s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:166:66:   required from here
+[8.180s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:137:12: warning: ‘CanDataQueue<tagZCANDataObj>::m_capacity’ will be initialized after [-Wreorder]
+[8.180s]   137 |     size_t m_capacity;              //��ǰ�������ڴﵽ�������֮ǰ�����Ŷ����������࣬���������ӵ��������
+[8.180s]       |            ^~~~~~~~~~
+[8.181s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:136:12: warning:   ‘size_t CanDataQueue<tagZCANDataObj>::m_capacity_max’ [-Wreorder]
+[8.181s]   136 |     size_t m_capacity_max;          //�������
+[8.181s]       |            ^~~~~~~~~~~~~~
+[8.181s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:149:5: warning:   when initialized here [-Wreorder]
+[8.181s]   149 |     CanDataQueue(size_t maxCount = CAN_DATA_QUEUE_BUFF_SIZE) :m_capacity(CAN_DATA_QUEUE_BUFF_INIT),
+[8.181s]       |     ^~~~~~~~~~~~
+[8.181s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h: In instantiation of ‘CanDataQueue<T>::CanDataQueue(size_t) [with T = _tagPacketDataLIN; size_t = long unsigned int]’:
+[8.181s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:166:105:   required from here
+[8.181s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:137:12: warning: ‘CanDataQueue<_tagPacketDataLIN>::m_capacity’ will be initialized after [-Wreorder]
+[8.181s]   137 |     size_t m_capacity;              //��ǰ�������ڴﵽ�������֮ǰ�����Ŷ����������࣬���������ӵ��������
+[8.181s]       |            ^~~~~~~~~~
+[8.181s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:136:12: warning:   ‘size_t CanDataQueue<_tagPacketDataLIN>::m_capacity_max’ [-Wreorder]
+[8.181s]   136 |     size_t m_capacity_max;          //�������
+[8.182s]       |            ^~~~~~~~~~~~~~
+[8.182s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:149:5: warning:   when initialized here [-Wreorder]
+[8.182s]   149 |     CanDataQueue(size_t maxCount = CAN_DATA_QUEUE_BUFF_SIZE) :m_capacity(CAN_DATA_QUEUE_BUFF_INIT),
+[8.182s]       |     ^~~~~~~~~~~~
+[8.409s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp: In member function ‘std::string CLog::GetFilePath(bool)’:
+[8.409s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp:42:36: warning: unused parameter ‘autoFilename’ [-Wunused-parameter]
+[8.409s]    42 | std::string CLog::GetFilePath(bool autoFilename)
+[8.410s]       |                               ~~~~~^~~~~~~~~~~~
+[8.410s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp: In member function ‘void CLog::Write(CLog::LogLevel, const char*, ...)’:
+[8.410s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp:60:27: warning: unused parameter ‘level’ [-Wunused-parameter]
+[8.410s]    60 | void CLog::Write(LogLevel level, const char* fmt, ...)
+[8.410s]       |                  ~~~~~~~~~^~~~~
+[8.410s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp:60:46: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[8.410s]    60 | void CLog::Write(LogLevel level, const char* fmt, ...)
+[8.410s]       |                                  ~~~~~~~~~~~~^~~
+[8.716s] [ 71%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/cJSON/cJSON.c.o
+[8.993s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpServer.cpp:3:
+[8.993s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[8.994s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[8.994s]    47 |     void Print(const char* fmt, ...){}
+[8.994s]       |                ~~~~~~~~~~~~^~~
+[8.997s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/UdpService.cpp:3:
+[8.998s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[8.998s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[8.998s]    47 |     void Print(const char* fmt, ...){}
+[8.999s]       |                ~~~~~~~~~~~~^~~
+[9.070s] [ 73%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/adler32.c.o
+[9.179s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::SyncDevClock()’:
+[9.180s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:4020:1: warning: control reaches end of non-void function [-Wreturn-type]
+[9.180s]  4020 | }
+[9.180s]       | ^
+[9.308s] [ 75%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/compress.c.o
+[9.443s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp:2:
+[9.444s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[9.444s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[9.445s]    47 |     void Print(const char* fmt, ...){}
+[9.445s]       |                ~~~~~~~~~~~~^~~
+[9.457s] [ 77%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/crc32.c.o
+[9.480s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpServer.cpp: In member function ‘virtual bool TcpServer::SendData(const char*, unsigned int)’:
+[9.481s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpServer.cpp:183:47: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+[9.486s]   183 |         if (cc_socket_send(&sock, data, size) != size) {
+[9.494s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[9.524s] [ 78%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/deflate.c.o
+[9.593s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/UdpService.cpp: In member function ‘virtual bool UdpService::SendData(const char*, unsigned int)’:
+[9.594s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/UdpService.cpp:185:56: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+[9.594s]   185 |     if (cc_socket_send_to(&m_socket, data, size, &rmt) != size) {
+[9.595s]       |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[9.644s] [ 80%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzclose.c.o
+[9.821s] [ 82%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c.o
+[9.853s] [ 84%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c.o
+[9.873s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c: In function ‘gz_open’:
+[9.873s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c:14:17: warning: implicit declaration of function ‘lseek’; did you mean ‘fseek’? [-Wimplicit-function-declaration]
+[9.874s]    14 | #  define LSEEK lseek
+[9.874s]       |                 ^~~~~
+[9.875s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c:252:9: note: in expansion of macro ‘LSEEK’
+[9.875s]   252 |         LSEEK(state->fd, 0, SEEK_END);  /* so gzoffset() is correct */
+[9.876s]       |         ^~~~~
+[9.894s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c: In function ‘gz_load’:
+[9.895s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c:35:15: warning: implicit declaration of function ‘read’; did you mean ‘fread’? [-Wimplicit-function-declaration]
+[9.895s]    35 |         ret = read(state->fd, buf + *have, get);
+[9.896s]       |               ^~~~
+[9.896s]       |               fread
+[9.899s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c: In function ‘gzclose_r’:
+[9.900s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c:651:11: warning: implicit declaration of function ‘close’; did you mean ‘pclose’? [-Wimplicit-function-declaration]
+[9.900s]   651 |     ret = close(state->fd);
+[9.901s]       |           ^~~~~
+[9.901s]       |           pclose
+[9.942s] [ 85%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c.o
+[9.968s] [ 87%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/infback.c.o
+[9.982s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c: In function ‘gz_comp’:
+[9.983s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c:89:20: warning: implicit declaration of function ‘write’; did you mean ‘fwrite’? [-Wimplicit-function-declaration]
+[9.983s]    89 |             writ = write(state->fd, strm->next_in, put);
+[9.984s]       |                    ^~~~~
+[9.984s]       |                    fwrite
+[9.984s] [ 89%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inffast.c.o
+[9.988s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c: In function ‘gzclose_w’:
+[9.989s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c:661:9: warning: implicit declaration of function ‘close’; did you mean ‘pclose’? [-Wimplicit-function-declaration]
+[9.989s]   661 |     if (close(state->fd) == -1)
+[9.991s]       |         ^~~~~
+[9.992s]       |         pclose
+[10.035s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/infback.c: In function ‘inflateBack’:
+[10.036s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/infback.c:479:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.036s]   479 |             state->mode = LEN;
+[10.037s]       |             ~~~~~~~~~~~~^~~~~
+[10.037s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/infback.c:481:9: note: here
+[10.038s]   481 |         case LEN:
+[10.038s]       |         ^~~~
+[10.098s] [ 91%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c.o
+[10.104s] In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp:2:
+[10.105s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h: In member function ‘void TimeCalc::Print(const char*, ...)’:
+[10.105s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:47:28: warning: unused parameter ‘fmt’ [-Wunused-parameter]
+[10.106s]    47 |     void Print(const char* fmt, ...){}
+[10.106s]       |                ~~~~~~~~~~~~^~~
+[10.106s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp: In function ‘void cc_time_begin_period(int)’:
+[10.107s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp:9:31: warning: unused parameter ‘ms’ [-Wunused-parameter]
+[10.128s]     9 | void cc_time_begin_period(int ms)
+[10.129s]       |                           ~~~~^~
+[10.131s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp: In function ‘void cc_time_end_period(int)’:
+[10.132s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp:16:29: warning: unused parameter ‘ms’ [-Wunused-parameter]
+[10.134s]    16 | void cc_time_end_period(int ms)
+[10.136s]       |                         ~~~~^~
+[10.136s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp: In function ‘bool thread_set_priority(std::thread&, int)’:
+[10.138s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp:23:39: warning: unused parameter ‘thread’ [-Wunused-parameter]
+[10.138s]    23 | bool thread_set_priority(std::thread& thread, int prio)
+[10.140s]       |                          ~~~~~~~~~~~~~^~~~~~
+[10.142s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp:23:51: warning: unused parameter ‘prio’ [-Wunused-parameter]
+[10.144s]    23 | bool thread_set_priority(std::thread& thread, int prio)
+[10.145s]       |                                               ~~~~^~~~
+[10.148s] [ 92%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inftrees.c.o
+[10.148s] [ 94%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/trees.c.o
+[10.189s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c: In function ‘inflate’:
+[10.190s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:742:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.191s]   742 |             state->mode = EXLEN;
+[10.192s]       |             ~~~~~~~~~~~~^~~~~~~
+[10.193s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:743:9: note: here
+[10.195s]   743 |         case EXLEN:
+[10.195s]       |         ^~~~
+[10.195s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:755:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.196s]   755 |             state->mode = EXTRA;
+[10.196s]       |             ~~~~~~~~~~~~^~~~~~~
+[10.196s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:756:9: note: here
+[10.196s]   756 |         case EXTRA:
+[10.196s]       |         ^~~~
+[10.196s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:777:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.196s]   777 |             state->mode = NAME;
+[10.196s]       |             ~~~~~~~~~~~~^~~~~~
+[10.196s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:778:9: note: here
+[10.196s]   778 |         case NAME:
+[10.196s]       |         ^~~~
+[10.196s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:798:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.196s]   798 |             state->mode = COMMENT;
+[10.196s]       |             ~~~~~~~~~~~~^~~~~~~~~
+[10.197s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:799:9: note: here
+[10.197s]   799 |         case COMMENT:
+[10.197s]       |         ^~~~
+[10.197s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:818:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.197s]   818 |             state->mode = HCRC;
+[10.197s]       |             ~~~~~~~~~~~~^~~~~~
+[10.197s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:819:9: note: here
+[10.197s]   819 |         case HCRC:
+[10.197s]       |         ^~~~
+[10.197s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:841:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.197s]   841 |             state->mode = DICT;
+[10.197s]       |             ~~~~~~~~~~~~^~~~~~
+[10.197s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:842:9: note: here
+[10.197s]   842 |         case DICT:
+[10.198s]       |         ^~~~
+[10.198s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:848:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.198s]   848 |             state->mode = TYPE;
+[10.198s]       |             ~~~~~~~~~~~~^~~~~~
+[10.198s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:849:9: note: here
+[10.198s]   849 |         case TYPE:
+[10.198s]       |         ^~~~
+[10.198s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:850:34: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.198s]   850 |             if (flush == Z_BLOCK || flush == Z_TREES) goto inf_leave;
+[10.198s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:851:9: note: here
+[10.198s]   851 |         case TYPEDO:
+[10.198s]       |         ^~~~
+[10.198s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:900:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.198s]   900 |             if (flush == Z_TREES) goto inf_leave;
+[10.199s]       |                ^
+[10.199s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:901:9: note: here
+[10.199s]   901 |         case COPY_:
+[10.199s]       |         ^~~~
+[10.199s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:902:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.199s]   902 |             state->mode = COPY;
+[10.199s]       |             ~~~~~~~~~~~~^~~~~~
+[10.199s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:903:9: note: here
+[10.199s]   903 |         case COPY:
+[10.199s]       |         ^~~~
+[10.199s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1041:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.199s]  1041 |             if (flush == Z_TREES) goto inf_leave;
+[10.199s]       |                ^
+[10.199s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1042:9: note: here
+[10.200s]  1042 |         case LEN_:
+[10.200s]       |         ^~~~
+[10.200s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1043:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.200s]  1043 |             state->mode = LEN;
+[10.200s]       |             ~~~~~~~~~~~~^~~~~
+[10.203s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1044:9: note: here
+[10.204s]  1044 |         case LEN:
+[10.205s]       |         ^~~~
+[10.205s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1092:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.206s]  1092 |             state->mode = LENEXT;
+[10.206s]       |             ~~~~~~~~~~~~^~~~~~~~
+[10.206s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1093:9: note: here
+[10.207s]  1093 |         case LENEXT:
+[10.207s]       |         ^~~~
+[10.207s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1102:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.207s]  1102 |             state->mode = DIST;
+[10.208s]       |             ~~~~~~~~~~~~^~~~~~
+[10.208s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1103:9: note: here
+[10.208s]  1103 |         case DIST:
+[10.208s]       |         ^~~~
+[10.209s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1129:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.209s]  1129 |             state->mode = DISTEXT;
+[10.209s]       |             ~~~~~~~~~~~~^~~~~~~~~
+[10.209s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1130:9: note: here
+[10.209s]  1130 |         case DISTEXT:
+[10.210s]       |         ^~~~
+[10.210s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1145:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.210s]  1145 |             state->mode = MATCH;
+[10.211s]       |             ~~~~~~~~~~~~^~~~~~~
+[10.211s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1146:9: note: here
+[10.211s]  1146 |         case MATCH:
+[10.211s]       |         ^~~~
+[10.212s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1220:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.212s]  1220 |             state->mode = LENGTH;
+[10.212s]       |             ~~~~~~~~~~~~^~~~~~~~
+[10.212s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1221:9: note: here
+[10.213s]  1221 |         case LENGTH:
+[10.213s]       |         ^~~~
+[10.213s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1233:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
+[10.214s]  1233 |             state->mode = DONE;
+[10.214s]       |             ~~~~~~~~~~~~^~~~~~
+[10.214s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c:1234:9: note: here
+[10.214s]  1234 |         case DONE:
+[10.215s]       |         ^~~~
+[10.257s] [ 96%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/uncompr.c.o
+[10.362s] [ 98%] Building C object CMakeFiles/can_motor_feedback_publisher.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/zutil.c.o
+[10.702s] In file included from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[10.703s]                  from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.h:10,
+[10.703s]                  from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp:7:
+[10.704s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h: At global scope:
+[10.704s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[10.704s]   584 |         struct {
+[10.705s]       |                ^
+[10.727s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp: In member function ‘void TcpClient::TcpRecvLoop()’:
+[10.728s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp:193:54: warning: unused variable ‘time_string’ [-Wunused-variable]
+[10.729s]   193 |                                                 char time_string[40];
+[10.730s]       |                                                      ^~~~~~~~~~~
+[10.730s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp: In member function ‘virtual bool TcpClient::SendData(const char*, unsigned int)’:
+[10.731s] /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp:235:51: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+[10.731s]   235 |         if (cc_socket_send(&m_socket, data, size) != size) {
+[10.732s]       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[11.326s] In file included from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[11.326s]                  from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:29:
+[11.327s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[11.327s]   584 |         struct {
+[11.328s]       |                ^
+[14.683s] [100%] Linking CXX executable can_motor_feedback_publisher
+[15.318s] [100%] Built target can_motor_feedback_publisher
+[15.351s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[15.381s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[15.405s] -- Install configuration: ""
+[15.406s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/rosidl_interfaces/multi_port_motor_feedback
+[15.407s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[15.408s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[15.409s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_generator_c__visibility_control.h
+[15.409s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/motor_state.h
+[15.410s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/low_state.h
+[15.411s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[15.411s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__functions.c
+[15.412s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.h
+[15.412s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__functions.c
+[15.412s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__functions.h
+[15.414s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.h
+[15.414s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__struct.h
+[15.415s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__struct.h
+[15.415s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__functions.h
+[15.416s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/library_path.sh
+[15.417s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/library_path.dsv
+[15.418s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_generator_c.so
+[15.419s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_generator_c.so" to ""
+[15.419s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[15.420s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[15.421s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[15.421s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[15.422s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_fastrtps_c.h
+[15.423s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_fastrtps_c.h
+[15.423s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_c.so
+[15.424s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_c.so" to ""
+[15.425s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[15.425s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[15.426s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_generator_cpp__visibility_control.hpp
+[15.427s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/low_state.hpp
+[15.428s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/motor_state.hpp
+[15.428s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[15.428s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.hpp
+[15.429s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__struct.hpp
+[15.429s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__traits.hpp
+[15.430s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__traits.hpp
+[15.431s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.hpp
+[15.431s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__builder.hpp
+[15.431s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__builder.hpp
+[15.432s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__struct.hpp
+[15.432s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[15.432s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[15.433s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[15.435s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[15.436s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_fastrtps_cpp.hpp
+[15.436s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_fastrtps_cpp.hpp
+[15.436s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/dds_fastrtps
+[15.437s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.so
+[15.437s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.so" to ""
+[15.437s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[15.438s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[15.438s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[15.439s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.c
+[15.439s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_introspection_c.h
+[15.439s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_introspection_c.h
+[15.440s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.c
+[15.440s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[15.440s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_introspection_c.so
+[15.444s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_introspection_c.so" to ""
+[15.447s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_c.so
+[15.447s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_c.so" to ""
+[15.448s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[15.449s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[15.450s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[15.451s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.cpp
+[15.452s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_introspection_cpp.hpp
+[15.453s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.cpp
+[15.454s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_introspection_cpp.hpp
+[15.454s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_introspection_cpp.so
+[15.455s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_introspection_cpp.so" to ""
+[15.456s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_cpp.so
+[15.456s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_cpp.so" to ""
+[15.457s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/MotorState.idl
+[15.458s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/LowState.idl
+[15.458s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/MotorState.msg
+[15.459s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/LowState.msg
+[15.460s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/multi_port_motor_feedback/can_motor_feedback_publisher
+[15.460s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/multi_port_motor_feedback/can_motor_feedback_publisher" to ""
+[15.461s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback//launch
+[15.462s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback//launch/motor_feedback_publisher.launch.py
+[15.462s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/package_run_dependencies/multi_port_motor_feedback
+[15.463s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/parent_prefix_path/multi_port_motor_feedback
+[15.464s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/ament_prefix_path.sh
+[15.465s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/ament_prefix_path.dsv
+[15.465s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/path.sh
+[15.466s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/path.dsv
+[15.466s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.bash
+[15.467s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.sh
+[15.467s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.zsh
+[15.468s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.dsv
+[15.471s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.dsv
+[15.472s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/packages/multi_port_motor_feedback
+[15.473s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_generator_cExport.cmake
+[15.473s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_generator_cExport-noconfig.cmake
+[15.474s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cExport.cmake
+[15.474s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[15.475s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_generator_cppExport.cmake
+[15.475s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cppExport.cmake
+[15.476s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[15.477s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cExport.cmake
+[15.477s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[15.478s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cExport.cmake
+[15.478s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cExport-noconfig.cmake
+[15.479s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cppExport.cmake
+[15.479s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[15.480s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cppExport.cmake
+[15.480s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cppExport-noconfig.cmake
+[15.481s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/rosidl_cmake-extras.cmake
+[15.481s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_dependencies-extras.cmake
+[15.482s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_include_directories-extras.cmake
+[15.482s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_libraries-extras.cmake
+[15.483s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_targets-extras.cmake
+[15.483s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[15.483s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[15.484s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedbackConfig.cmake
+[15.484s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedbackConfig-version.cmake
+[15.486s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.xml
+[15.489s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback

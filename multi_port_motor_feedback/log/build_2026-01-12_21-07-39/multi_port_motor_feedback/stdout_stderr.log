@@ -1,0 +1,8 @@
+[  9%] Built target can_send_test
+[ 12%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/src/motor_heartbeat_monitor.cpp.o
+[ 16%] Linking CXX executable motor_heartbeat_monitor
+[100%] Built target motor_heartbeat_monitor
+-- Install configuration: ""
+-- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/can_send_test
+-- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor
+-- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor" to ""

@@ -1,0 +1,12 @@
+[0.016s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback': /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback -- -j8 -l8
+[0.132s] [  9%] Built target can_send_test
+[0.177s] [ 12%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/src/motor_heartbeat_monitor.cpp.o
+[1.150s] [ 16%] Linking CXX executable motor_heartbeat_monitor
+[1.497s] [100%] Built target motor_heartbeat_monitor
+[1.512s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback' returned '0': /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback -- -j8 -l8
+[1.525s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback': /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback
+[1.534s] -- Install configuration: ""
+[1.535s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/can_send_test
+[1.535s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor
+[1.538s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor" to ""
+[1.541s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback' returned '0': /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback

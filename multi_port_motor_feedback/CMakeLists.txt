@@ -45,8 +45,16 @@ add_executable(can_send_test
 )
 target_link_libraries(can_send_test pthread)
 
+# Motor heartbeat monitor executable (500Hz read command sender)
+add_executable(motor_heartbeat_monitor
+    src/motor_heartbeat_monitor.cpp
+    ${CANFDNET_SOURCES}
+    ${ZLIB_SOURCES}
+)
+target_link_libraries(motor_heartbeat_monitor pthread)
+
 # Note: can_to_ros2.cpp was removed as it's a duplicate of can_motor_feedback_publisher.cpp
 # The ROS2 package at multi_port_motor_feedback_ros2/ contains the actual CAN->ROS2 publisher
 
 # Install non-ROS2 targets
-install(TARGETS can_send_test DESTINATION bin)
+install(TARGETS can_send_test motor_heartbeat_monitor DESTINATION bin)

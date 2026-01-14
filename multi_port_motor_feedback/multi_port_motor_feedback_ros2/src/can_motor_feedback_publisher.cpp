@@ -109,9 +109,8 @@ struct DMMotorData {
 
     int8_t  temp_mos;
     int8_t  temp_rotor;
-    bool valid;
 
-    DMMotorData() : valid(false) {
+    DMMotorData() {
         memset(raw, 0, sizeof(raw));
     }
 };
@@ -158,6 +157,18 @@ public:
         data.id = motor_id_from_can;
         data.state = (d[0] >> 4) & 0x0F;
 
+        // Debug output for motors 11 and 25-30 (troubleshooting state code)
+        if (data.id >= 11) {
+            static int debug_print_count[30] = {0};
+            debug_print_count[data.id - 1]++;
+            if (debug_print_count[data.id - 1] <= 3 || debug_print_count[data.id - 1] % 100 == 0) {
+                std::cout << "[DEBUG Motor " << (int)data.id << "] D[0]=0x"
+                          << std::hex << std::setw(2) << std::setfill('0') << (int)d[0] << std::dec
+                          << " -> state=" << (int)data.state
+                          << " (" << DMMotorFrameDecoder::GetStateDescription(data.state) << ")" << std::endl;
+            }
+        }
+
         // Get calibration for this motor
         int motor_idx = data.id - 1;  // motor 1 -> index 0
         if (motor_idx < 0 || motor_idx >= 30) motor_idx = 0;
@@ -167,25 +178,42 @@ public:
         // D[1-2]: Position (16-bit encoded value, range: [0, 2^16-1])
         uint16_t pos_encoded = static_cast<uint16_t>((d[1] << 8) | d[2]);
         data.position_raw = static_cast<int16_t>(pos_encoded);
+        // Position decoding: (pos_encoded - 2^15) / 2^16 * (PMAX - PMIN)
         data.position = (pos_encoded - 32768.0) / 65536.0 * (cal.p_max - cal.p_min);
 
         // D[3-4]: Velocity (12-bit encoded as unsigned, range: [0, 2^12-1])
         // D[3] = VEL[11:4], D[4] high nibble = VEL[3:0]
         int16_t vel_encoded = ((d[3] & 0xFF) << 4) | ((d[4] >> 4) & 0x0F);
         data.velocity_raw = vel_encoded;
+        // Velocity decoding: (vel_encoded - 2^11) / 2^12 * (VMAX - VMIN)
         data.velocity = (vel_encoded - 2048.0) / 4096.0 * (cal.v_max - cal.v_min);
 
         // D[4-5]: Effort/Torque (12-bit encoded as unsigned, range: [0, 2^12-1])
         // D[4] low nibble = T[11:8], D[5] = T[7:0]
         int16_t effort_encoded = ((d[4] & 0x0F) << 8) | d[5];
         data.effort_raw = effort_encoded;
+        // Torque decoding: (effort_encoded - 2^11) / 2^12 * (TMAX - TMIN)
         data.effort = (effort_encoded - 2048.0) / 4096.0 * (cal.t_max - cal.t_min);
 
         // D[6-7]: Temperatures (8-bit signed, directly in Celsius)
         data.temp_mos = static_cast<int8_t>(d[6]);
         data.temp_rotor = static_cast<int8_t>(d[7]);
 
-        data.valid = true;
+        // Debug output (print every 100th frame for motor 2)
+        static int debug_counter = 0;
+        if (data.id == 2 && ++debug_counter % 100 == 1) {
+            std::cout << "[DEBUG Motor 2] Raw: ";
+            for (int i = 0; i < 8; i++) std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)d[i] << " ";
+            std::cout << std::dec << std::endl;
+            std::cout << "[DEBUG Motor 2] pos_encoded=" << pos_encoded << " (" << (pos_encoded - 32768) << " offset)"
+                      << " -> position=" << data.position << " rad" << std::endl;
+            std::cout << "[DEBUG Motor 2] vel_encoded=" << vel_encoded << " (" << (vel_encoded - 2048) << " offset)"
+                      << " -> velocity=" << data.velocity << " rad/s" << std::endl;
+            std::cout << "[DEBUG Motor 2] effort_encoded=" << effort_encoded << " (" << (effort_encoded - 2048) << " offset)"
+                      << " -> effort=" << data.effort << " Nm" << std::endl;
+            std::cout << "[DEBUG Motor 2] T_MOS=" << (int)data.temp_mos << " T_Rotor=" << (int)data.temp_rotor << std::endl;
+        }
+
         return data;
     }
 
@@ -224,6 +252,21 @@ double DMMotorFrameDecoder::TMIN = -20.0;
 
 // Per-motor calibration array
 std::array<MotorCalibration, 30> DMMotorFrameDecoder::motor_calibration;
+
+// ==================== Heartbeat Timeout Detection ====================
+// Each motor's last seen timestamp (updated when CAN frame is received)
+// Initialize last_seen_time to epoch (all motors start as "never seen")
+std::array<std::chrono::steady_clock::time_point, NUM_MOTORS> g_last_seen_time = [] {
+    std::array<std::chrono::steady_clock::time_point, NUM_MOTORS> arr;
+    auto epoch = std::chrono::steady_clock::time_point{};
+    for (auto& t : arr) {
+        t = epoch;
+    }
+    return arr;
+}();
+
+// Heartbeat timeout threshold (2 seconds)
+constexpr int HEARTBEAT_TIMEOUT_MS = 2000;
 
 // ==================== Global Variables ====================
 std::atomic<bool> g_running(true);
@@ -461,21 +504,31 @@ void PortReceiver::ReceiveLoop() {
                 }
                 std::cout << std::endl;
 
-                // Motor feedback: extract motor ID from CAN ID
-                // Motor ID mapping: motor_id = CAN_ID - 0x20
-                // For example: motor 30 has CAN ID = 0x3E (0x1E + 0x20)
-                // We need to reverse this: motor_id = 0x3E - 0x20 = 0x1E = 30
-                int motor_id_from_can = can_id - 0x20;
+                // Motor feedback: extract motor ID from CAN ID (matches cantoudp.cpp)
+                // Global CAN ID (1-30) maps directly to array index (0-29)
+                int motor_id_from_can = can_id & 0x01F;  // Extract global CAN ID (1-30)
 
-                // Check if CAN ID is valid (1-30) - matches cantoudp.cpp
+                // Check if CAN ID is valid (1-30)
                 if (motor_id_from_can >= 1 && motor_id_from_can <= NUM_MOTORS) {
                     // Decode DM format (pass motor_id_from_can to correctly set data.id)
                     DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(receive_buffer[i], motor_id_from_can);
 
                     std::lock_guard<std::mutex> lock(g_data_mutex);
                     // Map CAN ID to array index: array_index = motor_id - 1
-                    g_motor_data[motor_id_from_can - 1] = dm_data;
+                    int array_index = motor_id_from_can - 1;
+                    g_motor_data[array_index] = dm_data;
+                    // Update last seen time for heartbeat timeout detection
+                    g_last_seen_time[array_index] = std::chrono::steady_clock::now();
                     receive_count_++;
+
+                    // Debug: print first time we see each motor
+                    static int first_motor_seen[30] = {0};
+                    if (first_motor_seen[array_index] == 0) {
+                        std::cout << "[RX] Motor " << motor_id_from_can << " (CAN ID=0x"
+                                  << std::hex << can_id << std::dec
+                                  << ") stored at array_index=" << array_index << std::endl;
+                        first_motor_seen[array_index] = 1;
+                    }
                 }
             }
         }
@@ -774,9 +827,9 @@ int main(int argc, char** argv) {
         RCLCPP_INFO(node->get_logger(), "All CAN receive threads started");
     }
 
-    // Publishing loop at 100Hz - publishes LowState with 30 motors in one message
+    // Publishing loop at 500Hz - publishes LowState with 30 motors in one message
     auto publish_timer = node->create_wall_timer(
-        std::chrono::milliseconds(10),
+        std::chrono::milliseconds(2),
         [&node, &publisher]() {
             // Create LowState message with all 30 motors
             auto msg = multi_port_motor_feedback::msg::LowState();
@@ -786,6 +839,10 @@ int main(int argc, char** argv) {
 
             std::lock_guard<std::mutex> lock(g_data_mutex);
 
+            // Get current time for heartbeat timeout detection
+            auto now = std::chrono::steady_clock::now();
+            auto epoch = std::chrono::steady_clock::time_point{};
+
             // Fill motor_state array (index 0 = motor 1, index 29 = motor 30)
             for (int motor_id = 1; motor_id <= NUM_MOTORS; motor_id++) {
                 int array_index = motor_id - 1;
@@ -793,12 +850,19 @@ int main(int argc, char** argv) {
 
                 auto& motor_msg = msg.motor_state[array_index];
 
-                if (dm_data.valid) {
-                    // Debug: print motor 30 data
-                    if (motor_id == 30) {
-                        std::cout << "[DEBUG] Motor 30: dm_data.id=" << (int)dm_data.id
-                                  << " position=" << dm_data.position << std::endl;
-                    }
+                // Heartbeat timeout detection:
+                // Check if last_seen_time is epoch (never seen) or elapsed time > 2s
+                bool is_valid = false;
+                if (g_last_seen_time[array_index] != epoch) {
+                    // Check if elapsed time exceeds timeout threshold
+                    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        now - g_last_seen_time[array_index]).count();
+                    is_valid = (elapsed <= HEARTBEAT_TIMEOUT_MS);
+                }
+
+                if (is_valid) {
+                    // Motor data is valid (received data within 2 seconds)
+                    motor_msg.valid = true;
                     motor_msg.id = static_cast<int8_t>(dm_data.id);
                     motor_msg.state = dm_data.state;
                     motor_msg.position = static_cast<float>(dm_data.position);
@@ -807,7 +871,9 @@ int main(int argc, char** argv) {
                     motor_msg.temp_mos = dm_data.temp_mos;
                     motor_msg.temp_rotor = dm_data.temp_rotor;
                 } else {
-                    // Default values for invalid motors
+                    // Motor data is invalid (never received or heartbeat timeout)
+                    // Still set motor_id to identify which motor this is
+                    motor_msg.valid = false;
                     motor_msg.id = static_cast<int8_t>(motor_id);
                     motor_msg.state = 0;
                     motor_msg.position = 0.0f;

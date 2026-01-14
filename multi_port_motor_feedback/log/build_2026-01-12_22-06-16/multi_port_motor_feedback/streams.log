@@ -1,0 +1,16 @@
+[0.014s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback': /usr/bin/cmake /home/linaro/ludan_sdk/multi_port_motor_feedback -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback
+[0.027s] -- Configuring done
+[0.037s] -- Generating done
+[0.039s] -- Build files have been written to: /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback
+[0.042s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback' returned '0': /usr/bin/cmake /home/linaro/ludan_sdk/multi_port_motor_feedback -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback
+[0.046s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback': /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback -- -j8 -l8
+[0.131s] Consolidate compiler generated dependencies of target can_send_test
+[0.145s] Consolidate compiler generated dependencies of target motor_heartbeat_monitor
+[0.163s] [  9%] Built target can_send_test
+[0.179s] [100%] Built target motor_heartbeat_monitor
+[0.209s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback' returned '0': /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback -- -j8 -l8
+[0.237s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback': /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback
+[0.259s] -- Install configuration: ""
+[0.260s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/can_send_test
+[0.260s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor
+[0.264s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback' returned '0': /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback

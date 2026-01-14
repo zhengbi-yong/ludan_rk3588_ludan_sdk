@@ -120,13 +120,29 @@ private:
 class Init_MotorState_state
 {
 public:
-  Init_MotorState_state()
-  : msg_(::rosidl_runtime_cpp::MessageInitialization::SKIP)
+  explicit Init_MotorState_state(::multi_port_motor_feedback::msg::MotorState & msg)
+  : msg_(msg)
   {}
   Init_MotorState_id state(::multi_port_motor_feedback::msg::MotorState::_state_type arg)
   {
     msg_.state = std::move(arg);
     return Init_MotorState_id(msg_);
+  }
+
+private:
+  ::multi_port_motor_feedback::msg::MotorState msg_;
+};
+
+class Init_MotorState_valid
+{
+public:
+  Init_MotorState_valid()
+  : msg_(::rosidl_runtime_cpp::MessageInitialization::SKIP)
+  {}
+  Init_MotorState_state valid(::multi_port_motor_feedback::msg::MotorState::_valid_type arg)
+  {
+    msg_.valid = std::move(arg);
+    return Init_MotorState_state(msg_);
   }
 
 private:
@@ -144,7 +160,7 @@ template<>
 inline
 auto build<::multi_port_motor_feedback::msg::MotorState>()
 {
-  return multi_port_motor_feedback::msg::builder::Init_MotorState_state();
+  return multi_port_motor_feedback::msg::builder::Init_MotorState_valid();
 }
 
 }  // namespace multi_port_motor_feedback

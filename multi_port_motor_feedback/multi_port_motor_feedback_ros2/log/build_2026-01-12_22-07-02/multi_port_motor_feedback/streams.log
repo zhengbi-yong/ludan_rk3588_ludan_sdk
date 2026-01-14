@@ -1,0 +1,173 @@
+[0.013s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2 -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback
+[0.041s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.259s] -- Found std_msgs: 4.9.0 (/opt/ros/humble/share/std_msgs/cmake)
+[0.285s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.288s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.296s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.308s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.324s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.354s] -- Found rclcpp: 16.0.16 (/opt/ros/humble/share/rclcpp/cmake)
+[0.386s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.387s] -- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.496s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.007s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[1.670s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.953s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.956s] -- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.966s] -- Added test 'copyright' to check source files copyright and LICENSE
+[2.024s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[2.025s] -- Configured cppcheck include dirs: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src;/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_generator_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_fastrtps_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_c>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback/rosidl_typesupport_introspection_cpp>;$<BUILD_INTERFACE:/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/include>
+[2.025s] -- Configured cppcheck exclude dirs and/or files: 
+[2.079s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[2.079s] -- Configured cpplint exclude dirs and/or files: 
+[2.086s] -- Added test 'flake8' to check Python code syntax and style conventions
+[2.101s] -- Added test 'lint_cmake' to check CMake code style
+[2.108s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[2.164s] -- Added test 'uncrustify' to check C / C++ code style
+[2.164s] -- Configured uncrustify additional arguments: 
+[2.171s] -- Added test 'xmllint' to check XML markup files
+[2.173s] -- Configuring done
+[2.215s] -- Generating done
+[2.230s] -- Build files have been written to: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[2.247s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2 -DCMAKE_INSTALL_PREFIX=/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback
+[2.251s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[2.376s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_generator_c
+[2.396s] [  1%] Built target multi_port_motor_feedback__cpp
+[2.406s] [  8%] Built target multi_port_motor_feedback__rosidl_generator_c
+[2.415s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp
+[2.421s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_typesupport_introspection_cpp
+[2.424s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_typesupport_fastrtps_c
+[2.430s] [ 15%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp
+[2.434s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_typesupport_introspection_c
+[2.438s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_typesupport_c
+[2.439s] Consolidate compiler generated dependencies of target multi_port_motor_feedback__rosidl_typesupport_cpp
+[2.445s] [ 22%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_c
+[2.447s] [ 29%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_cpp
+[2.456s] [ 36%] Built target multi_port_motor_feedback__rosidl_typesupport_c
+[2.468s] [ 43%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_c
+[2.476s] [ 50%] Built target multi_port_motor_feedback__rosidl_typesupport_cpp
+[2.538s] [ 50%] Built target multi_port_motor_feedback
+[2.575s] Consolidate compiler generated dependencies of target can_motor_feedback_publisher
+[2.631s] [ 52%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o
+[5.704s] In file included from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4,
+[5.704s]                  from /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:29:
+[5.704s] /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16: warning: ISO C++ prohibits anonymous structs [-Wpedantic]
+[5.705s]   584 |         struct {
+[5.705s]       |                ^
+[8.922s] [ 54%] Linking CXX executable can_motor_feedback_publisher
+[9.572s] [100%] Built target can_motor_feedback_publisher
+[9.588s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback -- -j8 -l8
+[9.617s] Invoking command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback
+[9.632s] -- Install configuration: ""
+[9.633s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/rosidl_interfaces/multi_port_motor_feedback
+[9.633s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[9.633s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[9.634s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_generator_c__visibility_control.h
+[9.634s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/motor_state.h
+[9.635s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/low_state.h
+[9.635s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[9.635s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__functions.c
+[9.636s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.h
+[9.636s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__functions.c
+[9.637s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__functions.h
+[9.637s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.h
+[9.637s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__struct.h
+[9.641s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__struct.h
+[9.641s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__functions.h
+[9.642s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/library_path.sh
+[9.644s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/library_path.dsv
+[9.645s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_generator_c.so
+[9.646s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[9.647s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[9.648s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[9.649s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[9.649s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_fastrtps_c.h
+[9.650s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_fastrtps_c.h
+[9.651s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_c.so
+[9.651s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[9.652s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[9.653s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_generator_cpp__visibility_control.hpp
+[9.653s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/low_state.hpp
+[9.654s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/motor_state.hpp
+[9.655s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[9.656s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.hpp
+[9.657s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__struct.hpp
+[9.657s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__traits.hpp
+[9.658s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__traits.hpp
+[9.659s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.hpp
+[9.660s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__builder.hpp
+[9.661s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__builder.hpp
+[9.662s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__struct.hpp
+[9.663s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[9.663s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[9.664s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[9.665s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[9.669s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_fastrtps_cpp.hpp
+[9.669s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_fastrtps_cpp.hpp
+[9.670s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/dds_fastrtps
+[9.670s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_fastrtps_cpp.so
+[9.671s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[9.671s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[9.672s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[9.672s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.c
+[9.673s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_introspection_c.h
+[9.673s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_introspection_c.h
+[9.674s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.c
+[9.675s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[9.676s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_introspection_c.so
+[9.677s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_c.so
+[9.678s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback
+[9.679s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg
+[9.680s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail
+[9.681s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__type_support.cpp
+[9.681s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/motor_state__rosidl_typesupport_introspection_cpp.hpp
+[9.682s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__type_support.cpp
+[9.683s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/include/multi_port_motor_feedback/multi_port_motor_feedback/msg/detail/low_state__rosidl_typesupport_introspection_cpp.hpp
+[9.684s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_introspection_cpp.so
+[9.685s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/libmulti_port_motor_feedback__rosidl_typesupport_cpp.so
+[9.688s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/MotorState.idl
+[9.693s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/LowState.idl
+[9.693s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/MotorState.msg
+[9.694s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/msg/LowState.msg
+[9.696s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/multi_port_motor_feedback/can_motor_feedback_publisher
+[9.696s] -- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/lib/multi_port_motor_feedback/can_motor_feedback_publisher" to ""
+[9.697s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback//launch
+[9.697s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback//launch/motor_feedback_publisher.launch.py
+[9.697s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/package_run_dependencies/multi_port_motor_feedback
+[9.698s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/parent_prefix_path/multi_port_motor_feedback
+[9.699s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/ament_prefix_path.sh
+[9.700s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/ament_prefix_path.dsv
+[9.701s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/path.sh
+[9.702s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/environment/path.dsv
+[9.703s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.bash
+[9.703s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.sh
+[9.704s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.zsh
+[9.704s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/local_setup.dsv
+[9.708s] -- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.dsv
+[9.708s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/ament_index/resource_index/packages/multi_port_motor_feedback
+[9.709s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_generator_cExport.cmake
+[9.709s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_generator_cExport-noconfig.cmake
+[9.710s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cExport.cmake
+[9.710s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[9.711s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_generator_cppExport.cmake
+[9.711s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cppExport.cmake
+[9.712s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/export_multi_port_motor_feedback__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[9.712s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cExport.cmake
+[9.713s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[9.713s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cExport.cmake
+[9.714s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cExport-noconfig.cmake
+[9.715s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cppExport.cmake
+[9.716s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[9.717s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cppExport.cmake
+[9.718s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedback__rosidl_typesupport_cppExport-noconfig.cmake
+[9.719s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/rosidl_cmake-extras.cmake
+[9.720s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_dependencies-extras.cmake
+[9.720s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_include_directories-extras.cmake
+[9.721s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_libraries-extras.cmake
+[9.722s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/ament_cmake_export_targets-extras.cmake
+[9.723s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[9.724s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[9.724s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedbackConfig.cmake
+[9.726s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/cmake/multi_port_motor_feedbackConfig-version.cmake
+[9.726s] -- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/install/multi_port_motor_feedback/share/multi_port_motor_feedback/package.xml
+[9.727s] Invoked command in '/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/build/multi_port_motor_feedback

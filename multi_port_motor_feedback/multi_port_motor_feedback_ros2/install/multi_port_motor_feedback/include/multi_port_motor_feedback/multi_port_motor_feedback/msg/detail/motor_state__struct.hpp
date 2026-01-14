@@ -38,6 +38,7 @@ struct MotorState_
     if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
+      this->valid = false;
       this->state = 0;
       this->id = 0;
       this->position = 0.0f;
@@ -54,6 +55,7 @@ struct MotorState_
     if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
+      this->valid = false;
       this->state = 0;
       this->id = 0;
       this->position = 0.0f;
@@ -65,6 +67,9 @@ struct MotorState_
   }
 
   // field types and members
+  using _valid_type =
+    bool;
+  _valid_type valid;
   using _state_type =
     uint8_t;
   _state_type state;
@@ -88,6 +93,12 @@ struct MotorState_
   _temp_rotor_type temp_rotor;
 
   // setters for named parameter idiom
+  Type & set__valid(
+    const bool & _arg)
+  {
+    this->valid = _arg;
+    return *this;
+  }
   Type & set__state(
     const uint8_t & _arg)
   {
@@ -173,6 +184,9 @@ struct MotorState_
   // comparison operators
   bool operator==(const MotorState_ & other) const
   {
+    if (this->valid != other.valid) {
+      return false;
+    }
     if (this->state != other.state) {
       return false;
     }

@@ -1,0 +1,427 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/linaro/ludan_sdk/multi_port_motor_feedback/build/multi_port_motor_feedback
+[  3%] Building C object CMakeFiles/can_send_test.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/cJSON/cJSON.c.o
+[  9%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/src/motor_heartbeat_monitor.cpp.o
+[  6%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/DeviceMgr.cpp.o
+[ 12%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.cpp.o
+[ 16%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp.o
+[ 19%] Building CXX object CMakeFiles/can_send_test.dir/src/can_send_test.cpp.o
+[ 22%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp.o
+[ 25%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp.o
+[ 29%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/common.cpp.o
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘void* ZCAN_OpenDevice(UINT, UINT, UINT)’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:16:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+   16 |     return (DEVICE_HANDLE)hDeviceHandle.handle;
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘void* ZCAN_InitCAN(DEVICE_HANDLE, UINT, ZCAN_CHANNEL_INIT_CONFIG*)’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:72:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+   72 |     return (DEVICE_HANDLE)hDeviceHandle.handle;
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp: In function ‘void* ZCAN_InitLIN(DEVICE_HANDLE, UINT, PZCAN_LIN_INIT_CONFIG)’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.cpp:368:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  368 |     return (DEVICE_HANDLE)hDeviceHandle.handle;
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 32%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/platform/linux/network.cpp.o
+[ 35%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpClient.cpp.o
+[ 38%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/TcpServer.cpp.o
+[ 41%] Building CXX object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/service/UdpService.cpp.o
+[ 45%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/cJSON/cJSON.c.o
+[ 48%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/adler32.c.o
+[ 51%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/compress.c.o
+[ 54%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/crc32.c.o
+[ 58%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/deflate.c.o
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static void CPacketUtil::DumpData(uint8_t*, int)’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1454:20: warning: format ‘%s’ expects argument of type ‘char*’, but argument 2 has type ‘std::string’ {aka ‘std::__cxx11::basic_string<char>’} [-Wformat=]
+ 1454 |         LOG_ALWAYS("%s\n", strLine);
+      |                    ^~~~~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:1454:22: note: format string is defined here
+ 1454 |         LOG_ALWAYS("%s\n", strLine);
+      |                     ~^
+      |                      |
+      |                      char*
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp: In static member function ‘static Packet CPacketEncoder::BuildPacketDevReqRes(bool, const uint8_t*, unsigned int, uint8_t)’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/NetPacket.cpp:2161:63: warning: narrowing conversion of ‘len’ from ‘unsigned int’ to ‘USHORT’ {aka ‘short unsigned int’} [-Wnarrowing]
+ 2161 |     PacketHead head{ PACKET_HEADER, pktType, pktTypeParam, 0, len };
+      |                                                               ^~~
+[ 61%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzclose.c.o
+[ 64%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c.o
+[ 67%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c.o
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c: In function ‘gz_open’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c:14:17: warning: implicit declaration of function ‘lseek’; did you mean ‘fseek’? [-Wimplicit-function-declaration]
+   14 | #  define LSEEK lseek
+      |                 ^~~~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzlib.c:252:9: note: in expansion of macro ‘LSEEK’
+  252 |         LSEEK(state->fd, 0, SEEK_END);  /* so gzoffset() is correct */
+      |         ^~~~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c: In function ‘gz_load’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c:35:15: warning: implicit declaration of function ‘read’; did you mean ‘fread’? [-Wimplicit-function-declaration]
+   35 |         ret = read(state->fd, buf + *have, get);
+      |               ^~~~
+      |               fread
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c: In function ‘gzclose_r’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzread.c:651:11: warning: implicit declaration of function ‘close’; did you mean ‘pclose’? [-Wimplicit-function-declaration]
+  651 |     ret = close(state->fd);
+      |           ^~~~~
+      |           pclose
+[ 70%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c.o
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c: In function ‘gz_comp’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c:89:20: warning: implicit declaration of function ‘write’; did you mean ‘fwrite’? [-Wimplicit-function-declaration]
+   89 |             writ = write(state->fd, strm->next_in, put);
+      |                    ^~~~~
+      |                    fwrite
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c: In function ‘gzclose_w’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/gzwrite.c:661:9: warning: implicit declaration of function ‘close’; did you mean ‘pclose’? [-Wimplicit-function-declaration]
+  661 |     if (close(state->fd) == -1)
+      |         ^~~~~
+      |         pclose
+[ 74%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/infback.c.o
+[ 77%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inflate.c.o
+[ 80%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inffast.c.o
+[ 83%] Linking CXX executable can_send_test
+[ 87%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/trees.c.o
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::_StopAndClear()’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 2 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                      |
+      |                                                                                      UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:36: note: format string is defined here
+ 1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+      |                                ~~~~^
+      |                                    |
+      |                                    unsigned int
+      |                                %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 3 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                   |
+      |                                                                                                                   UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:56: note: format string is defined here
+ 1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+      |                                                    ~~~~^
+      |                                                        |
+      |                                                        unsigned int
+      |                                                    %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:16: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 4 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                           ~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                               |
+      |                                                                                                                                               UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1364:70: note: format string is defined here
+ 1364 |     LOG_ALWAYS("Device TxBytes:%I64u TxFailedBytes:%I64u RxBytes:%I64u", m_statistic.nTxBytesSuccess, m_statistic.nTxBytesFailed, m_statistic.nRxBytes);
+      |                                                                  ~~~~^
+      |                                                                      |
+      |                                                                      unsigned int
+      |                                                                  %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘size_t’ {aka ‘long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+      |             ~       
+      |             |
+      |             size_t {aka long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:27: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                          ~^
+      |                           |
+      |                           int
+      |                          %ld
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 3 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                    |
+      |                                    UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:40: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                    ~~~~^
+      |                                        |
+      |                                        unsigned int
+      |                                    %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 4 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                |
+      |                                                                UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:48: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                            ~~~~^
+      |                                                |
+      |                                                unsigned int
+      |                                            %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 5 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+      |                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                               |
+      |                                                                                               UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:63: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                           ~~~~^
+      |                                                               |
+      |                                                               unsigned int
+      |                                                           %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 6 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+      |                                                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                             |
+      |                                                                                                                             UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:71: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                   ~~~~^
+      |                                                                       |
+      |                                                                       unsigned int
+      |                                                                   %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 7 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+ 1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                 |
+      |                                 UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:84: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                ~~~~^
+      |                                                                                    |
+      |                                                                                    unsigned int
+      |                                                                                %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 8 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+ 1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+      |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                             |
+      |                                                             UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:92: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                        ~~~~^
+      |                                                                                            |
+      |                                                                                            unsigned int
+      |                                                                                        %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 9 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+ 1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+      |                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                             |
+      |                                                                                             UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:107: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                       ~~~~^
+      |                                                                                                           |
+      |                                                                                                           unsigned int
+      |                                                                                                       %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 10 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1377 |             i, m_statistic.chnl[i].nTxCAN, m_statistic.chnl[i].nTxCANSim, m_statistic.chnl[i].nTxCANFD, m_statistic.chnl[i].nTxCANFDSim,
+ 1378 |             m_statistic.chnl[i].nRxCAN, m_statistic.chnl[i].nRxCANDrop, m_statistic.chnl[i].nRxCANFD, m_statistic.chnl[i].nRxCANFDDrop,
+      |                                                                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                           |
+      |                                                                                                                           UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:115: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                               ~~~~^
+      |                                                                                                                   |
+      |                                                                                                                   unsigned int
+      |                                                                                                               %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 11 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+......
+ 1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                 |
+      |                                 UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:126: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                                          ~~~~^
+      |                                                                                                                              |
+      |                                                                                                                              unsigned int
+      |                                                                                                                          %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 12 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+......
+ 1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+      |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                             |
+      |                                                             UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:139: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                                                       ~~~~^
+      |                                                                                                                                           |
+      |                                                                                                                                           unsigned int
+      |                                                                                                                                       %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 13 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+......
+ 1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+      |                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                          |
+      |                                                                                          UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:153: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                                                                     ~~~~^
+      |                                                                                                                                                         |
+      |                                                                                                                                                         unsigned int
+      |                                                                                                                                                     %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 14 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+......
+ 1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+      |                                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                        |
+      |                                                                                                                        UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:161: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                                                                             ~~~~^
+      |                                                                                                                                                                 |
+      |                                                                                                                                                                 unsigned int
+      |                                                                                                                                                             %I64llu
+In file included from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.h:18,
+                 from /home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:20: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 15 has type ‘UINT64’ {aka ‘long long unsigned int’} [-Wformat=]
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+......
+ 1379 |             m_statistic.chnl[i].nError, m_statistic.chnl[i].nTxEcho, m_statistic.chnl[i].nRxMerge, m_statistic.chnl[i].nRxMergeDrop, m_statistic.chnl[i].nAppRxMerge);
+      |                                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                          |
+      |                                                                                                                                                          UINT64 {aka long long unsigned int}
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/log.h:116:53: note: in definition of macro ‘LOG_ALWAYS’
+  116 | #define LOG_ALWAYS(fmt,...) printf("[SYS] ");printf(fmt, ##__VA_ARGS__)
+      |                                                     ^~~
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1376:179: note: format string is defined here
+ 1376 |         LOG_ALWAYS("Chnl %d: TxCAN:%I64u(S:%I64u) TxCANFD:%I64u(S:%I64u) RxCAN:%I64u(D:%I64u) RxCANFD:%I64u(D:%I64u) Err:%I64u TxEcho:%I64u RxMerge:%I64u(D:%I64u) AppRxMerge:%I64u",
+      |                                                                                                                                                                               ~~~~^
+      |                                                                                                                                                                                   |
+      |                                                                                                                                                                                   unsigned int
+      |                                                                                                                                                                               %I64llu
+[ 90%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/inftrees.c.o
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::InitLIN(UINT, PZCAN_LIN_INIT_CONFIG)’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:1460:82: warning: conversion from ‘UINT’ {aka ‘unsigned int’} to ‘unsigned char:1’ changes value from ‘2’ to ‘0’ [-Woverflow]
+ 1460 |                         m_linConfig[chnIdx].stFeature.unionVal.bEnhancedChksum = 2;
+      |                                                                                  ^
+[ 93%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/uncompr.c.o
+[ 96%] Building C object CMakeFiles/motor_heartbeat_monitor.dir/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/3rd/zlib/zutil.c.o
+[ 96%] Built target can_send_test
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp: In member function ‘bool Device::SyncDevClock()’:
+/home/linaro/ludan_sdk/LINUX_CANFDNET_V1.3.0.5_example/src/Device.cpp:4020:1: warning: control reaches end of non-void function [-Wreturn-type]
+ 4020 | }
+      | ^
+[100%] Linking CXX executable motor_heartbeat_monitor
+[100%] Built target motor_heartbeat_monitor
+-- Install configuration: ""
+-- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/can_send_test
+-- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/can_send_test" to ""
+-- Installing: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor
+-- Set runtime path of "/home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor" to ""

@@ -108,12 +108,14 @@ struct ZhilgongConfig {
 
 // Motor command structure
 struct MotorCommandCan {
-    uint16_t motor_id;
+    uint16_t motor_id;        // CAN ID (控制命令用) 或 global_motor_id (心跳命令用)
     float pos;
     float vel;
     float kp;
     float kd;
     float torq;
+    bool is_heartbeat = false;  // true=心跳命令(0xCC), false=控制命令
+    uint16_t global_motor_id = 0;  // 全局电机ID (1-30), 心跳命令需要用这个设置Data[0]
 };
 
 // ==================== Multi-Port Configuration ====================
@@ -288,7 +290,22 @@ static inline void MotorCommandToCanData_MIT(const MotorCommandCan& cmd, uint8_t
 
 // ==================== 统一的转换函数 ====================
 // 根据全局设置选择协议类型（DM 和 MIT 协议现在使用相同的编码方式）
+// 支持心跳命令：is_heartbeat=true 时发送 [motor_id, 0x00, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00]
 static inline void MotorCommandToCanData(const MotorCommandCan& cmd, uint8_t* can_data) {
+    // 如果是心跳命令，直接返回心跳帧格式
+    if (cmd.is_heartbeat) {
+        can_data[0] = static_cast<uint8_t>(cmd.global_motor_id);  // motor_id (CAN ID low 8 bits)
+        can_data[1] = 0x00;                                       // CAN ID high 8 bits
+        can_data[2] = 0xCC;                                       // Read command (心跳读取命令)
+        can_data[3] = 0x00;                                       // Padding
+        can_data[4] = 0x00;                                       // Padding
+        can_data[5] = 0x00;                                       // Padding
+        can_data[6] = 0x00;                                       // Padding
+        can_data[7] = 0x00;                                       // Padding
+        return;
+    }
+
+    // 否则使用正常的控制命令编码
     if (g_use_dm_protocol) {
         MotorCommandToCanData_DM(cmd, can_data);
     } else {
@@ -1535,7 +1552,9 @@ public:
             ZCAN_Transmit_Data transmit_data;
             memset(&transmit_data, 0, sizeof(transmit_data));
 
-            transmit_data.frame.can_id = MAKE_CAN_ID(cmd.motor_id, 0, 0, 0);
+            // 心跳命令使用 0x7FF (广播地址)，控制命令使用 cmd.motor_id
+            uint32_t can_id_to_use = cmd.is_heartbeat ? 0x7FF : cmd.motor_id;
+            transmit_data.frame.can_id = MAKE_CAN_ID(can_id_to_use, 0, 0, 0);
             transmit_data.frame.can_dlc = 8;
 
             uint8_t can_data[8];
@@ -1655,11 +1674,32 @@ public:
         // Group commands by port
         std::array<std::vector<MotorCommandCan>, 4> port_commands;
 
+        // 检查是否包含 motor_id 30
+        bool has_motor_30 = false;
+        for (const auto& cmd : all_commands) {
+            if (cmd.motor_id == 30) {
+                has_motor_30 = true;
+                break;
+            }
+        }
+
         for (const auto& cmd : all_commands) {
             int port_idx = GetPortIndexForMotor(cmd.motor_id);
             if (port_idx >= 0 && port_senders_[port_idx]->IsInitialized()) {
                 MotorCommandCan local_cmd = cmd;
                 local_cmd.motor_id = GetLocalCanId(cmd.motor_id);
+
+                // 调试：motor_id 30 的详细信息
+                if (cmd.motor_id == 30) {
+                    static int motor_30_debug_count = 0;
+                    if (motor_30_debug_count < 5) {
+                        std::cout << "[DEBUG] Motor 30: port_idx=" << port_idx
+                                  << ", local_can_id=" << local_cmd.motor_id
+                                  << ", pos=" << local_cmd.pos << std::endl;
+                        motor_30_debug_count++;
+                    }
+                }
+
                 port_commands[port_idx].push_back(local_cmd);
             }
         }
@@ -1966,10 +2006,18 @@ public:
                 const float POSITION_MAX = 0.15f;
                 const float POSITION_MIN = -0.15f;
 
+                bool pos_limited = false;
                 if (limited_pos > POSITION_MAX) {
                     limited_pos = POSITION_MAX;
+                    pos_limited = true;
                 } else if (limited_pos < POSITION_MIN) {
                     limited_pos = POSITION_MIN;
+                    pos_limited = true;
+                }
+
+                // 调试输出：显示 motor_id 30 的限幅情况
+                if (motor_id == 30 && pos_limited) {
+                    std::cout << "[LIMIT] Motor 30: " << motor_cmd.q << " -> " << limited_pos << std::endl;
                 }
 
                 motor_commands_[array_idx].pos = limited_pos;
@@ -2145,58 +2193,63 @@ public:
         return sent;
     }
 
-    // 收集所有需要发送的电机命令到批量数组（只收集活跃的电机）
-    // 添加超时检测：如果超过一定时间没有收到新数据，停止发送该电机
+    // 收集所有需要发送的电机命令到批量数组
+    // 所有30个电机都会发送命令，确保每个电机都达到500Hz发送频率
+    // - 有活跃控制命令的电机：发送插值后的控制命令
+    // - 没有活跃控制命令的电机：发送心跳命令 [motor_id, 0x00, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00]
     std::vector<MotorCommandCan> CollectMotorCommands(std::chrono::high_resolution_clock::time_point current_time) {
         std::vector<MotorCommandCan> commands;
         commands.reserve(G1_NUM_MOTOR);
 
-        // 超时阈值（秒）：如果超过这个时间没有收到新数据，停止发送
+        // 超时阈值（秒）：如果超过这个时间没有收到新数据，发送心跳命令而不是控制命令
         const double COMMAND_TIMEOUT_SECONDS = 0.5;  // 500ms 超时
         auto current_timestamp_double = std::chrono::duration<double>(current_time.time_since_epoch()).count();
 
-        for (int motor_id = 1; motor_id <= G1_NUM_MOTOR; motor_id++) {  // 修复：包含motor_id=30
+        for (int motor_id = 1; motor_id <= G1_NUM_MOTOR; motor_id++) {  // 遍历所有30个电机
             // 转换为数组索引 (motor_id 1-30 -> array_idx 0-29)
             int array_idx = motor_id - 1;
 
-            // 只收集活跃的电机（收到过 ROS2 命令的电机）
-            if (!active_motors_[array_idx]) {
-                continue;
-            }
-
             int can_id = get_can_id_for_motor(motor_id);
             if (can_id > 0) {
-                auto& history = command_history_[array_idx];
-
-                // ⭐ 新增：检查是否超时
-                double last_command_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
-                double time_since_last_command = current_timestamp_double - last_command_time;
-
-                if (time_since_last_command > COMMAND_TIMEOUT_SECONDS) {
-                    // 超时：取消该电机的活跃状态
-                    if (verbose_logging_ || motor_id <= 6) {  // 只打印前6个电机的超时信息
-                        std::cout << "[TIMEOUT] Motor " << motor_id
-                                  << " 超时 (" << time_since_last_command << "s > "
-                                  << COMMAND_TIMEOUT_SECONDS << "s), 停止发送" << std::endl;
-                    }
-                    active_motors_[array_idx] = false;  // 取消活跃状态
-                    continue;  // 跳过该电机
-                }
-
                 MotorCommandCan cmd_to_send;
-                auto current_timestamp = std::chrono::duration<double>(current_time.time_since_epoch()).count();
+                cmd_to_send.motor_id = can_id;
+                cmd_to_send.global_motor_id = motor_id;  // 设置全局电机ID (1-30)，心跳命令需要
 
-                if (history.has_previous) {
-                    double prev_time = std::chrono::duration<double>(history.previous_timestamp.time_since_epoch()).count();
-                    double curr_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
+                // 检查该电机是否活跃且有控制命令
+                if (active_motors_[array_idx]) {
+                    auto& history = command_history_[array_idx];
+                    double last_command_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
+                    double time_since_last_command = current_timestamp_double - last_command_time;
 
-                    cmd_to_send = interpolateCommand(history.previous, history.current,
-                                                   prev_time, curr_time, current_timestamp);
+                    if (time_since_last_command > COMMAND_TIMEOUT_SECONDS) {
+                        // 超时：发送心跳命令
+                        if (verbose_logging_ || motor_id <= 6 || motor_id == 30) {
+                            std::cout << "[HEARTBEAT] Motor " << motor_id
+                                      << " 超时 (" << time_since_last_command << "s > "
+                                      << COMMAND_TIMEOUT_SECONDS << "s), 发送心跳命令" << std::endl;
+                        }
+                        active_motors_[array_idx] = false;  // 取消活跃状态
+                        cmd_to_send.is_heartbeat = true;   // 标记为心跳命令
+                    } else {
+                        // 未超时：发送插值后的控制命令
+                        auto current_timestamp = std::chrono::duration<double>(current_time.time_since_epoch()).count();
+
+                        if (history.has_previous) {
+                            double prev_time = std::chrono::duration<double>(history.previous_timestamp.time_since_epoch()).count();
+                            double curr_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
+
+                            cmd_to_send = interpolateCommand(history.previous, history.current,
+                                                           prev_time, curr_time, current_timestamp);
+                        } else {
+                            cmd_to_send = history.current;
+                        }
+                        cmd_to_send.is_heartbeat = false;  // 标记为控制命令
+                    }
                 } else {
-                    cmd_to_send = history.current;
+                    // 电机不活跃：发送心跳命令
+                    cmd_to_send.is_heartbeat = true;   // 标记为心跳命令
                 }
 
-                cmd_to_send.motor_id = can_id;
                 commands.push_back(cmd_to_send);
             }
         }

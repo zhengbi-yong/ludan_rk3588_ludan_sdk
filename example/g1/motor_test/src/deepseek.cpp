@@ -1,0 +1,780 @@
+#include <iostream>
+#include <cmath>
+#include <thread>
+#include <chrono>
+#include <cstring>
+#include <iomanip>
+#include <atomic>
+#include <vector>
+#include <signal.h>
+#include <fstream>
+#include <sstream>
+#include <mutex>
+#include <queue>
+#include "CANFDNET.h"
+#include <algorithm>
+
+struct MotorTestConfig {
+    std::string zlg_ip = "192.168.1.5";
+    int zlg_port = 8002;
+    int channel = 0;
+    int arb_baud = 1000000;   // 仲裁波特率  1 兆比特每秒
+    int data_baud = 5000000;  // 数据波特率  5 兆比特每秒
+
+    int motor_id = 1;          // 要控制的电机(1-30)
+    double kp = 90.0;          // 位置增益
+    double kd = 2.0;           // 位置增益
+    double torque = 0.0;       // 前馈扭矩 (Nm)
+
+    double amplitude = 0.3;    // 幅度（弧度）
+    double start_freq = 0.1;   // 起始频率（Hz）
+    double end_freq = 10;      // 结束频率（Hz）
+    double freq_step = 0.1;    // 频率步进（Hz，离散点）
+    double cycles_per_freq = 1.0;  // 每个频率点保持的周期数
+    double min_hold = 3.0;      // 每个频率点的最小保持时间（秒）
+    double offset = 0.0;       // 偏移量（弧度）
+
+    double control_rate = 50.0;   // 控制频率（Hz）
+    bool enable_motor = true;     // 启动时自动使能电机
+
+    std::string log_dir = "log";
+    bool enable_logging = true;
+};
+
+// DM电机反馈格式：
+// 第 0 字节：低四位为电机编号，高四位为错误码
+// 第 1-2 字节：16 位位置编码
+// 第 3-4 字节：12 位速度编码
+// 第 4-5 字节：12 位扭矩编码
+// 第 6 字节：功率管温度（℃），第 7 字节：转子温度（℃）
+
+struct DMMotorData {
+    // 原始 CAN 帧数据
+    uint8_t raw[8];
+
+    // 解码值（DM 电机格式，定点数）
+    uint8_t  motor_id;   // 电机 ID（来自 D[0] 低 4 位）
+    uint8_t  error;      // 错误码（来自 D[0] 高 4 位）
+    int16_t  position;   // 位置原始值（来自 D[1], D[2] 的 16 位有符号数）
+    int16_t  velocity;   // 速度原始值（来自 D[3], D[4] 低 4 位的 12 位有符号数）
+    int16_t  torque;     // 扭矩原始值（来自 D[4] 高 4 位, D[5] 的 12 位有符号数）
+    int8_t   temp_mos;   // MOS 温度（来自 D[6] 的 8 位有符号数）
+    int8_t   temp_rotor; // 转子温度（来自 D[7] 的 8 位有符号数）
+
+    // 解码后的物理值（从定点数线性映射）
+    double position_rad;   // 位置（弧度）
+    double velocity_rad_s; // 速度（rad/s）
+    double torque_nm;      // 扭矩（Nm）
+};
+
+class DMMotorFrameDecoder {
+public:
+    // DM motor range limits (adjust based on your motor specifications)
+    static constexpr double PMAX = 3.14159;    // 位置最大值: π rad (180°)
+    static constexpr double PMIN = -3.14159;   // 位置最小值: -π rad (-180°)
+    static constexpr double VMAX = 45.0;       // 速度最大值: 45 rad/s
+    static constexpr double VMIN = -45.0;      // 速度最小值: -45 rad/s
+    static constexpr double TMAX = 20.0;       // 扭矩最大值: 20 Nm
+    static constexpr double TMIN = -20.0;      // 扭矩最小值: -20 Nm
+
+    static DMMotorData DecodeFrameFD(const ZCAN_ReceiveFD_Data& frame) {
+        DMMotorData data;
+        memset(&data, 0, sizeof(data));
+
+        const uint8_t* d = frame.frame.data;
+
+        // 保存原始数据
+        memcpy(data.raw, d, 8);
+
+        // D[0]: ID[3:0] | ERR[3:0]<<4
+        data.motor_id = d[0] & 0x0F;           // 低 4 位: 电机 ID
+        data.error = (d[0] >> 4) & 0x0F;       // 高 4 位: 错误码
+        // D[1-2]: 位置（16 位编码值，范围: [0, 2^16-1]）
+        // 编码: POS_16bit = position_rad / (PMAX - PMIN) * 2^16 + 2^15
+        // 解码: position_rad = (POS_16bit - 2^15) / 2^16 * (PMAX - PMIN)
+        uint16_t pos_encoded = static_cast<uint16_t>((d[1] << 8) | d[2]);
+        data.position = static_cast<int16_t>(pos_encoded);
+        data.position_rad = (pos_encoded - 32768.0) / 65536.0 * (PMAX - PMIN);
+
+        // D[3-4]: 速度（12 位编码为无符号数，范围: [0, 2^12-1]）
+        // 编码: VEL_12bit = velocity_rad_s / (VMAX - VMIN) * 2^12 + 2^11
+        // 解码: velocity_rad_s = (VEL_12bit - 2^11) / 2^12 * (VMAX - VMIN)
+        int16_t vel_encoded = ((d[3] & 0xFF) << 4) | (d[4] & 0x0F);
+        data.velocity = vel_encoded;
+        data.velocity_rad_s = (vel_encoded - 2048.0) / 4096.0 * (VMAX - VMIN);
+
+        // D[4-5]: Torque (12-bit encoded as unsigned, range: [0, 2^12-1])
+        // Encoding: T_12bit = torque_nm / (TMAX - TMIN) * 2^12 + 2^11
+        // Decoding: torque_nm = (T_12bit - 2^11) / 2^12 * (TMAX - TMIN)
+        int16_t torque_encoded = (((d[4] >> 4) & 0x0F) << 8) | d[5];
+        data.torque = torque_encoded;
+        data.torque_nm = (torque_encoded - 2048.0) / 4096.0 * (TMAX - TMIN);
+
+        // D[6-7]：温度编码（8 位有符号数，单位：摄氏度）
+        data.temp_mos = static_cast<int8_t>(d[6]);
+        data.temp_rotor = static_cast<int8_t>(d[7]);
+
+        return data;
+    }
+};
+
+struct MotorFeedback {
+    double timestamp;       // 时间戳（秒）
+    double position;        // 位置（弧度）
+    double velocity;        // 速度（弧度每秒）
+    double torque;          // 扭矩（牛·米）
+    uint8_t  motor_id;
+    uint8_t  error;
+    int16_t  raw_pos;
+    int16_t  raw_vel;
+    int16_t  raw_torque;
+    int8_t   temp_mos;
+    int8_t   temp_rotor;
+    double  frequency;      // 指令频率（赫兹）
+    bool valid;
+};
+
+struct MotorCommand {
+    uint16_t motor_id;
+    float pos;
+    float vel;
+    float kp;
+    float kd;
+    float tau;
+};
+
+// 将电机指令转换为协议格式的总线数据字节
+inline void MotorCommandToCanData(const MotorCommand& cmd, uint8_t* can_data) {
+    int16_t pos_int = static_cast<int16_t>(std::max(-12.5f, std::min(12.5f, cmd.pos)) * 32767.0f / 12.5f);
+    can_data[0] = pos_int & 0xFF;
+    can_data[1] = (pos_int >> 8) & 0xFF;
+
+    int16_t vel_int = static_cast<int16_t>(std::max(-30.0f, std::min(30.0f, cmd.vel)) * 32767.0f / 30.0f);
+    can_data[2] = vel_int & 0xFF;
+    can_data[3] = (vel_int >> 8) & 0xFF;
+
+    int16_t kp_int = static_cast<int16_t>(std::max(0.0f, std::min(500.0f, cmd.kp)) * 32767.0f / 500.0f);
+    can_data[4] = kp_int & 0xFF;
+    can_data[5] = (kp_int >> 8) & 0xFF;
+
+    int16_t kd_int = static_cast<int16_t>(std::max(0.0f, std::min(50.0f, cmd.kd)) * 32767.0f / 50.0f);
+    can_data[6] = kd_int & 0xFF;
+    can_data[7] = (kd_int >> 8) & 0xFF;
+}
+
+// ==================== Motor Test Controller ====================
+class MotorTestController {
+public:
+    MotorTestController(const MotorTestConfig& config) : config_(config) {}
+
+    bool Initialize() {
+        std::cout << "=== Initializing Motor Test Controller ===" << std::endl;
+        std::cout << "ZLG: " << config_.zlg_ip << ":" << config_.zlg_port << std::endl;
+        std::cout << "Channel: CAN" << config_.channel << std::endl;
+        std::cout << "Motor ID: " << config_.motor_id << std::endl;
+        std::cout << "Control Rate: " << config_.control_rate << " Hz" << std::endl;
+        std::cout << "Frequency Sweep: " << config_.start_freq << " -> " << config_.end_freq
+                  << " Hz, step=" << config_.freq_step << " Hz" << std::endl;
+        std::cout << "Amplitude: " << config_.amplitude << " rad" << std::endl;
+        std::cout << "Gains: kp=" << config_.kp << ", kd=" << config_.kd << std::endl;
+        std::cout << "Cycles per freq: " << config_.cycles_per_freq << std::endl;
+
+        // 1. 打开设备
+        device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP, 0, 0);
+        if (device_handle_ == INVALID_DEVICE_HANDLE) {
+            std::cerr << "Failed to open ZCAN device" << std::endl;
+            return false;
+        }
+        std::cout << "[1/5] Device opened" << std::endl;
+
+        // 2. 配置以太网参数（使用 ZCAN_SetValue）
+        // 设置工作模式为客户端
+        if (0 == ZCAN_SetValue(device_handle_, "0/work_mode", "0")) {
+            std::cerr << "Failed to set work mode" << std::endl;
+        }
+        
+        // 设置目标IP地址
+        if (0 == ZCAN_SetValue(device_handle_, "0/ip", config_.zlg_ip.c_str())) {
+            std::cerr << "Failed to set IP address" << std::endl;
+        }
+        
+        // 设置目标端口
+        char port_str[16];
+        sprintf_s(port_str, "%d", config_.zlg_port);
+        if (0 == ZCAN_SetValue(device_handle_, "0/work_port", port_str)) {
+            std::cerr << "Failed to set port" << std::endl;
+        }
+        
+        // 开启合并接收功能（重要！）
+        if (0 == ZCAN_SetValue(device_handle_, "0/set_device_recv_merge", "1")) {
+            std::cerr << "Failed to enable merge receive" << std::endl;
+        } else {
+            std::cout << "[2/5] Merge receive enabled" << std::endl;
+        }
+        
+        std::cout << "[3/5] TCP client mode, IP:Port configured" << std::endl;
+
+        // 3. 初始化通道
+        ZCAN_CHANNEL_INIT_CONFIG init_config;
+        memset(&init_config, 0, sizeof(init_config));
+        init_config.can_type = TYPE_CANFD;
+        init_config.canfd.acc_code = 0;
+        init_config.canfd.acc_mask = 0;
+        init_config.canfd.abit_timing = config_.arb_baud;
+        init_config.canfd.dbit_timing = config_.data_baud;
+        init_config.canfd.brp = 0;
+        init_config.canfd.filter = 0;
+        init_config.canfd.mode = 0;
+
+        channel_handle_ = ZCAN_InitCAN(device_handle_, config_.channel, &init_config);
+        if (channel_handle_ == INVALID_CHANNEL_HANDLE) {
+            std::cerr << "Failed to initialize CAN channel" << std::endl;
+            ZCAN_CloseDevice(device_handle_);
+            return false;
+        }
+        std::cout << "[4/5] CAN channel initialized (CAN-FD " << config_.arb_baud << "/"
+                  << config_.data_baud << ")" << std::endl;
+
+        // 4. 启动通道
+        if (ZCAN_StartCAN(channel_handle_) != STATUS_OK) {
+            std::cerr << "Failed to start CAN channel" << std::endl;
+            ZCAN_CloseDevice(device_handle_);
+            return false;
+        }
+        std::cout << "[5/5] CAN started" << std::endl;
+
+        // 5. 配置日志
+        if (config_.enable_logging) {
+            SetupLogging();
+            std::cout << "[6/5] Logging enabled: " << log_file_path_ << std::endl;
+        } else {
+            std::cout << "[6/5] Logging disabled" << std::endl;
+        }
+
+        std::cout << "=========================================" << std::endl;
+
+        // 如配置为自动使能则执行使能
+        if (config_.enable_motor) {
+            EnableMotor();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        return true;
+    }
+
+    void EnableMotor() {
+        uint8_t enable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC};
+        SendCanFrame(config_.motor_id, enable_frame, 8);
+        std::cout << ">>> Motor " << config_.motor_id << " ENABLE sent <<<" << std::endl;
+    }
+
+    void DisableMotor() {
+        uint8_t disable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD};
+        SendCanFrame(config_.motor_id, disable_frame, 8);
+        std::cout << ">>> Motor " << config_.motor_id << " DISABLE sent <<<" << std::endl;
+    }
+
+    void StartReceiveThread() {
+        receive_thread_running_ = true;
+        receive_thread_ = std::thread(&MotorTestController::ReceiveLoop, this);
+        std::cout << ">>> CAN Receive Thread Started <<<" << std::endl;
+    }
+
+    void RunControlLoop() {
+        std::cout << "\n=== Starting Control Loop at " << config_.control_rate << " Hz ===" << std::endl;
+
+        // 生成离散频率点
+        std::vector<double> freq_points;
+        std::vector<double> freq_durations;
+        double total_duration = 0.0;
+
+        for (double f = config_.start_freq; f <= config_.end_freq + 1e-9; f += config_.freq_step) {
+            freq_points.push_back(f);
+            // 频率点保持时间（按设定的保持时长）
+            double duration = std::max(config_.min_hold, config_.cycles_per_freq / f);
+            freq_durations.push_back(duration);
+            total_duration += duration;
+        }
+
+        std::cout << "Frequency Sweep: " << config_.start_freq << " -> " << config_.end_freq
+                  << " Hz, step=" << config_.freq_step << " Hz" << std::endl;
+        std::cout << "Number of frequency points: " << freq_points.size() << std::endl;
+        std::cout << "Estimated total duration: " << std::fixed << std::setprecision(1)
+                  << total_duration << " s (" << total_duration / 60.0 << " min)" << std::endl;
+        std::cout << "Press Ctrl+C to stop..." << std::endl;
+        std::cout << std::fixed << std::setprecision(4);
+
+        running_ = true;
+
+        // 定时变量
+        auto start_time = std::chrono::steady_clock::now();
+        auto next_time = start_time;
+        const auto control_period = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+            std::chrono::duration<double>(1.0 / config_.control_rate));
+
+        uint64_t iteration = 0;
+        uint64_t print_counter = 0;
+        uint64_t feedback_count = 0;
+        MotorFeedback last_feedback = {0};
+        size_t freq_index = 0;
+        double freq_start_time = 0.0;
+        double current_freq = freq_points[0];
+        double phase_offset = 0.0;  // 跨频点累计相位，避免跳变
+
+        // 初始化当前指令频率
+        current_cmd_frequency_.store(current_freq);
+
+        std::cout << "\n>>> Starting Frequency Point " << (freq_index + 1) << "/" << freq_points.size()
+                  << ": " << current_freq << " Hz (duration: " << freq_durations[0] << " s) <<<" << std::endl;
+
+        while (running_ && freq_index < freq_points.size()) {
+            // 按当前频率计算目标位置
+            auto current_time = std::chrono::steady_clock::now();
+            double elapsed = std::chrono::duration<double>(current_time - start_time).count();
+            double freq_elapsed = elapsed - freq_start_time;
+
+            // 判断是否切换到下一个频率点
+            if (freq_elapsed >= freq_durations[freq_index]) {
+                phase_offset += current_freq * freq_elapsed;  // 累计当前频点尾相位
+                freq_index++;
+                if (freq_index >= freq_points.size()) {
+                    break;  // 所有频率点已完成
+                }
+                current_freq = freq_points[freq_index];
+                freq_start_time = elapsed;
+                std::cout << "\n>>> Switching to Frequency Point " << (freq_index + 1) << "/"
+                          << freq_points.size() << ": " << current_freq << " Hz (duration: "
+                          << freq_durations[freq_index] << " s) <<<" << std::endl;
+            }
+
+            // 当前频率下计算相位（连续相位累积）
+            double phase = phase_offset + current_freq * (elapsed - freq_start_time);
+
+            // 正弦波：位置 = 幅度 × 正弦(2π × 相位) + 偏移
+            double target_pos = config_.amplitude * std::sin(2.0 * M_PI * phase) + config_.offset;
+
+            // 计算目标速度
+            // 速度 = 幅度 × 2π × 频率 × 余弦(2π × 相位)
+            double target_vel = config_.amplitude * 2.0 * M_PI * current_freq *
+                              std::cos(2.0 * M_PI * phase);
+
+            // 生成电机指令
+            MotorCommand cmd;
+            cmd.motor_id = config_.motor_id;
+            cmd.pos = static_cast<float>(target_pos);
+            cmd.vel = static_cast<float>(target_vel);
+            cmd.kp = static_cast<float>(config_.kp);
+            cmd.kd = static_cast<float>(config_.kd);
+            cmd.tau = static_cast<float>(config_.torque);
+
+            // 发送电机指令
+            SendMotorCommand(cmd);
+
+            // 更新当前指令频率用于日志
+            current_cmd_frequency_.store(current_freq);
+
+            // 读取最新反馈
+            {
+                std::lock_guard<std::mutex> lock(feedback_mutex_);
+                if (latest_feedback_.valid) {
+                    last_feedback = latest_feedback_;
+                    feedback_count++;
+                }
+            }
+
+            // 每 50 次循环打印状态
+            if (++print_counter >= 50) {
+                double progress = (freq_elapsed / freq_durations[freq_index]) * 100.0;
+                std::cout << "[" << std::setw(8) << elapsed << "s] "
+                          << "Freq[" << (freq_index + 1) << "/" << freq_points.size() << "] "
+                          << std::setw(6) << current_freq << " Hz "
+                          << "(" << std::setw(5) << std::setprecision(1) << progress << "%), "
+                          << "pos=" << std::setw(8) << target_pos << " rad, "
+                          << "vel=" << std::setw(8) << target_vel << " rad/s";
+                if (last_feedback.valid) {
+                    std::cout << " | act_pos=" << std::setw(8) << last_feedback.position << " rad"
+                              << ", act_vel=" << std::setw(8) << last_feedback.velocity << " rad/s";
+                }
+                
+                std::cout << std::setprecision(4);
+                std::cout << ", iter=" << iteration << std::endl;
+                std::cout << std::flush;  // 立即刷新输出
+                print_counter = 0;
+            }
+
+            iteration++;
+
+            // 休眠等待下一个控制周期
+            next_time += control_period;
+            std::this_thread::sleep_until(next_time);
+        }
+
+        std::cout << "\n=== Control Loop Stopped ===" << std::endl;
+        std::cout << "Total iterations: " << iteration << std::endl;
+        std::cout << "Total feedback received: " << feedback_count << std::endl;
+        std::cout << "Frequency points completed: " << freq_index << "/" << freq_points.size() << std::endl;
+    }
+
+    void Stop() {
+        running_ = false;
+        receive_thread_running_ = false;
+    }
+
+    ~MotorTestController() {
+        if (receive_thread_.joinable()) {
+            receive_thread_.join();
+        }
+
+        DisableMotor();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        if (config_.enable_logging && log_file_.is_open()) {
+            log_file_.flush();
+            log_file_.close();
+            std::cout << ">>> Log file saved: " << log_file_path_ << std::endl;
+            std::cout << "    Total records: " << log_count_ << std::endl;
+        }
+
+        if (channel_handle_) {
+            ZCAN_ResetCAN(channel_handle_);
+        }
+        if (device_handle_) {
+            ZCAN_CloseDevice(device_handle_);
+        }
+    }
+
+private:
+    void SetupLogging() {
+        // 若不存在则创建日志目录
+        std::string mkdir_cmd = "mkdir -p " + config_.log_dir;
+        int ret = system(mkdir_cmd.c_str());
+        std::cout << "[LOG] mkdir -p " << config_.log_dir << " returned: " << ret << std::endl;
+
+        // 生成带时间戳的日志文件名
+        auto now = std::chrono::system_clock::now();
+        auto time_t_now = std::chrono::system_clock::to_time_t(now);
+
+        std::stringstream ss;
+        ss << config_.log_dir << "/motor_log_" << config_.motor_id << "_"
+           << std::put_time(std::localtime(&time_t_now), "%Y%m%d_%H%M%S") << ".csv";
+        log_file_path_ = ss.str();
+
+        // 打开日志文件
+        log_file_.open(log_file_path_);
+        if (log_file_.is_open()) {
+            // 写入表头
+            log_file_ << "timestamp,motor_id,error,position,velocity,torque,raw_pos,raw_vel,raw_torque,temp_mos,temp_rotor,frequency\n";
+            log_file_ << std::fixed << std::setprecision(6);
+            log_file_.flush();  // 立即刷新表头
+            log_count_ = 0;
+            std::cout << "[LOG] Log file opened successfully: " << log_file_path_ << std::endl;
+        } else {
+            std::cerr << "[LOG ERROR] Failed to open log file: " << log_file_path_ << std::endl;
+        }
+    }
+
+    void ReceiveLoop() {
+        // 使用 ZCAN_ReceiveData 进行合并接收（已开启）
+        ZCANDataObj receive_buffer[100];
+        uint64_t total_received = 0;
+        uint64_t motor_feedback_count = 0;
+        uint64_t debug_print_count = 0;
+        uint64_t no_data_count = 0;
+
+        std::cout << ">>> Receive Loop Started (Using Merge Receive) <<<" << std::endl;
+        std::cout << "[RECV] Waiting for CAN frames..." << std::endl;
+
+        // 先检查是否有数据可接收
+        int available = ZCAN_GetReceiveNum(device_handle_, 2);  // 2 表示合并接收
+        std::cout << "[RECV] Initial available merge frames: " << available << std::endl;
+
+        while (receive_thread_running_) {
+            // 合并接收函数：ZCAN_ReceiveData
+            uint32_t received = ZCAN_ReceiveData(device_handle_, receive_buffer, 100, 100);
+            if (received == 0) {
+                no_data_count++;
+                if (no_data_count >= 50) {
+                    no_data_count = 0;
+                }
+                continue;
+            }
+            no_data_count = 0;
+            total_received += received;
+
+            if (++debug_print_count >= 1000) {
+                std::cout << "[RECV] Total frames: " << total_received
+                          << ", Motor feedback: " << motor_feedback_count
+                          << ", Log records: " << log_count_ << std::endl;
+                debug_print_count = 0;
+            }
+
+            if (total_received == received) {
+                std::cout << "[RECV] First CAN data received! Total frames: " << total_received << std::endl;
+            }
+
+            auto now = std::chrono::steady_clock::now();
+            double timestamp = std::chrono::duration<double>(now.time_since_epoch()).count();
+
+            for (uint32_t i = 0; i < received; i++) {
+                // 仅处理 CAN/CANFD 数据
+                if (receive_buffer[i].dataType != ZCAN_DT_ZCAN_CAN_CANFD_DATA) {
+                    continue;
+                }
+
+                // 提取 CANFD 数据
+                ZCANCANFDData& canfd_data = receive_buffer[i].data.zcanCANFDData;
+                uint32_t can_id = GET_ID(canfd_data.frame.can_id);  // 使用宏获取实际ID
+                uint8_t len = canfd_data.frame.len;
+
+                // 调试打印前几个帧
+                if (motor_feedback_count < 5) {
+                    std::cout << "[RECV DEBUG] CAN frame: CH=" << (int)receive_buffer[i].chnl
+                              << ", ID=0x" << std::hex << can_id << std::dec
+                              << ", len=" << (int)len;
+                    if (len >= 8) {
+                        std::cout << ", data=[" << std::hex << std::setfill('0');
+                        for (int j = 0; j < 8; j++) {
+                            std::cout << std::setw(2) << (int)canfd_data.frame.data[j] << " ";
+                        }
+                        std::cout << std::dec << "]";
+                    }
+                    std::cout << std::endl;
+                }
+
+                // 判断是否为目标电机反馈（编号 1-30）
+                if (can_id >= 1 && can_id <= 30 && len >= 8) {
+                    if (motor_feedback_count == 0) {
+                        std::cout << "[RECV] First motor feedback received! CAN ID=" << can_id << std::endl;
+                    }
+                    
+                    // 解码（复用原解码函数）
+                    ZCAN_ReceiveFD_Data frame;
+                    frame.frame.can_id = canfd_data.frame.can_id;
+                    frame.frame.len = canfd_data.frame.len;
+                    memcpy(frame.frame.data, canfd_data.frame.data, len);
+                    frame.timestamp = canfd_data.timeStamp;
+
+                    DMMotorData dm_data = DMMotorFrameDecoder::DecodeFrameFD(frame);
+                    motor_feedback_count++;
+
+                    // 每 100 条电机反馈打印一次详细信息
+                    if (motor_feedback_count % 100 == 0) {
+                        std::cout << "[RECV] Motor[" << (int)dm_data.motor_id << "] "
+                                  << "pos=" << dm_data.position_rad << " rad, "
+                                  << "vel=" << dm_data.velocity_rad_s << " rad/s, "
+                                  << "torque=" << dm_data.torque_nm << " Nm" << std::endl;
+                    }
+
+                    // 转换为反馈结构体
+                    MotorFeedback fb;
+                    fb.timestamp = timestamp;
+                    fb.motor_id = dm_data.motor_id;
+                    fb.error = dm_data.error;
+                    fb.position = dm_data.position_rad;
+                    fb.velocity = dm_data.velocity_rad_s;
+                    fb.torque = dm_data.torque_nm;
+                    fb.raw_pos = dm_data.position;
+                    fb.raw_vel = dm_data.velocity;
+                    fb.raw_torque = dm_data.torque;
+                    fb.temp_mos = dm_data.temp_mos;
+                    fb.temp_rotor = dm_data.temp_rotor;
+                    fb.frequency = current_cmd_frequency_.load();  // 获取当前指令频率
+                    fb.valid = true;
+
+                    // 保存最新反馈
+                    {
+                        std::lock_guard<std::mutex> lock(feedback_mutex_);
+                        latest_feedback_ = fb;
+                    }
+
+                    // 写入日志
+                    if (config_.enable_logging && log_file_.is_open()) {
+                        std::lock_guard<std::mutex> lock(log_mutex_);
+                        log_file_ << fb.timestamp << ","
+                                 << static_cast<int>(fb.motor_id) << ","
+                                 << static_cast<int>(fb.error) << ","
+                                 << fb.position << ","
+                                 << fb.velocity << ","
+                                 << fb.torque << ","
+                                 << fb.raw_pos << ","
+                                 << fb.raw_vel << ","
+                                 << fb.raw_torque << ","
+                                 << static_cast<int>(fb.temp_mos) << ","
+                                 << static_cast<int>(fb.temp_rotor) << ","
+                                 << fb.frequency << "\n";
+                        log_count_++;
+
+                        if (log_count_ % 10 == 0) {
+                            log_file_.flush();
+                            std::cout << "[LOG] Wrote " << log_count_ << " records to "
+                                      << log_file_path_ << std::endl;
+                        }
+                    } else if (config_.enable_logging) {
+                        if (log_count_ == 0) {
+                            std::cerr << "[LOG ERROR] Logging enabled but file not open!" << std::endl;
+                            log_count_ = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        std::cout << ">>> Receive Thread Stopped (total: " << total_received
+                  << " frames, " << motor_feedback_count << " motor feedback) <<<" << std::endl;
+    }
+
+    void SendMotorCommand(const MotorCommand& cmd) {
+        uint8_t can_data[8];
+        MotorCommandToCanData(cmd, can_data);
+        SendCanFrame(cmd.motor_id, can_data, 8);
+    }
+
+    // 发送函数适配 CANFD 模式
+    void SendCanFrame(uint16_t motor_id, const uint8_t* data, uint8_t len) {
+        ZCAN_TransmitFD_Data transmit_data;
+        memset(&transmit_data, 0, sizeof(transmit_data));
+        transmit_data.frame.can_id = motor_id;
+        transmit_data.frame.len = len;
+        memcpy(transmit_data.frame.data, data, len);
+        transmit_data.transmit_type = 0;
+
+        ZCAN_TransmitFD(channel_handle_, &transmit_data, 1);
+    }
+
+    MotorTestConfig config_;
+    DEVICE_HANDLE device_handle_ = nullptr;
+    CHANNEL_HANDLE channel_handle_ = nullptr;
+    std::atomic<bool> running_{false};
+    std::atomic<bool> receive_thread_running_{false};
+    std::thread receive_thread_;
+    MotorFeedback latest_feedback_{0};
+    std::mutex feedback_mutex_;
+    std::atomic<double> current_cmd_frequency_{0.0};
+    std::ofstream log_file_;
+    std::string log_file_path_;
+    std::mutex log_mutex_;
+    uint64_t log_count_ = 0;
+};
+
+// ==================== Signal Handler ====================
+MotorTestController* g_controller = nullptr;
+
+void SignalHandler(int signal) {
+    if (g_controller) {
+        std::cout << "\nReceived signal " << signal << ", stopping..." << std::endl;
+        g_controller->Stop();
+    }
+}
+
+void PrintUsage(const char* program_name) {
+    std::cout << "Usage: " << program_name << " [options]" << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  --ip <address>        ZLG device IP (default: 192.168.1.5)" << std::endl;
+    std::cout << "  --port <port>         ZLG device port (default: 8002)" << std::endl;
+    std::cout << "  --channel <num>       CAN channel (default: 2)" << std::endl;
+    std::cout << "  --motor-id <id>       Motor ID to control (default: 9)" << std::endl;
+    std::cout << "  --amplitude <rad>     Sine wave amplitude in rad (default: 0.5)" << std::endl;
+    std::cout << "  --start-freq <hz>     Start frequency in Hz (default: 0.1)" << std::endl;
+    std::cout << "  --end-freq <hz>       End frequency in Hz (default: 20.0)" << std::endl;
+    std::cout << "  --freq-step <hz>      Frequency step in Hz (default: 0.05)" << std::endl;
+    std::cout << "  --hold-time <sec>     Hold time per frequency (default: 2.0)" << std::endl;
+    std::cout << "  --offset <rad>        Position offset in rad (default: 0.0)" << std::endl;
+    std::cout << "  --kp <value>          Position gain (default: 10.0)" << std::endl;
+    std::cout << "  --kd <value>          Velocity gain (default: 1.5)" << std::endl;
+    std::cout << "  --rate <hz>           Control rate in Hz (default: 500)" << std::endl;
+    std::cout << "  --log-dir <path>      Log directory (default: log)" << std::endl;
+    std::cout << "  --no-logging          Disable logging" << std::endl;
+    std::cout << "  --no-enable           Don't auto-enable motor" << std::endl;
+    std::cout << "  -h, --help            Show this help message" << std::endl;
+    std::cout << "\nFrequency Sweep Mode:" << std::endl;
+    std::cout << "  Discrete frequency sweep from --start-freq to --end-freq" << std::endl;
+    std::cout << "  with step size --freq-step. Each frequency is held for --cycles" << std::endl;
+    std::cout << "  complete cycles (duration = cycles / frequency)." << std::endl;
+    std::cout << "\nExample:" << std::endl;
+    std::cout << "  " << program_name << " --motor-id 9 --amplitude 0.3 --start-freq 0.5 --end-freq 5.0 --freq-step 0.1" << std::endl;
+}
+
+int main(int argc, char** argv) {
+    MotorTestConfig config;
+
+    // 解析命令行参数
+    for (int i = 1; i < argc; i++) {
+        std::string arg = argv[i];
+
+        if (arg == "-h" || arg == "--help") {
+            PrintUsage(argv[0]);
+            return 0;
+        } else if (arg == "--ip" && i + 1 < argc) {
+            config.zlg_ip = argv[++i];
+        } else if (arg == "--port" && i + 1 < argc) {
+            config.zlg_port = std::atoi(argv[++i]);
+        } else if (arg == "--channel" && i + 1 < argc) {
+            config.channel = std::atoi(argv[++i]);
+        } else if (arg == "--motor-id" && i + 1 < argc) {
+            config.motor_id = std::atoi(argv[++i]);
+        } else if (arg == "--amplitude" && i + 1 < argc) {
+            config.amplitude = std::atof(argv[++i]);
+        } else if (arg == "--start-freq" && i + 1 < argc) {
+            config.start_freq = std::atof(argv[++i]);
+        } else if (arg == "--end-freq" && i + 1 < argc) {
+            config.end_freq = std::atof(argv[++i]);
+        } else if (arg == "--freq-step" && i + 1 < argc) {
+            config.freq_step = std::atof(argv[++i]);
+        } else if (arg == "--hold-time" && i + 1 < argc) {
+            config.min_hold = std::atof(argv[++i]);
+        } else if (arg == "--offset" && i + 1 < argc) {
+            config.offset = std::atof(argv[++i]);
+        } else if (arg == "--kp" && i + 1 < argc) {
+            config.kp = std::atof(argv[++i]);
+        } else if (arg == "--kd" && i + 1 < argc) {
+            config.kd = std::atof(argv[++i]);
+        } else if (arg == "--rate" && i + 1 < argc) {
+            config.control_rate = std::atof(argv[++i]);
+        } else if (arg == "--log-dir" && i + 1 < argc) {
+            config.log_dir = argv[++i];
+        } else if (arg == "--no-logging") {
+            config.enable_logging = false;
+        } else if (arg == "--no-enable") {
+            config.enable_motor = false;
+        } else {
+            std::cerr << "Unknown option: " << arg << std::endl;
+            PrintUsage(argv[0]);
+            return 1;
+        }
+    }
+
+    // 校验电机编号
+    if (config.motor_id < 1 || config.motor_id > 30) {
+        std::cerr << "Error: Motor ID must be between 1 and 30" << std::endl;
+        return 1;
+    }
+
+    // 校验频率参数
+    if (config.start_freq <= 0 || config.end_freq <= 0 || config.start_freq >= config.end_freq) {
+        std::cerr << "Error: Invalid frequency range (start_freq < end_freq, both > 0)" << std::endl;
+        return 1;
+    }
+
+    // 安装信号处理函数
+    signal(SIGINT, SignalHandler);
+    signal(SIGTERM, SignalHandler);
+
+    // 创建并运行控制器
+    MotorTestController controller(config);
+    g_controller = &controller;
+
+    if (!controller.Initialize()) {
+        std::cerr << "Failed to initialize controller" << std::endl;
+        return 1;
+    }
+
+    // 启动接收线程
+    controller.StartReceiveThread();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    // 运行控制循环
+    controller.RunControlLoop();
+
+    std::cout << "Exiting..." << std::endl;
+    return 0;
+}

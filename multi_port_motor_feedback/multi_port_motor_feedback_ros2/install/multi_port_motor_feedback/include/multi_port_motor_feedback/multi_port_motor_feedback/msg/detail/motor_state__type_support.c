@@ -31,7 +31,24 @@ void multi_port_motor_feedback__msg__MotorState__rosidl_typesupport_introspectio
   multi_port_motor_feedback__msg__MotorState__fini(message_memory);
 }
 
-static rosidl_typesupport_introspection_c__MessageMember multi_port_motor_feedback__msg__MotorState__rosidl_typesupport_introspection_c__MotorState_message_member_array[7] = {
+static rosidl_typesupport_introspection_c__MessageMember multi_port_motor_feedback__msg__MotorState__rosidl_typesupport_introspection_c__MotorState_message_member_array[8] = {
+  {
+    "valid",  // name
+    rosidl_typesupport_introspection_c__ROS_TYPE_BOOLEAN,  // type
+    0,  // upper bound of string
+    NULL,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(multi_port_motor_feedback__msg__MotorState, valid),  // bytes offset in struct
+    NULL,  // default value
+    NULL,  // size() function pointer
+    NULL,  // get_const(index) function pointer
+    NULL,  // get(index) function pointer
+    NULL,  // fetch(index, &value) function pointer
+    NULL,  // assign(index, value) function pointer
+    NULL  // resize(index) function pointer
+  },
   {
     "state",  // name
     rosidl_typesupport_introspection_c__ROS_TYPE_UINT8,  // type
@@ -156,7 +173,7 @@ static rosidl_typesupport_introspection_c__MessageMember multi_port_motor_feedba
 static const rosidl_typesupport_introspection_c__MessageMembers multi_port_motor_feedback__msg__MotorState__rosidl_typesupport_introspection_c__MotorState_message_members = {
   "multi_port_motor_feedback__msg",  // message namespace
   "MotorState",  // message name
-  7,  // number of fields
+  8,  // number of fields
   sizeof(multi_port_motor_feedback__msg__MotorState),
   multi_port_motor_feedback__msg__MotorState__rosidl_typesupport_introspection_c__MotorState_message_member_array,  // message members
   multi_port_motor_feedback__msg__MotorState__rosidl_typesupport_introspection_c__MotorState_init_function,  // function to initialize message memory (memory has to be allocated)

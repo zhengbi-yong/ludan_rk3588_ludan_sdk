@@ -37,7 +37,24 @@ void MotorState_fini_function(void * message_memory)
   typed_message->~MotorState();
 }
 
-static const ::rosidl_typesupport_introspection_cpp::MessageMember MotorState_message_member_array[7] = {
+static const ::rosidl_typesupport_introspection_cpp::MessageMember MotorState_message_member_array[8] = {
+  {
+    "valid",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_BOOLEAN,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(multi_port_motor_feedback::msg::MotorState, valid),  // bytes offset in struct
+    nullptr,  // default value
+    nullptr,  // size() function pointer
+    nullptr,  // get_const(index) function pointer
+    nullptr,  // get(index) function pointer
+    nullptr,  // fetch(index, &value) function pointer
+    nullptr,  // assign(index, value) function pointer
+    nullptr  // resize(index) function pointer
+  },
   {
     "state",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_UINT8,  // type
@@ -162,7 +179,7 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember MotorState_me
 static const ::rosidl_typesupport_introspection_cpp::MessageMembers MotorState_message_members = {
   "multi_port_motor_feedback::msg",  // message namespace
   "MotorState",  // message name
-  7,  // number of fields
+  8,  // number of fields
   sizeof(multi_port_motor_feedback::msg::MotorState),
   MotorState_message_member_array,  // message members
   MotorState_init_function,  // function to initialize message memory (memory has to be allocated)

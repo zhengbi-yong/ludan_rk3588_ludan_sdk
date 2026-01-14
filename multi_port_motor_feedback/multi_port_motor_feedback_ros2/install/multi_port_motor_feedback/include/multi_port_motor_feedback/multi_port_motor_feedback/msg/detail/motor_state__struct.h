@@ -24,6 +24,9 @@ extern "C"
  */
 typedef struct multi_port_motor_feedback__msg__MotorState
 {
+  /// Data validity flag
+  /// True if motor data has been received at least once
+  bool valid;
   /// Error code (DM motor format)
   uint8_t state;
   /// Scaled measurements

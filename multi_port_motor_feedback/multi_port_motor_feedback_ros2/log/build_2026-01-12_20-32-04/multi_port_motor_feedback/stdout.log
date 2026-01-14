@@ -1,0 +1,10 @@
+[  1%] Built target multi_port_motor_feedback__cpp
+[  8%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_cpp
+[ 15%] Built target multi_port_motor_feedback__rosidl_generator_c
+[ 22%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_cpp
+[ 29%] Built target multi_port_motor_feedback__rosidl_typesupport_cpp
+[ 36%] Built target multi_port_motor_feedback__rosidl_typesupport_c
+[ 43%] Built target multi_port_motor_feedback__rosidl_typesupport_introspection_c
+[ 50%] Built target multi_port_motor_feedback__rosidl_typesupport_fastrtps_c
+[ 52%] Building CXX object CMakeFiles/can_motor_feedback_publisher.dir/src/can_motor_feedback_publisher.cpp.o
+[ 52%] Built target multi_port_motor_feedback

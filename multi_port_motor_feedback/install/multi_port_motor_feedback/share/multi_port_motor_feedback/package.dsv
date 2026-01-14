@@ -1,0 +1,6 @@
+source;share/multi_port_motor_feedback/hook/path.ps1
+source;share/multi_port_motor_feedback/hook/path.dsv
+source;share/multi_port_motor_feedback/hook/path.sh
+source;share/multi_port_motor_feedback/hook/pythonscriptspath.ps1
+source;share/multi_port_motor_feedback/hook/pythonscriptspath.dsv
+source;share/multi_port_motor_feedback/hook/pythonscriptspath.sh

@@ -58,6 +58,7 @@ enum ErrorCode : uint8_t {
 struct MotorDataConfig {
     int motor_id;
     bool enabled;
+    bool valid;             // Data validity flag (false = motor offline, true = motor online)
     float position;         // Position (range depends on P_MAX)
     float velocity;         // Velocity in rad/s (range depends on V_MAX)
     float torque;           // Torque in Nm (range depends on T_MAX)
@@ -192,6 +193,7 @@ bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
             motor_config.v_min = default_v_min;
             motor_config.t_max = default_t_max;
             motor_config.t_min = default_t_min;
+            motor_config.valid = true;  // Default to true (motor online)
 
             cJSON* id = cJSON_GetObjectItem(motor, "id");
             if (id && cJSON_IsNumber(id)) {
@@ -203,6 +205,13 @@ bool LoadJsonConfig(const char* filepath, GlobalConfig& config) {
                 motor_config.enabled = cJSON_IsTrue(enabled);
             } else {
                 motor_config.enabled = true;
+            }
+
+            cJSON* valid = cJSON_GetObjectItem(motor, "valid");
+            if (valid && cJSON_IsBool(valid)) {
+                motor_config.valid = cJSON_IsTrue(valid);
+            } else {
+                motor_config.valid = true;  // Default to true (motor online)
             }
 
             cJSON* position = cJSON_GetObjectItem(motor, "position");
@@ -551,9 +560,14 @@ int main(int argc, char** argv) {
                 }
 
                 // Generate frame data
-                if (motor_config && motor_config->enabled) {
+                if (motor_config && motor_config->enabled && motor_config->valid) {
+                    // Motor is enabled and valid (online) - generate frame
                     GenerateMotorFrame(shm_data->frames[frame_idx], *motor_config, elapsed, frame_counter);
                     frame_idx++;
+                } else if (motor_config && motor_config->enabled && !motor_config->valid) {
+                    // Motor is enabled but invalid (offline) - do NOT send frame
+                    // This simulates a motor that has gone offline
+                    // The publisher will not receive data for this motor, so valid=false
                 } else {
                     // Default data if motor disabled or not configured
                     shm_data->frames[frame_idx].can_id = motor_id;

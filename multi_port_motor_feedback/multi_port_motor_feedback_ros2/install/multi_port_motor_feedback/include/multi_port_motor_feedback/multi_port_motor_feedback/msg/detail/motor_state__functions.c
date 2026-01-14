@@ -17,6 +17,7 @@ multi_port_motor_feedback__msg__MotorState__init(multi_port_motor_feedback__msg_
   if (!msg) {
     return false;
   }
+  // valid
   // state
   // id
   // position
@@ -33,6 +34,7 @@ multi_port_motor_feedback__msg__MotorState__fini(multi_port_motor_feedback__msg_
   if (!msg) {
     return;
   }
+  // valid
   // state
   // id
   // position
@@ -46,6 +48,10 @@ bool
 multi_port_motor_feedback__msg__MotorState__are_equal(const multi_port_motor_feedback__msg__MotorState * lhs, const multi_port_motor_feedback__msg__MotorState * rhs)
 {
   if (!lhs || !rhs) {
+    return false;
+  }
+  // valid
+  if (lhs->valid != rhs->valid) {
     return false;
   }
   // state
@@ -87,6 +93,8 @@ multi_port_motor_feedback__msg__MotorState__copy(
   if (!input || !output) {
     return false;
   }
+  // valid
+  output->valid = input->valid;
   // state
   output->state = input->state;
   // id

@@ -10,6 +10,11 @@ module multi_port_motor_feedback {
       "Single motor state message")
     struct MotorState {
       @verbatim (language="comment", text=
+        "Data validity flag" "\n"
+        "True if motor data has been received at least once")
+      boolean valid;
+
+      @verbatim (language="comment", text=
         "Error code (DM motor format)")
       uint8 state;
 

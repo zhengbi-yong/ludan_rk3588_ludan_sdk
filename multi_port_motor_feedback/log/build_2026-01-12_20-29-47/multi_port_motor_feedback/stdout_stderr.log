@@ -1,0 +1,5 @@
+[ 90%] Built target motor_heartbeat_monitor
+[100%] Built target can_send_test
+-- Install configuration: ""
+-- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/can_send_test
+-- Up-to-date: /home/linaro/ludan_sdk/multi_port_motor_feedback/install/multi_port_motor_feedback/bin/motor_heartbeat_monitor

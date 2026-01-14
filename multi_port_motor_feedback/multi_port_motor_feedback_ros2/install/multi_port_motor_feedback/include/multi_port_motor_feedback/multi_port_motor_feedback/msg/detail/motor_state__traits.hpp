@@ -25,6 +25,13 @@ inline void to_flow_style_yaml(
   std::ostream & out)
 {
   out << "{";
+  // member: valid
+  {
+    out << "valid: ";
+    rosidl_generator_traits::value_to_yaml(msg.valid, out);
+    out << ", ";
+  }
+
   // member: state
   {
     out << "state: ";
@@ -79,6 +86,16 @@ inline void to_block_style_yaml(
   const MotorState & msg,
   std::ostream & out, size_t indentation = 0)
 {
+  // member: valid
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "valid: ";
+    rosidl_generator_traits::value_to_yaml(msg.valid, out);
+    out << "\n";
+  }
+
   // member: state
   {
     if (indentation > 0) {

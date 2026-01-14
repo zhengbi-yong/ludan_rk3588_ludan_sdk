@@ -1,0 +1,11 @@
+In file included from [01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/CANFDNET.h:4[m[K,
+                 from [01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:29[m[K:
+[01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/../../LINUX_CANFDNET_V1.3.0.5_example/src/zlgcan/zlgcan.h:584:16:[m[K [01;35m[Kwarning: [m[KISO C++ prohibits anonymous structs [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wpedantic-Wpedantic]8;;[m[K]
+  584 |         struct [01;35m[K{[m[K
+      |                [01;35m[K^[m[K
+[01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:[m[K In lambda function:
+[01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:865:28:[m[K [01;35m[Kwarning: [m[Kunused variable ‘[01m[Kdebug_print_counter[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]
+  865 |                 static int [01;35m[Kdebug_print_counter[m[K = 0;
+      |                            [01;35m[K^~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:[m[K At global scope:
+[01m[K/home/linaro/ludan_sdk/multi_port_motor_feedback/multi_port_motor_feedback_ros2/src/can_motor_feedback_publisher.cpp:865:28:[m[K [01;35m[Kwarning: [m[K‘[01m[Kdebug_print_counter[m[K’ defined but not used [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]

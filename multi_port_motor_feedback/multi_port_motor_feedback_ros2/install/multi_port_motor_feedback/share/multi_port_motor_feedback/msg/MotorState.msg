@@ -1,6 +1,9 @@
 # MotorState.msg
 # Single motor state message
 
+# Data validity flag
+bool   valid            # True if motor data has been received at least once
+
 # Error code (DM motor format)
 uint8 state
 

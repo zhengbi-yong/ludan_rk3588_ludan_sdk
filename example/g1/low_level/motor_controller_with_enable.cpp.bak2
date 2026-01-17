@@ -209,63 +209,24 @@ struct MotorLimits {
     float kd_max;  // Kd max
 };
 
-// ==================== 电机限位配置 ====================
-// 每个电机的位置限位 (rad)，速度/转矩/Kp/Kd限位保持原分组设置
+// 电机参数分组：
+// Group A: motorID 18,19,20,21,22,25,26,27,28 -> PMAX 12.5, VMAX 25, TMAX 200
+// Group B: motorID 4,5,6,11,12,13,23,24,29,30 -> PMAX 12.566, VMAX 20, TMAX 120
+// Group C: motorID 1,2,3,7,8,9,10,14,15,16,17 -> PMAX 12.5, VMAX 10, TMAX 28
 static inline MotorLimits GetMotorLimits(uint16_t motor_id) {
-    // 默认速度/转矩/Kp/Kd限位
-    float v_min, v_max, t_min, t_max, kp_min, kp_max, kd_min, kd_max;
-
-    // 根据电机ID分组设置速度/转矩限位
+    // Group A: motorID 18,19,20,21,22,25,26,27,28
     if ((motor_id >= 18 && motor_id <= 22) || (motor_id >= 25 && motor_id <= 28)) {
-        // Group A: motorID 18,19,20,21,22,25,26,27,28 -> VMAX 25, TMAX 200
-        v_min = -25.0f; v_max = 25.0f; t_min = -200.0f; t_max = 200.0f;
-    } else if ((motor_id >= 4 && motor_id <= 6) || (motor_id >= 11 && motor_id <= 13) ||
-               (motor_id >= 23 && motor_id <= 24) || (motor_id >= 29 && motor_id <= 30)) {
-        // Group B: motorID 4,5,6,11,12,13,23,24,29,30 -> VMAX 20, TMAX 120
-        v_min = -20.0f; v_max = 20.0f; t_min = -120.0f; t_max = 120.0f;
-    } else {
-        // Group C: motorID 1,2,3,7,8,9,10,14,15,16,17 -> VMAX 10, TMAX 28
-        v_min = -10.0f; v_max = 10.0f; t_min = -28.0f; t_max = 28.0f;
+        return {-12.5f, 12.5f, -25.0f, 25.0f, -200.0f, 200.0f, 0.0f, 500.0f, 0.0f, 5.0f};
     }
-    kp_min = 0.0f; kp_max = 500.0f; kd_min = 0.0f; kd_max = 5.0f;
-
-    // 每个电机的位置限位
-    float p_min, p_max;
-    switch (motor_id) {
-        case 1:  p_min = -1.7f;  p_max = 1.7f;   break;   // 正负1.7
-        case 2:  p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        case 3:  p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        case 4:  p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 5:  p_min = -0.26f; p_max = 2.6f;   break;   // -0.26至2.6
-        case 6:  p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 7:  p_min = -2.09f; p_max = 0.79f;  break;   // -2.09至0.79
-        case 8:  p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 9:  p_min = -1.83f; p_max = 1.83f;  break;   // 正负1.83
-        case 10: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 11: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 12: p_min = -2.6f;  p_max = 0.26f;  break;   // -2.6至0.26
-        case 13: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 14: p_min = -0.79f; p_max = 2.09f;  break;   // -0.79至2.09
-        case 15: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 16: p_min = -1.83f; p_max = 1.83f;  break;   // 正负1.83
-        case 17: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 18: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 19: p_min = -1.6f;  p_max = 1.6f;   break;   // 正负1.6
-        case 20: p_min = -0.35f; p_max = 1.6f;   break;   // -0.35至1.6
-        case 21: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 22: p_min = 0.0f;   p_max = 1.6f;   break;   // 0至1.6
-        case 23: p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        case 24: p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        case 25: p_min = -1.6f;  p_max = 1.6f;   break;   // 正负1.6
-        case 26: p_min = -1.6f;  p_max = 0.35f;  break;   // -1.6至0.35
-        case 27: p_min = -1.57f; p_max = 1.57f;  break;   // 正负1.57
-        case 28: p_min = -1.6f;  p_max = 0.0f;   break;   // -1.6至0
-        case 29: p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        case 30: p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        default: p_min = -1.57f; p_max = 1.57f;  break;   // 默认正负1.57
+    // Group B: motorID 4,5,6,11,12,13,23,24,29,30
+    else if ((motor_id >= 4 && motor_id <= 6) || (motor_id >= 11 && motor_id <= 13) ||
+             (motor_id >= 23 && motor_id <= 24) || (motor_id >= 29 && motor_id <= 30)) {
+        return {-12.566f, 12.566f, -20.0f, 20.0f, -120.0f, 120.0f, 0.0f, 500.0f, 0.0f, 5.0f};
     }
-
-    return {p_min, p_max, v_min, v_max, t_min, t_max, kp_min, kp_max, kd_min, kd_max};
+    // Group C: motorID 1,2,3,7,8,9,10,14,15,16,17
+    else {
+        return {-12.5f, 12.5f, -10.0f, 10.0f, -28.0f, 28.0f, 0.0f, 500.0f, 0.0f, 5.0f};
+    }
 }
 
 // DM4310 电机参数范围（与 motor_config.h 中的定义一致）
@@ -1904,20 +1865,12 @@ private:
     // 追踪活跃的电机（收到过 ROS2 命令的电机）
     std::array<bool, G1_NUM_MOTOR> active_motors_;
 
-    // 最大速度限制 (rad/s)
-    static constexpr double MAX_VELOCITY = 0.3;
-
     struct MotorCommandHistory {
         MotorCommandCan current;
         MotorCommandCan previous;
         bool has_previous = false;
         std::chrono::high_resolution_clock::time_point current_timestamp;
         std::chrono::high_resolution_clock::time_point previous_timestamp;
-
-        // 速度限制相关：记录上次实际发送的位置和时间
-        double last_sent_pos = 0.0;
-        double last_sent_time = 0.0;
-        bool has_sent = false;  // 是否已经发送过命令
     };
     std::array<MotorCommandHistory, G1_NUM_MOTOR> command_history_;
 
@@ -2048,9 +2001,26 @@ public:
 
                 motor_commands_[array_idx].motor_id = motor_id;
 
-                // 获取该电机的位置限位并进行限幅
-                MotorLimits limits = GetMotorLimits(motor_id);
-                motor_commands_[array_idx].pos = std::max(limits.p_min, std::min(limits.p_max, motor_cmd.q));
+                // 位置限幅：限制在 -0.15 到 +0.15 之间
+                float limited_pos = motor_cmd.q;
+                const float POSITION_MAX = 0.15f;
+                const float POSITION_MIN = -0.15f;
+
+                bool pos_limited = false;
+                if (limited_pos > POSITION_MAX) {
+                    limited_pos = POSITION_MAX;
+                    pos_limited = true;
+                } else if (limited_pos < POSITION_MIN) {
+                    limited_pos = POSITION_MIN;
+                    pos_limited = true;
+                }
+
+                // 调试输出：显示 motor_id 30 的限幅情况
+                if (motor_id == 30 && pos_limited) {
+                    std::cout << "[LIMIT] Motor 30: " << motor_cmd.q << " -> " << limited_pos << std::endl;
+                }
+
+                motor_commands_[array_idx].pos = limited_pos;
                 motor_commands_[array_idx].vel = motor_cmd.dq;
                 motor_commands_[array_idx].kp = motor_cmd.kp;
                 motor_commands_[array_idx].kd = motor_cmd.kd;
@@ -2264,30 +2234,16 @@ public:
                         // 未超时：发送插值后的控制命令
                         auto current_timestamp = std::chrono::duration<double>(current_time.time_since_epoch()).count();
 
-                        // 调试输出：检查是否进入插值逻辑
-                        static int debug_entry_count = 0;
-                        if (++debug_entry_count % 1000 == 0 && (motor_id <= 3 || motor_id == 30)) {
-                            std::cout << "[DEBUG] Motor " << motor_id
-                                      << " has_previous=" << history.has_previous
-                                      << " active=true" << std::endl;
-                        }
-
                         if (history.has_previous) {
                             double prev_time = std::chrono::duration<double>(history.previous_timestamp.time_since_epoch()).count();
                             double curr_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
 
                             cmd_to_send = interpolateCommand(history.previous, history.current,
-                                                           prev_time, curr_time, current_timestamp,
-                                                           history);
+                                                           prev_time, curr_time, current_timestamp);
                         } else {
                             cmd_to_send = history.current;
                         }
                         cmd_to_send.is_heartbeat = false;  // 标记为控制命令
-
-                        // 更新发送记录（用于下一次速度限制计算）
-                        history.last_sent_pos = cmd_to_send.pos;
-                        history.last_sent_time = current_timestamp;
-                        history.has_sent = true;
                     }
                 } else {
                     // 电机不活跃：发送心跳命令
@@ -2302,66 +2258,14 @@ public:
     }
 
     MotorCommandCan interpolateCommand(const MotorCommandCan& prev, const MotorCommandCan& curr,
-                                       double prev_time, double curr_time, double target_time,
-                                       MotorCommandHistory& history) {
-        // 调试输出：确认函数被调用
-        static int call_count = 0;
-        if (++call_count % 1000 == 0) {
-            std::cout << "[INTERPOLATE_CALL] count=" << call_count
-                      << " prev.pos=" << prev.pos
-                      << " curr.pos=" << curr.pos
-                      << " prev_time=" << prev_time
-                      << " curr_time=" << curr_time
-                      << " target_time=" << target_time
-                      << std::endl;
-        }
-
+                                       double prev_time, double curr_time, double target_time) {
         MotorCommandCan result = curr;
 
         if (curr_time > prev_time) {
             double t = (target_time - prev_time) / (curr_time - prev_time);
             t = std::max(0.0, std::min(1.0, t));
 
-            // 先计算理论插值位置
-            double interpolated_pos = prev.pos + t * (curr.pos - prev.pos);
-
-            // 速度限制：基于上次实际发送的位置，累积执行速度限制
-            if (history.has_sent) {
-                double dt = target_time - history.last_sent_time;
-                if (dt > 0) {
-                    double max_delta = MAX_VELOCITY * dt;
-                    double actual_delta = interpolated_pos - history.last_sent_pos;
-
-                    // 如果变化超过最大速度，限制位置增量
-                    if (std::abs(actual_delta) > max_delta) {
-                        // 调试输出
-                        static int debug_count = 0;
-                        if (++debug_count % 500 == 0) {
-                            std::cout << "[VEL_LIMIT] dt=" << dt
-                                      << " max_delta=" << max_delta
-                                      << " actual_delta=" << actual_delta
-                                      << " last_sent=" << history.last_sent_pos
-                                      << " target=" << interpolated_pos
-                                      << " -> limited=" << (history.last_sent_pos + (actual_delta >= 0 ? 1.0 : -1.0) * max_delta)
-                                      << std::endl;
-                        }
-                        double sign = (actual_delta >= 0) ? 1.0 : -1.0;
-                        interpolated_pos = history.last_sent_pos + sign * max_delta;
-                    } else {
-                        // 速度未超限，也打印一下确认逻辑正常
-                        static int debug_count2 = 0;
-                        if (++debug_count2 % 1000 == 0) {
-                            std::cout << "[VEL_OK] dt=" << dt
-                                      << " delta=" << actual_delta
-                                      << " max=" << max_delta
-                                      << " pos=" << interpolated_pos
-                                      << std::endl;
-                        }
-                    }
-                }
-            }
-
-            result.pos = interpolated_pos;
+            result.pos = prev.pos + t * (curr.pos - prev.pos);
             result.vel = prev.vel + t * (curr.vel - prev.vel);
             result.kp = prev.kp + t * (curr.kp - prev.kp);
             result.kd = prev.kd + t * (curr.kd - prev.kd);

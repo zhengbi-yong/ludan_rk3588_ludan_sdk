@@ -17,7 +17,7 @@ include_directories(${ZCAN_INCLUDE_DIR})
 
 # Source files
 set(SOURCES
-     src/deekseep.cpp
+     src/motor_test_new_0113.cpp
 )
 
 # Create executable

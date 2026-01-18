@@ -6,3 +6,4 @@ build
 
 #cland
 .cache
+*.log

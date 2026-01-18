@@ -566,9 +566,24 @@ static inline void PrintZLGRawPacketBatch(const ZCAN_Transmit_Data* frames, uint
 
 // Motor ID mapping function
 static inline int get_can_id_for_motor(int motor_id) {
-    if (motor_id >= 1 && motor_id <= 30) {
-        return motor_id;
+    // 根据端口计算本地CAN ID
+    // 8000 (offset=0): 全局1-10  → 本地1-10
+    // 8001 (offset=10): 全局11-17 → 本地1-7
+    // 8002 (offset=17): 全局18-24 → 本地1-7
+    // 8003 (offset=24): 全局25-30 → 本地1-6
+    if (motor_id < 1 || motor_id > 30) {
+        return 0;
     }
+
+    // Find the port config for this motor and return local CAN ID
+    for (const auto& config : PORT_CONFIGS) {
+        int motor_start = config.motor_offset + 1;
+        int motor_end = config.motor_offset + config.motor_count;
+        if (motor_id >= motor_start && motor_id <= motor_end) {
+            return motor_id - config.motor_offset;  // Return local CAN ID
+        }
+    }
+
     return 0;
 }
 
@@ -1501,14 +1516,14 @@ public:
                int arb_baud, int data_baud)
         : port_config_(port_config), zlg_ip_(zlg_ip),
           arb_baud_(arb_baud), data_baud_(data_baud),
-          owns_device_(true) {}
+          owns_device_(true), device_index_(0) {}
 
     // 构造函数：使用外部传入的设备句柄（用于多端口模式）
     PortSender(const PortConfig& port_config, DEVICE_HANDLE device_handle,
-               const std::string& zlg_ip, int arb_baud, int data_baud)
+               const std::string& zlg_ip, int arb_baud, int data_baud, int device_index)
         : port_config_(port_config), device_handle_(device_handle), zlg_ip_(zlg_ip),
           arb_baud_(arb_baud), data_baud_(data_baud),
-          owns_device_(false) {}
+          owns_device_(false), device_index_(device_index) {}
 
     ~PortSender() {
         if (channel_handle_ && channel_handle_ != INVALID_CHANNEL_HANDLE) {
@@ -1548,6 +1563,8 @@ public:
         init_config.canfd.filter = 0;
         init_config.canfd.mode = 0;
 
+        // 初始化CAN - 使用 port_config_.channel（每个端口对应一个通道）
+        // 注意：现在使用单一设备句柄，通过不同的通道号访问不同的TCP端口
         channel_handle_ = ZCAN_InitCAN(device_handle_, port_config_.channel, &init_config);
         if (channel_handle_ == INVALID_CHANNEL_HANDLE) {
             std::cerr << "  [Port " << port_config_.port << "] Failed to init CAN" << std::endl;
@@ -1555,12 +1572,12 @@ public:
             return false;
         }
 
-        // 3. Set IP and port
-        // 注意：ZCAN_SetReference 的第二个参数是设备索引(应为0)，第三个参数是通道号
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, port_config_.channel,
+        // 设置IP和端口 - 使用 device_index_ 作为设备索引和通道号
+        // 注意：根据motorenable.cpp的模式，ZCAN_SetReference的两个参数都是device_index_
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, device_index_, device_index_,
                          CMD_DESIP, (void*)zlg_ip_.c_str());
         uint32_t port_val = port_config_.port;
-        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, 0, port_config_.channel,
+        ZCAN_SetReference(ZCAN_CANFDNET_400U_TCP, device_index_, device_index_,
                          CMD_DESPORT, &port_val);
 
         // 4. Start CAN
@@ -1654,6 +1671,7 @@ private:
     int arb_baud_;
     int data_baud_;
     bool owns_device_;  // 是否拥有设备（true=自己打开并负责关闭，false=使用外部句柄）
+    int device_index_;  // ZCAN 设备索引（用于多设备模式）
 
     DEVICE_HANDLE device_handle_ = INVALID_DEVICE_HANDLE;
     CHANNEL_HANDLE channel_handle_ = INVALID_CHANNEL_HANDLE;
@@ -1669,10 +1687,12 @@ private:
 class MultiPortMotorManager {
 public:
     MultiPortMotorManager(const std::string& zlg_ip, int arb_baud, int data_baud)
-        : zlg_ip_(zlg_ip), arb_baud_(arb_baud), data_baud_(data_baud) {}
+        : zlg_ip_(zlg_ip), arb_baud_(arb_baud), data_baud_(data_baud), device_handle_(INVALID_DEVICE_HANDLE) {
+        // 初始化设备句柄为无效
+    }
 
     ~MultiPortMotorManager() {
-        // 关闭共享设备句柄
+        // 关闭单一设备句柄
         if (device_handle_ && device_handle_ != INVALID_DEVICE_HANDLE) {
             ZCAN_CloseDevice(device_handle_);
             device_handle_ = INVALID_DEVICE_HANDLE;
@@ -1685,19 +1705,23 @@ public:
         std::cout << "Arbitration Baud: " << arb_baud_ << " bps" << std::endl;
         std::cout << "Data Baud: " << data_baud_ << " bps" << std::endl;
 
-        // 1. 只打开一次设备（多通道共享同一设备）
-        std::cout << "[1/5] Opening shared ZCAN device..." << std::endl;
+        // 1. 打开 1 个设备，支持 4 个通道
+        // 注意：ZLG CANFDNET-400U 在单设备多通道模式下
+        // 所有 4 个 TCP 端口 (8000-8003) 都使用同一个设备句柄
+        // 但每个通道需要单独初始化
+        std::cout << "[1/5] Opening 1 ZCAN device for 4 channels..." << std::endl;
         device_handle_ = ZCAN_OpenDevice(ZCAN_CANFDNET_400U_TCP, 0, 0);
         if (device_handle_ == INVALID_DEVICE_HANDLE) {
-            std::cerr << "Failed to open ZCAN device" << std::endl;
+            std::cerr << "Failed to open ZCAN device 0" << std::endl;
             return false;
         }
-        std::cout << "[2/5] Shared device opened successfully" << std::endl;
+        std::cout << "  Device 0 opened (handles all 4 channels)" << std::endl;
+        std::cout << "[2/5] Device opened successfully" << std::endl;
 
-        // 2. 为每个端口创建 PortSender，使用共享的设备句柄
+        // 2. 为每个端口创建 PortSender，都使用同一个设备句柄，但使用不同的通道号
         for (int i = 0; i < 4; i++) {
             port_senders_[i] = std::make_unique<PortSender>(
-                PORT_CONFIGS[i], device_handle_, zlg_ip_, arb_baud_, data_baud_);
+                PORT_CONFIGS[i], device_handle_, zlg_ip_, arb_baud_, data_baud_, PORT_CONFIGS[i].channel);
             if (!port_senders_[i]->Initialize()) {
                 std::cerr << "Failed to initialize port " << PORT_CONFIGS[i].port << std::endl;
                 return false;
@@ -1723,29 +1747,33 @@ public:
         }
 
         for (const auto& cmd : all_commands) {
-            int port_idx = GetPortIndexForMotor(cmd.motor_id);
+            int port_idx = GetPortIndexForMotor(cmd.global_motor_id);
             if (port_idx >= 0 && port_senders_[port_idx]->IsInitialized()) {
                 MotorCommandCan local_cmd = cmd;
-                local_cmd.motor_id = GetLocalCanId(cmd.motor_id);
-
-                // 调试：motor_id 30 的详细信息
-                if (cmd.motor_id == 30) {
-                    static int motor_30_debug_count = 0;
-                    if (motor_30_debug_count < 5) {
-                        std::cout << "[DEBUG] Motor 30: port_idx=" << port_idx
-                                  << ", local_can_id=" << local_cmd.motor_id
-                                  << ", pos=" << local_cmd.pos << std::endl;
-                        motor_30_debug_count++;
-                    }
-                }
-
+                local_cmd.motor_id = GetLocalCanId(cmd.global_motor_id);
                 port_commands[port_idx].push_back(local_cmd);
+            } else if (port_idx >= 0) {
+                // 端口索引正确但未初始化
+                static int init_warn_count = 0;
+                if (init_warn_count < 10) {
+                    std::cout << "[WARNING] Port " << (8000 + port_idx)
+                              << " for motor " << cmd.global_motor_id << " NOT INITIALIZED!" << std::endl;
+                    init_warn_count++;
+                }
+            } else {
+                // 端口索引错误
+                static int idx_err_count = 0;
+                if (idx_err_count < 10) {
+                    std::cout << "[ERROR] Invalid port_idx=" << port_idx
+                              << " for motor " << cmd.global_motor_id << std::endl;
+                    idx_err_count++;
+                }
             }
         }
 
         // 调试输出：显示每个端口的电机数量
         static int debug_count = 0;
-        if (debug_count < 3) {
+        if (debug_count < 10) {
             std::cout << "[DEBUG] 端口分配: ";
             for (int i = 0; i < 4; i++) {
                 std::cout << "800" << i << "=" << port_commands[i].size() << " ";
@@ -1760,6 +1788,15 @@ public:
             if (!port_commands[i].empty()) {
                 int sent = port_senders_[i]->SendMotorCommands(port_commands[i]);
                 total_sent += sent;
+
+                // 调试：显示每个端口的发送结果
+                static int send_debug_count = 0;
+                if (send_debug_count < 10) {
+                    std::cout << "[SEND] Port " << (8000 + i)
+                              << ": commands=" << port_commands[i].size()
+                              << ", sent=" << sent << std::endl;
+                    send_debug_count++;
+                }
             }
         }
 
@@ -1848,12 +1885,17 @@ private:
     }
 
     int GetLocalCanId(int global_motor_id) const {
-        // 直接映射：motor_id (1-30) 直接对应 CAN ID (1-30)
-        // motor_id 1 → CAN ID 1 (0x01)
-        // motor_id 10 → CAN ID 10 (0x0a)
-        // motor_id 30 → CAN ID 30 (0x1e)
-        if (global_motor_id >= 1 && global_motor_id <= 30) {
-            return global_motor_id;
+        // 根据端口计算本地CAN ID
+        // 8000 (offset=0): 全局1-10  → 本地1-10
+        // 8001 (offset=10): 全局11-17 → 本地1-7
+        // 8002 (offset=17): 全局18-24 → 本地1-7
+        // 8003 (offset=24): 全局25-30 → 本地1-6
+        for (const auto& config : PORT_CONFIGS) {
+            int motor_start = config.motor_offset + 1;
+            int motor_end = config.motor_offset + config.motor_count;
+            if (global_motor_id >= motor_start && global_motor_id <= motor_end) {
+                return global_motor_id - config.motor_offset;  // 本地CAN ID
+            }
         }
         return -1;
     }
@@ -1862,7 +1904,7 @@ private:
     std::string zlg_ip_;
     int arb_baud_;
     int data_baud_;
-    DEVICE_HANDLE device_handle_ = INVALID_DEVICE_HANDLE;  // 共享设备句柄
+    DEVICE_HANDLE device_handle_;  // 单一设备句柄（支持4个通道）
     std::array<std::unique_ptr<PortSender>, 4> port_senders_;
 };
 
@@ -2046,7 +2088,8 @@ public:
                 // 转换为数组索引 (0-29)
                 int array_idx = motor_id - 1;
 
-                motor_commands_[array_idx].motor_id = motor_id;
+                // 保存全局 motor_id (在覆盖 motor_id 为本地 CAN ID 之前)
+                motor_commands_[array_idx].global_motor_id = motor_id;
 
                 // 获取该电机的位置限位并进行限幅
                 MotorLimits limits = GetMotorLimits(motor_id);
@@ -2058,7 +2101,7 @@ public:
 
                 int can_id = get_can_id_for_motor(motor_id);
                 if (can_id > 0) {
-                    motor_commands_[array_idx].motor_id = can_id;
+                    motor_commands_[array_idx].motor_id = can_id;  // 设置为本地 CAN ID
 
                     // 只有当 mode != 0 时才标记为活跃（mode=0 表示没有有效控制数据）
                     if (motor_cmd.mode != 0) {

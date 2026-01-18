@@ -30,6 +30,11 @@
 // Note: CANFDNET.h must be included before zlgcan.h for extern "C" linkage
 #include "CANFDNET.h"
 
+// ==================== CAN ID 宏定义 ====================
+// 这些宏用于构造和解析CAN帧的ID字段
+#define MAKE_CAN_ID(id, src_id, seg_id, rtr) ((id & 0x1FFFFFFF))
+#define GET_ID(can_id) (can_id & 0x1FFFFFFF)
+
 static const std::string ROS2_CMD_TOPIC = "/lowcmd";
 const int G1_NUM_MOTOR = 30;
 
@@ -210,27 +215,40 @@ struct MotorLimits {
 };
 
 // ==================== 电机限位配置 ====================
-// 每个电机的位置限位 (rad)，速度/转矩/Kp/Kd限位保持原分组设置
+// 根据电机ID分组设置PMAX、VMAX、TMAX参数
+// Group A: motorID 18,19,20,21,22,25,26,27,28 -> PMAX 12.5, VMAX 25, TMAX 200
+// Group B: motorID 4,5,6,11,12,13,23,24,29,30 -> PMAX 12.566, VMAX 20, TMAX 120
+// Group C: motorID 1,2,3,7,8,9,10,14,15,16,17 -> PMAX 12.5, VMAX 10, TMAX 28
 static inline MotorLimits GetMotorLimits(uint16_t motor_id) {
-    // 默认速度/转矩/Kp/Kd限位
-    float v_min, v_max, t_min, t_max, kp_min, kp_max, kd_min, kd_max;
+    // 默认Kp/Kd限位
+    float kp_min = 0.0f, kp_max = 500.0f;     // Kp范围: 0.0 到 500.0
+    float kd_min = 0.0f, kd_max = 5.0f;       // Kd范围: 0.0 到 5.0
 
-    // 根据电机ID分组设置速度/转矩限位
+    // 根据电机ID分组设置PMAX、VMAX、TMAX
+    float p_min, p_max, v_min, v_max, t_min, t_max;
+
     if ((motor_id >= 18 && motor_id <= 22) || (motor_id >= 25 && motor_id <= 28)) {
-        // Group A: motorID 18,19,20,21,22,25,26,27,28 -> VMAX 25, TMAX 200
-        v_min = -25.0f; v_max = 25.0f; t_min = -200.0f; t_max = 200.0f;
+        // Group A: motorID 18,19,20,21,22,25,26,27,28
+        // PMAX 12.5, VMAX 25, TMAX 200
+        p_min = -12.5f; p_max = 12.5f;
+        v_min = -25.0f; v_max = 25.0f;
+        t_min = -200.0f; t_max = 200.0f;
     } else if ((motor_id >= 4 && motor_id <= 6) || (motor_id >= 11 && motor_id <= 13) ||
                (motor_id >= 23 && motor_id <= 24) || (motor_id >= 29 && motor_id <= 30)) {
-        // Group B: motorID 4,5,6,11,12,13,23,24,29,30 -> VMAX 20, TMAX 120
-        v_min = -20.0f; v_max = 20.0f; t_min = -120.0f; t_max = 120.0f;
+        // Group B: motorID 4,5,6,11,12,13,23,24,29,30
+        // PMAX 12.566, VMAX 20, TMAX 120
+        p_min = -12.566f; p_max = 12.566f;
+        v_min = -20.0f; v_max = 20.0f;
+        t_min = -120.0f; t_max = 120.0f;
     } else {
-        // Group C: motorID 1,2,3,7,8,9,10,14,15,16,17 -> VMAX 10, TMAX 28
-        v_min = -10.0f; v_max = 10.0f; t_min = -28.0f; t_max = 28.0f;
+        // Group C: motorID 1,2,3,7,8,9,10,14,15,16,17
+        // PMAX 12.5, VMAX 10, TMAX 28
+        p_min = -12.5f; p_max = 12.5f;
+        v_min = -10.0f; v_max = 10.0f;
+        t_min = -28.0f; t_max = 28.0f;
     }
-    kp_min = 0.0f; kp_max = 500.0f; kd_min = 0.0f; kd_max = 5.0f;
 
-    // 每个电机的位置限位
-    float p_min, p_max;
+    // 根据具体电机ID覆盖位置限位（保持原有的位置限位设置）
     switch (motor_id) {
         case 1:  p_min = -1.7f;  p_max = 1.7f;   break;   // 正负1.7
         case 2:  p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
@@ -262,11 +280,17 @@ static inline MotorLimits GetMotorLimits(uint16_t motor_id) {
         case 28: p_min = -1.6f;  p_max = 0.0f;   break;   // -1.6至0
         case 29: p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
         case 30: p_min = -0.3f;  p_max = 0.3f;   break;   // 正负0.3
-        default: p_min = -1.57f; p_max = 1.57f;  break;   // 默认正负1.57
+        default: break;  // 使用分组设置的默认值
     }
 
     return {p_min, p_max, v_min, v_max, t_min, t_max, kp_min, kp_max, kd_min, kd_max};
 }
+
+// ==================== DM Motor Control Mode Definitions ====================
+// 与 motor_config.h 中的定义一致
+constexpr uint16_t MIT_MODE = 0x000;    // MIT 模式 (混合控制: 位置+速度+力矩)
+constexpr uint16_t POS_MODE = 0x100;    // 位置模式
+constexpr uint16_t SPEED_MODE = 0x200;  // 速度模式
 
 // DM4310 电机参数范围（与 motor_config.h 中的定义一致）
 // 注意：现在使用 GetMotorLimits(motor_id) 来获取电机特定的参数
@@ -281,18 +305,33 @@ constexpr float KP_MAX_DM = 500.0f;  // Kp max: 500.0
 constexpr float KD_MIN_DM = 0.0f;    // Kd min: 0.0
 constexpr float KD_MAX_DM = 5.0f;    // Kd max: 5.0
 
+// ==================== DM Motor Control Command ====================
+// DM 电机 MIT 模式控制命令格式（与 motor_config.c 中的 mit_ctrl 函数完全一致）
+// DM4310/DM4340/DM6006/DM8006 等电机使用相同的 MIT 模式协议
+// 参考: motor_config.c 第 625-656 行
 static inline void MotorCommandToCanData_DM(const MotorCommandCan& cmd, uint8_t* can_data) {
-    // 获取电机特定的参数限制
-    MotorLimits limits = GetMotorLimits(cmd.motor_id);
+    // DM 协议使用固定的全局参数范围（与 motor_config.c 中的 P_MIN1, V_MIN1 等一致）
+    // 不能使用电机特定的限制值，否则会导致数据转换错误
+    constexpr float P_MIN = -12.5f;   // 与 motor_config.h 中的 P_MIN1 一致
+    constexpr float P_MAX = 12.5f;    // 与 motor_config.h 中的 P_MAX1 一致
+    constexpr float V_MIN = -30.0f;   // 与 motor_config.h 中的 V_MIN1 一致
+    constexpr float V_MAX = 30.0f;    // 与 motor_config.h 中的 V_MAX1 一致
+    constexpr float KP_MIN = 0.0f;    // 与 motor_config.h 中的 KP_MIN1 一致
+    constexpr float KP_MAX = 500.0f;  // 与 motor_config.h 中的 KP_MAX1 一致
+    constexpr float KD_MIN = 0.0f;    // 与 motor_config.h 中的 KD_MIN1 一致
+    constexpr float KD_MAX = 5.0f;    // 与 motor_config.h 中的 KD_MAX1 一致
+    constexpr float T_MIN = -10.0f;   // 与 motor_config.h 中的 T_MIN1 一致
+    constexpr float T_MAX = 10.0f;    // 与 motor_config.h 中的 T_MAX1 一致
 
     // Step 1: Quantize float parameters to integers using float_to_uint
-    uint16_t pos_tmp = float_to_uint(cmd.pos, limits.p_min, limits.p_max, 16);
-    uint16_t vel_tmp = float_to_uint(cmd.vel, limits.v_min, limits.v_max, 12);
-    uint16_t kp_tmp = float_to_uint(cmd.kp, limits.kp_min, limits.kp_max, 12);
-    uint16_t kd_tmp = float_to_uint(cmd.kd, limits.kd_min, limits.kd_max, 12);
-    uint16_t tor_tmp = float_to_uint(cmd.torq, limits.t_min, limits.t_max, 12);
+    // 与 motor_config.c 第 636-640 行完全一致
+    uint16_t pos_tmp = float_to_uint(cmd.pos, P_MIN, P_MAX, 16);
+    uint16_t vel_tmp = float_to_uint(cmd.vel, V_MIN, V_MAX, 12);
+    uint16_t kp_tmp = float_to_uint(cmd.kp, KP_MIN, KP_MAX, 12);
+    uint16_t kd_tmp = float_to_uint(cmd.kd, KD_MIN, KD_MAX, 12);
+    uint16_t tor_tmp = float_to_uint(cmd.torq, T_MIN, T_MAX, 12);
 
-    // Step 2: Pack data into 8-byte frame (与 C 代码中的打包方式完全一致)
+    // Step 2: Pack data into 8-byte frame (与 motor_config.c 第 643-652 行完全一致)
     can_data[0] = (pos_tmp >> 8);     /* Position high byte */
     can_data[1] = pos_tmp;            /* Position low byte */
     can_data[2] = (vel_tmp >> 4);     /* Velocity high 8 bits */
@@ -303,53 +342,25 @@ static inline void MotorCommandToCanData_DM(const MotorCommandCan& cmd, uint8_t*
     can_data[7] = tor_tmp;            /* Torque low 8 bits */
 }
 
-// ==================== MIT Motor Protocol ====================
-// MIT 电机命令格式（线性缩放，与 DM 协议格式相同）
-static inline void MotorCommandToCanData_MIT(const MotorCommandCan& cmd, uint8_t* can_data) {
-    // 获取电机特定的参数限制
-    MotorLimits limits = GetMotorLimits(cmd.motor_id);
-
-    // MIT 协议使用与 DM 协议相同的编码方式
-    uint16_t pos_tmp = float_to_uint(cmd.pos, limits.p_min, limits.p_max, 16);
-    uint16_t vel_tmp = float_to_uint(cmd.vel, limits.v_min, limits.v_max, 12);
-    uint16_t kp_tmp = float_to_uint(cmd.kp, limits.kp_min, limits.kp_max, 12);
-    uint16_t kd_tmp = float_to_uint(cmd.kd, limits.kd_min, limits.kd_max, 12);
-    uint16_t tor_tmp = float_to_uint(cmd.torq, limits.t_min, limits.t_max, 12);
-
-    // 打包方式与 DM 协议相同
-    can_data[0] = (pos_tmp >> 8);
-    can_data[1] = pos_tmp;
-    can_data[2] = (vel_tmp >> 4);
-    can_data[3] = ((vel_tmp & 0xF) << 4) | (kp_tmp >> 8);
-    can_data[4] = kp_tmp;
-    can_data[5] = (kd_tmp >> 4);
-    can_data[6] = ((kd_tmp & 0xF) << 4) | (tor_tmp >> 8);
-    can_data[7] = tor_tmp;
-}
-
-// ==================== 统一的转换函数 ====================
-// 根据全局设置选择协议类型（DM 和 MIT 协议现在使用相同的编码方式）
-// 支持心跳命令：is_heartbeat=true 时发送 [motor_id, 0x00, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00]
+// ==================== DM Protocol Unified Conversion ====================
+// 使用 DM 电机 MIT 模式协议（与 motor_config.c 中的 mit_ctrl 函数完全一致）
+// 心跳命令：is_heartbeat=true 时发送 pos=0, vel=0, kp=0, kd=0, tau=0 的控制命令
+// 这样电机不执行动作，但会返回状态反馈
 static inline void MotorCommandToCanData(const MotorCommandCan& cmd, uint8_t* can_data) {
-    // 如果是心跳命令，直接返回心跳帧格式
     if (cmd.is_heartbeat) {
-        can_data[0] = static_cast<uint8_t>(cmd.global_motor_id);  // motor_id (CAN ID low 8 bits)
-        can_data[1] = 0x00;                                       // CAN ID high 8 bits
-        can_data[2] = 0xCC;                                       // Read command (心跳读取命令)
-        can_data[3] = 0x00;                                       // Padding
-        can_data[4] = 0x00;                                       // Padding
-        can_data[5] = 0x00;                                       // Padding
-        can_data[6] = 0x00;                                       // Padding
-        can_data[7] = 0x00;                                       // Padding
+        // 心跳命令：发送 pos=0, vel=0, kp=0, kd=0, tau=0 的 DM 控制命令
+        // 电机不会产生任何输出力矩，但仍然会返回状态反馈
+        MotorCommandCan heartbeat_cmd = cmd;
+        heartbeat_cmd.pos = 0.0f;
+        heartbeat_cmd.vel = 0.0f;
+        heartbeat_cmd.kp = 0.0f;
+        heartbeat_cmd.kd = 0.0f;
+        heartbeat_cmd.torq = 0.0f;
+        MotorCommandToCanData_DM(heartbeat_cmd, can_data);
         return;
     }
-
-    // 否则使用正常的控制命令编码
-    if (g_use_dm_protocol) {
-        MotorCommandToCanData_DM(cmd, can_data);
-    } else {
-        MotorCommandToCanData_MIT(cmd, can_data);
-    }
+    // 使用 DM 电机 MIT 模式控制命令编码（与 motor_config.c 第 625-656 行完全一致）
+    MotorCommandToCanData_DM(cmd, can_data);
 }
 
 // ==================== ZLG TCP 协议原始数据包显示 ====================
@@ -565,12 +576,12 @@ static inline void PrintZLGRawPacketBatch(const ZCAN_Transmit_Data* frames, uint
 }
 
 // Motor ID mapping function
+// 根据端口计算本地CAN ID（每个端口上的电机使用独立的本地CAN ID）
+// 8000 (offset=0):  全局1-10  → 本地CAN ID 1-10  (0x01-0x0A)
+// 8001 (offset=10): 全局11-17 → 本地CAN ID 1-7   (0x01-0x07)
+// 8002 (offset=17): 全局18-24 → 本地CAN ID 1-7   (0x01-0x07)
+// 8003 (offset=24): 全局25-30 → 本地CAN ID 1-6   (0x01-0x06)
 static inline int get_can_id_for_motor(int motor_id) {
-    // 根据端口计算本地CAN ID
-    // 8000 (offset=0): 全局1-10  → 本地1-10
-    // 8001 (offset=10): 全局11-17 → 本地1-7
-    // 8002 (offset=17): 全局18-24 → 本地1-7
-    // 8003 (offset=24): 全局25-30 → 本地1-6
     if (motor_id < 1 || motor_id > 30) {
         return 0;
     }
@@ -580,7 +591,7 @@ static inline int get_can_id_for_motor(int motor_id) {
         int motor_start = config.motor_offset + 1;
         int motor_end = config.motor_offset + config.motor_count;
         if (motor_id >= motor_start && motor_id <= motor_end) {
-            return motor_id - config.motor_offset;  // Return local CAN ID
+            return motor_id - config.motor_offset;  // 返回本地CAN ID
         }
     }
 
@@ -1604,12 +1615,14 @@ public:
         std::vector<ZCAN_Transmit_Data> frames;
         frames.reserve(commands.size());
 
+        static int debug_count = 0;
         for (const auto& cmd : commands) {
             ZCAN_Transmit_Data transmit_data;
             memset(&transmit_data, 0, sizeof(transmit_data));
 
-            // 心跳命令使用 0x7FF (广播地址)，控制命令使用 cmd.motor_id
-            uint32_t can_id_to_use = cmd.is_heartbeat ? 0x7FF : cmd.motor_id;
+            // DM 电机 MIT 模式: CAN ID = local_motor_id + MIT_MODE
+            // 参考: motor_config.c 第 633 行: uint16_t id = motor_id + MIT_MODE;
+            uint32_t can_id_to_use = cmd.motor_id + MIT_MODE;
             transmit_data.frame.can_id = MAKE_CAN_ID(can_id_to_use, 0, 0, 0);
             transmit_data.frame.can_dlc = 8;
 
@@ -1617,6 +1630,18 @@ public:
             MotorCommandToCanData(cmd, can_data);
             for (int i = 0; i < 8; i++) {
                 transmit_data.frame.data[i] = can_data[i];
+            }
+
+            // 调试输出：前10个命令的详细信息
+            if (debug_count < 10 && !cmd.is_heartbeat) {
+                printf("[CAN_DEBUG] Motor%d(pos=%.3f,vel=%.3f,kp=%.1f,kd=%.2f,tau=%.2f) -> ",
+                       cmd.global_motor_id, cmd.pos, cmd.vel, cmd.kp, cmd.kd, cmd.torq);
+                printf("CAN_ID=0x%03x Data: ", can_id_to_use);
+                for (int i = 0; i < 8; i++) {
+                    printf("%02x ", can_data[i]);
+                }
+                printf("\n");
+                debug_count++;
             }
 
             transmit_data.transmit_type = 0;
@@ -1638,10 +1663,11 @@ public:
 
     bool SendEnableCommand(int local_motor_id) {
         if (!initialized_) return false;
+        // DM 电机 MIT 模式使能命令: CAN ID = local_motor_id + MIT_MODE
         uint8_t enable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFC};
         ZCAN_Transmit_Data transmit_data;
         memset(&transmit_data, 0, sizeof(transmit_data));
-        transmit_data.frame.can_id = MAKE_CAN_ID(local_motor_id, 0, 0, 0);
+        transmit_data.frame.can_id = MAKE_CAN_ID(local_motor_id + MIT_MODE, 0, 0, 0);
         transmit_data.frame.can_dlc = 8;
         memcpy(transmit_data.frame.data, enable_frame, 8);
         transmit_data.transmit_type = 0;
@@ -1650,10 +1676,11 @@ public:
 
     bool SendDisableCommand(int local_motor_id) {
         if (!initialized_) return false;
+        // DM 电机 MIT 模式失能命令: CAN ID = local_motor_id + MIT_MODE
         uint8_t disable_frame[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFD};
         ZCAN_Transmit_Data transmit_data;
         memset(&transmit_data, 0, sizeof(transmit_data));
-        transmit_data.frame.can_id = MAKE_CAN_ID(local_motor_id, 0, 0, 0);
+        transmit_data.frame.can_id = MAKE_CAN_ID(local_motor_id + MIT_MODE, 0, 0, 0);
         transmit_data.frame.can_dlc = 8;
         memcpy(transmit_data.frame.data, disable_frame, 8);
         transmit_data.transmit_type = 0;
@@ -1830,9 +1857,10 @@ public:
         int local_can_id = GetLocalCanId(global_motor_id);
 
         // 构造标零命令数据帧: FF FF FF FF FF FF FF FE
+        // DM 电机 MIT 模式: CAN ID = local_can_id + MIT_MODE
         ZCAN_Transmit_Data transmit_data;
         memset(&transmit_data, 0, sizeof(transmit_data));
-        transmit_data.frame.can_id = MAKE_CAN_ID(local_can_id, 0, 0, 0);
+        transmit_data.frame.can_id = MAKE_CAN_ID(local_can_id + MIT_MODE, 0, 0, 0);
         transmit_data.frame.can_dlc = 8;
         transmit_data.frame.data[0] = 0xFF;
         transmit_data.frame.data[1] = 0xFF;
@@ -2250,6 +2278,38 @@ public:
     void SetAutoStart() {
         std::cout << "\n>>> AUTO-START mode enabled <<<<" << std::endl;
         std::cout << ">>> 500Hz motor command sending STARTED <<<" << std::endl;
+        std::cout << ">>> Initial state: sending HEARTBEAT commands (0xCC) <<<" << std::endl;
+        std::cout << ">>> Will send control commands when /lowcmd data is received <<<" << std::endl;
+
+        // 在auto-start模式下，初始状态所有电机标记为非活跃
+        // 这样会立即发送心跳命令，直到收到 /lowcmd Topic 的有效数据
+        for (int i = 0; i < G1_NUM_MOTOR; i++) {
+            active_motors_[i] = false;  // 初始为非活跃，发送心跳命令
+
+            // 初始化电机命令为默认值（收到有效数据后会更新）
+            int motor_id = i + 1;
+            motor_commands_[i].global_motor_id = motor_id;
+            motor_commands_[i].motor_id = get_can_id_for_motor(motor_id);
+            motor_commands_[i].pos = 0.0f;
+            motor_commands_[i].vel = 0.0f;
+            motor_commands_[i].kp = 30.0f;   // 位置增益，收到数据后保持位置
+            motor_commands_[i].kd = 0.5f;    // 速度增益，提供阻尼
+            motor_commands_[i].torq = 0.0f;
+            motor_commands_[i].is_heartbeat = false;
+
+            // 设置命令历史记录，避免插值时出现问题
+            auto& history = command_history_[i];
+            if (!history.has_previous) {
+                history.current = motor_commands_[i];
+                history.previous = motor_commands_[i];
+                history.has_previous = true;
+                // 使用旧的时间戳，确保启动时立即发送心跳命令
+                auto old_time = std::chrono::high_resolution_clock::now() - std::chrono::seconds(10);
+                history.current_timestamp = old_time;
+                history.previous_timestamp = old_time;
+            }
+        }
+
         can_send_started_ = true;
     }
 
@@ -2267,14 +2327,13 @@ public:
     }
 
     // 收集所有需要发送的电机命令到批量数组
-    // 所有30个电机都会发送命令，确保每个电机都达到500Hz发送频率
     // - 有活跃控制命令的电机：发送插值后的控制命令
-    // - 没有活跃控制命令的电机：发送心跳命令 [motor_id, 0x00, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00]
+    // - 没有活跃控制命令的电机：发送心跳命令（pos=0, vel=0, kp=0, kd=0, tau=0）
     std::vector<MotorCommandCan> CollectMotorCommands(std::chrono::high_resolution_clock::time_point current_time) {
         std::vector<MotorCommandCan> commands;
         commands.reserve(G1_NUM_MOTOR);
 
-        // 超时阈值（秒）：如果超过这个时间没有收到新数据，发送心跳命令而不是控制命令
+        // 超时阈值（秒）：如果超过这个时间没有收到新数据，取消活跃状态
         const double COMMAND_TIMEOUT_SECONDS = 0.5;  // 500ms 超时
         auto current_timestamp_double = std::chrono::duration<double>(current_time.time_since_epoch()).count();
 
@@ -2284,25 +2343,26 @@ public:
 
             int can_id = get_can_id_for_motor(motor_id);
             if (can_id > 0) {
-                MotorCommandCan cmd_to_send;
-                cmd_to_send.motor_id = can_id;
-                cmd_to_send.global_motor_id = motor_id;  // 设置全局电机ID (1-30)，心跳命令需要
-
                 // 检查该电机是否活跃且有控制命令
                 if (active_motors_[array_idx]) {
+                    MotorCommandCan cmd_to_send;
+                    cmd_to_send.motor_id = can_id;
+                    cmd_to_send.global_motor_id = motor_id;
+
                     auto& history = command_history_[array_idx];
                     double last_command_time = std::chrono::duration<double>(history.current_timestamp.time_since_epoch()).count();
                     double time_since_last_command = current_timestamp_double - last_command_time;
 
                     if (time_since_last_command > COMMAND_TIMEOUT_SECONDS) {
-                        // 超时：发送心跳命令
+                        // 超时：取消活跃状态，发送心跳命令
                         if (verbose_logging_ || motor_id <= 6 || motor_id == 30) {
-                            std::cout << "[HEARTBEAT] Motor " << motor_id
+                            std::cout << "[TIMEOUT] Motor " << motor_id
                                       << " 超时 (" << time_since_last_command << "s > "
-                                      << COMMAND_TIMEOUT_SECONDS << "s), 发送心跳命令" << std::endl;
+                                      << COMMAND_TIMEOUT_SECONDS << "s), 切换为心跳命令" << std::endl;
                         }
                         active_motors_[array_idx] = false;  // 取消活跃状态
-                        cmd_to_send.is_heartbeat = true;   // 标记为心跳命令
+                        cmd_to_send.is_heartbeat = true;   // 发送心跳命令
+                        commands.push_back(cmd_to_send);
                     } else {
                         // 未超时：发送插值后的控制命令
                         auto current_timestamp = std::chrono::duration<double>(current_time.time_since_epoch()).count();
@@ -2331,13 +2391,18 @@ public:
                         history.last_sent_pos = cmd_to_send.pos;
                         history.last_sent_time = current_timestamp;
                         history.has_sent = true;
+
+                        // 添加活跃的电机命令
+                        commands.push_back(cmd_to_send);
                     }
                 } else {
-                    // 电机不活跃：发送心跳命令
-                    cmd_to_send.is_heartbeat = true;   // 标记为心跳命令
+                    // 不活跃的电机发送心跳命令
+                    MotorCommandCan cmd_to_send;
+                    cmd_to_send.motor_id = can_id;
+                    cmd_to_send.global_motor_id = motor_id;
+                    cmd_to_send.is_heartbeat = true;
+                    commands.push_back(cmd_to_send);
                 }
-
-                commands.push_back(cmd_to_send);
             }
         }
 
